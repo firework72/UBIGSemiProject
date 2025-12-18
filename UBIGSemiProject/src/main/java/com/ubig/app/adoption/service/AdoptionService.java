@@ -1,8 +1,9 @@
 package com.ubig.app.adoption.service;
 
-import org.springframework.stereotype.Service;
+import com.ubig.app.vo.adoption.AnimalDetailVO;
 
-@Service
-public class AdoptionService {
+public interface AdoptionService {
+
+	int insertAnimal(AnimalDetailVO animal);
 
 }
