@@ -1,5 +1,13 @@
 package com.ubig.app.volunteer.service;
 
-public class VolunteerService {
+import java.util.List;
+
+import com.ubig.app.vo.volunteer.ActivitieVO;
+
+public interface VolunteerService {
+
+	List<ActivitieVO> selectActivityList();
+	
+	
 
 }

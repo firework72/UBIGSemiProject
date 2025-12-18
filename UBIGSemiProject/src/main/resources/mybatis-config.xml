@@ -8,4 +8,17 @@
   	<setting name="jdbcTypeForNull" value="NULL"/>
   	<setting name="mapUnderscoreToCamelCase" value="true"/>
   </settings>
+  
+  
+  <typeAliases>
+		<typeAlias type="com.ubig.app.vo.volunteer.ActivitieVO" alias="activity"/>
+		<typeAlias type="com.ubig.app.vo.volunteer.SignVO" alias="sign"/>
+		<typeAlias type="com.ubig.app.vo.volunteer.VolunteerCommentVO" alias="comment"/>
+		<typeAlias type="com.ubig.app.vo.volunteer.VolunteerReviewVO" alias="review"/>
+		<typeAlias type="com.ubig.app.vo.volunteer.TagVO" alias="tag"/>
+		<typeAlias type="com.ubig.app.vo.volunteer.TagInfoVO" alias="tagInfo"/>
+	</typeAliases>
+	
+	
 </configuration>
+
