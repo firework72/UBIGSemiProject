@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="communityMapper">
+
+    <resultMap type="com.ubig.app.vo.community.BoardVO" id="boardResultMap">
+        <id property="boardId" column="BOARD_ID"/>
+        <result property="userId" column="USER_ID"/>
+        <result property="category" column="CATEGORY"/>
+        <result property="title" column="TITLE"/>
+        <result property="content" column="CONTENT"/>
+        <result property="createDate" column="CREATE_DATE"/>
+        <result property="updateDate" column="UPDATE_DATE"/>
+        <result property="viewCount" column="VIEW_COUNT"/>
+        <result property="isDeleted" column="IS_DELETED"/>
+    </resultMap>
+
+    <resultMap type="com.ubig.app.vo.community.CommentVO" id="commentResultMap">
+        <id property="commentId" column="COMMENT_ID"/>
+        <result property="userId" column="USER_ID"/>
+        <result property="boardId" column="BOARD_ID"/>
+        <result property="content" column="CONTENT"/>
+        <result property="createDate" column="CREATE_DATE"/>
+        <result property="updateDate" column="UPDATE_DATE"/>
+        <result property="isDeleted" column="IS_DELETED"/>
+        <result property="parentId" column="PARENT_ID"/>
+    </resultMap>
+    
+    <!-- Boards -->
+    <select id="selectBoardList" resultMap="boardResultMap">
+        SELECT 
+            BOARD_ID, USER_ID, CATEGORY, TITLE, CONTENT, 
+            CREATE_DATE, UPDATE_DATE, VIEW_COUNT, IS_DELETED
+        FROM BOARDS
+        WHERE IS_DELETED = 'N'
+        ORDER BY BOARD_ID DESC
+    </select>
+    
+    <select id="selectBoardDetail" parameterType="_int" resultMap="boardResultMap">
+        SELECT * FROM BOARDS WHERE BOARD_ID = #{boardId}
+    </select>
+    
+    <insert id="insertBoard" parameterType="com.ubig.app.vo.community.BoardVO">
+        INSERT INTO BOARDS (
+            BOARD_ID, USER_ID, CATEGORY, TITLE, CONTENT, CREATE_DATE, VIEW_COUNT, IS_DELETED
+        ) VALUES (
+            SEQ_BOARD_NO.NEXTVAL, #{userId}, #{category}, #{title}, #{content}, SYSDATE, 0, 'N'
+        )
+    </insert>
+    
+    <update id="updateBoard" parameterType="com.ubig.app.vo.community.BoardVO">
+        UPDATE BOARDS 
+        SET TITLE = #{title}, CONTENT = #{content}, UPDATE_DATE = SYSDATE 
+        WHERE BOARD_ID = #{boardId}
+    </update>
+    
+    <update id="deleteBoard" parameterType="_int">
+        UPDATE BOARDS SET IS_DELETED = 'Y' WHERE BOARD_ID = #{boardId}
+    </update>
+    
+    <!-- Comments -->
+    <select id="selectCommentList" parameterType="_int" resultMap="commentResultMap">
+        SELECT * FROM COMMENTS 
+        WHERE BOARD_ID = #{boardId} AND IS_DELETED = 'N'
+        ORDER BY COMMENT_ID ASC
+    </select>
+    
+    <insert id="insertComment" parameterType="com.ubig.app.vo.community.CommentVO">
+        INSERT INTO COMMENTS (
+            COMMENT_ID, USER_ID, BOARD_ID, CONTENT, CREATE_DATE, IS_DELETED, PARENT_ID
+        ) VALUES (
+            SEQ_COMMENT_NO.NEXTVAL, #{userId}, #{boardId}, #{content}, SYSDATE, 'N', #{parentId}
+        )
+    </insert>
+    
+    <update id="deleteComment" parameterType="_int">
+        UPDATE COMMENTS SET IS_DELETED = 'Y' WHERE COMMENT_ID = #{commentId}
+    </update>
+
+</mapper>
