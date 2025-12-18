@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 public class VolunteerCommentVO {
+	//수정
 	private int cmtNo;          // CMT_NO (댓글 번호/PK)
 	private int actId;          // ACT_ID (활동 ID/FK - Activity 참조)
 	private String userId;      // USER_ID (작성자 ID/FK - Member 참조)

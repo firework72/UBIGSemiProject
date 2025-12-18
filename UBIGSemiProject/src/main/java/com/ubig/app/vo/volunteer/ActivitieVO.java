@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 public class ActivitieVO {
-	
+	//수정
 	private int actId;          // ACT_ID (PK예상)
 	private String adminId;     // ADMIN_ID (작성자 ID)
 	private Date actDate;       // ACT_DATE (활동 시작일?)

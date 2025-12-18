@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 public class SignVO {
+	//수정
 	private int signsNo;        // SIGNS_NO (신청 번호/PK)
 	private int actId;          // ACT_ID (활동 게시글 번호/FK)
 	private String signsId;     // SIGNS_ID (신청자 ID/FK)

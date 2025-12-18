@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 public class VolunteerReviewVO {
+	//수정
 	private int reviewNo;       // REVIEW_NO (리뷰 번호/PK)
 	private int actId;          // ACT_ID (활동 ID/FK - Activity 참조)
 	private String rId;         // R_ID (작성자 ID - Member 참조)

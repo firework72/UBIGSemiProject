@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @Builder
 
 public class TagInfoVO {
+	//수정
 	private int tagId;          // TAG_ID (태그 고유 ID/PK)
 	private String tagName;     // TAG_NAME (태그 이름 / 예: "산책", "봉사", "대형견" 등)
 	
