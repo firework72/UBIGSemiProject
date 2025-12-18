@@ -13,13 +13,14 @@ import com.ubig.app.admin.service.AdminService;
 import com.ubig.app.vo.member.MemberVO;
 
 @Controller
+@RequestMapping("/admin")
 public class AdminController {
 	
 	@Autowired
 	private AdminService service;
 	
 	//관리자 페이지 이동
-	@RequestMapping("/admin")
+	@RequestMapping("")
 	public String adminPage() {
 		
 		return "admin/admin";
@@ -37,7 +38,7 @@ public class AdminController {
 	}
 	
 	//회원 정지
-	@RequestMapping("")
+	@RequestMapping("/stop")
 	public String updateStatus(HttpSession session,String userId) {
 		
 		int result = service.updateStatus(userId);
@@ -52,7 +53,7 @@ public class AdminController {
 	}
 	
 	//회원 추방
-	@RequestMapping("")
+	@RequestMapping("/delete")
 	public String deleteUser(HttpSession session,String userId) {
 		
 		int result = service.deleteUser(userId);
@@ -67,7 +68,7 @@ public class AdminController {
 	}
 	
 	//공지글 등록
-	@RequestMapping("")
+	@RequestMapping("/insert")
 	public String insertBoard(HttpSession session) {
 		
 		int result = service.insertBoard();

@@ -3,9 +3,11 @@ package com.ubig.app.admin.dao;
 import java.util.ArrayList;
 
 import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.stereotype.Repository;
 
 import com.ubig.app.vo.member.MemberVO;
 
+@Repository
 public class AdminDao {
 
 	public ArrayList<MemberVO> selectUser(SqlSessionTemplate sqlSession) {
