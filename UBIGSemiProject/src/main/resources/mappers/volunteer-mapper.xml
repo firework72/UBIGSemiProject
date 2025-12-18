@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  
+ <mapper namespace="volunteerMapper">
+ 
+ 
+
+ 
+ <select id="selectActivityList" resultType="activity">
+		SELECT 
+			ACT_ID, 
+			ADMIN_ID, 
+			ACT_TITLE, 
+			ACT_ADDRESS, 
+			ACT_DATE, 
+			ACT_END, 
+			ACT_CUR, 
+			ACT_MAX 
+		FROM ACTIVITIES
+		ORDER BY ACT_ID DESC
+	</select>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ </mapper>
