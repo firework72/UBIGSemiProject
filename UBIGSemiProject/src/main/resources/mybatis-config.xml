@@ -8,4 +8,9 @@
   	<setting name="jdbcTypeForNull" value="NULL"/>
   	<setting name="mapUnderscoreToCamelCase" value="true"/>
   </settings>
+  
+   	<typeAliases>
+ 		<typeAlias type="com.ubig.app.vo.adoption.AnimalDetailVO" alias="AnimalDetail"/>
+ 	</typeAliases>
+ 	
 </configuration>

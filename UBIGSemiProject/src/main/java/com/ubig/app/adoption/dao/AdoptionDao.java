@@ -9,7 +9,7 @@ import com.ubig.app.vo.adoption.AnimalDetailVO;
 public class AdoptionDao {
 
 	public int insertAnimal(SqlSessionTemplate sqlSession, AnimalDetailVO animal) {
-		return sqlSession.selectOne("adoptionMapper.insertAnimal", animal);
+		return sqlSession.insert("adoptionMapper.insertAnimal", animal);
 	}
 
 }
