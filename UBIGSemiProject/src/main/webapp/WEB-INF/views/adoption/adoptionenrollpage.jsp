@@ -25,7 +25,7 @@
 	</form>
 
 	
-	<form action="adoption.insert.animal"><br>
+	<form action="adoption.insert.animal" method="POST" enctype="multipart/form-data"><br>
 	<h3>[동물 상세 정보 등록]</h3>
 
             <label>1. 축종 (Species)</label>
@@ -85,7 +85,7 @@
             <input type="date" name="deadlineDate"><br>
 
             <label>15. 사진 첨부 (Photo)</label>
-            <input type="file" name="uploadFile"><br><br>
+            <input type="file" name="uploadFile" accept="image/*"><br><br>
             <input type="submit" value="동물 정보 등록하기">
 	</form>
 </body>

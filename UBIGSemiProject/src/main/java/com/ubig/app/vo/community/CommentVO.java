@@ -13,5 +13,9 @@ public class CommentVO {
     private Date updateDate;
     private String isDeleted;
     private Integer parentId; // Nullable
+    private int level; // Hierarchical query level
+
+    // UI purposes
+    private int likeCount;
+    private boolean isLiked;
 }
-	

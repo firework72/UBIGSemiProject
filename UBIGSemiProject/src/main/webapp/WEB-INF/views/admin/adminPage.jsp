@@ -17,20 +17,20 @@
 <body>
 
     <nav id="sidebar" class="d-flex flex-column p-3">
-        <h3 class="text-center">Admin Panel</h3>
+        <h3 class="text-center">관리자 페이지</h3>
         <hr>
         <ul class="nav nav-pills flex-column mb-auto">
-            <li class="nav-item"><a href="#" class="nav-link active">대시보드</a></li>
-            <li><a href="#" class="nav-link">사용자 관리</a></li>
+            <li class="nav-item"><a href="${pageContext.request.contextPath}/admin/userStatus" class="nav-link active">사용자 관리</a></li>
+            <li><a href="#" class="nav-link">공지글 등록</a></li>
             <li><a href="#" class="nav-link">게시글 관리</a></li>
-            <li><a href="#" class="nav-link">설정</a></li>
+            <li><a href="#" class="nav-link">봉사활동 등록</a></li>
         </ul>
         <hr>
         <div class="dropdown">
             <strong>관리자님</strong>
         </div>
     </nav>
-
+    
     <main id="content">
         <header class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
             <h1 class="h2">통계 현황</h1>
@@ -64,7 +64,7 @@
         </div>
 
         <div class="mt-4">
-            <h3>최근 가입 사용자</h3>
+            <h3>회원 목록</h3>
             <table class="table table-striped table-hover mt-3">
                 <thead class="table-dark">
                     <tr>
@@ -86,6 +86,8 @@
                     </tbody>
             </table>
         </div>
+        
+        
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

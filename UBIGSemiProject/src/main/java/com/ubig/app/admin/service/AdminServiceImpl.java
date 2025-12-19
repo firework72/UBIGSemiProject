@@ -1,6 +1,7 @@
 package com.ubig.app.admin.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +26,15 @@ public class AdminServiceImpl implements AdminService{
 	}
 	
 	@Override
-	public int updateStatus(String userId) {
+	public int updateStatus(HashMap<String,String> map) {
 		
-		return dao.updateStatus(sqlSession,userId);
+		return dao.updateStatus(sqlSession,map);
+	}
+	
+	@Override
+	public int changeStatus(HashMap<String, String> map) {
+		
+		return dao.changeStatus(sqlSession,map);
 	}
 	
 	@Override
@@ -41,5 +48,13 @@ public class AdminServiceImpl implements AdminService{
 		
 		return dao.insertBoard(sqlSession);
 	}
+	
+	@Override
+	public int insertActivity() {
+		
+		return dao.insertActivity(sqlSession);
+	}
+	
+	
 	
 }

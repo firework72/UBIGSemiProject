@@ -21,5 +21,18 @@ public class MemberServiceImpl implements MemberService {
 	public MemberVO loginMember(MemberVO inputMember) {
 		return dao.loginMember(sqlSession, inputMember);
 	}
-
+	
+	// 회원가입 처리하기
+	@Override
+	public int insertMember(MemberVO m) {
+		return dao.insertMember(sqlSession, m);
+	}
+	
+	// 아이디 중복 체크
+	@Override
+	public int checkId(String userId) {
+		return dao.checkId(sqlSession, userId);
+	}
+	
+	
 }

@@ -12,4 +12,9 @@ public class AdoptionDao {
 		return sqlSession.insert("adoptionMapper.insertAnimal", animal);
 	}
 
+	public int listCount(SqlSessionTemplate sqlSession) {
+		return sqlSession.selectOne("adoptionMapper.listCount");
+	}
+
+
 }

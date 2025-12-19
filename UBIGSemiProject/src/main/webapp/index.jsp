@@ -14,60 +14,7 @@
 
         <body>
 
-            <header>
-                <nav>
-                    <div class="logo">
-                        <a href="${pageContext.request.contextPath}/">유봉일공</a>
-                    </div>
-                    <ul class="nav-links">
-                        <li class="dropdown">
-                            <a href="#">봉사활동</a>
-                            <ul class="dropdown-content">
-                                <li><a href="#">봉사 프로그램</a></li>
-                                <li><a href="#">봉사 신청</a></li>
-                                <li><a href="#">봉사 후기</a></li>
-                            </ul>
-                        </li>
-                        <li class="dropdown">
-                            <a href="#">입양</a>
-                            <ul class="dropdown-content">
-                                <li><a href="#">입양 공고</a></li>
-                                <li><a href="#">동물 소개</a></li>
-                                <li><a href="#">입양 신청</a></li>
-                            </ul>
-                        </li>
-                        <li class="dropdown">
-                            <a href="#">커뮤니티</a>
-                            <ul class="dropdown-content">
-                                <li><a href="${pageContext.request.contextPath}/community/list?category=NOTICE">공지사항</a>
-                                </li>
-                                <li><a href="${pageContext.request.contextPath}/community/list?category=FREE">자유게시판</a>
-                                </li>
-                                <li><a
-                                        href="${pageContext.request.contextPath}/community/list?category=REQUEST">건의사항</a>
-                                </li>
-                                <li><a href="${pageContext.request.contextPath}/community/list?category=REVIEW">봉사후기</a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="dropdown">
-                            <a href="#">후원</a>
-                            <ul class="dropdown-content">
-                                <li><a href="#">펀딩 목록</a></li>
-                                <li><a href="#">후원하기</a></li>
-                            </ul>
-                        </li>
-                        <li class="dropdown">
-                            <a href="#">회원</a>
-                            <ul class="dropdown-content">
-                                <li><a href="#">로그인</a></li>
-                                <li><a href="#">회원가입</a></li>
-                                <li><a href="#">마이페이지</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </nav>
-            </header>
+            <jsp:include page="/WEB-INF/views/common/menubar.jsp" />
 
             <main>
                 <h1>환영합니다! 유봉일공입니다.</h1>

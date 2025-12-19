@@ -59,7 +59,7 @@
                 <c:remove var="msg"/>
             </c:if>
 
-            <form action="/member/login" method="post">
+            <form action="${pageContext.request.contextPath}/user/login.me" method="post">
                 
                 <div class="mb-3">
                     <label for="userId" class="form-label">아이디</label>
@@ -71,22 +71,17 @@
                     <input type="password" class="form-control" id="userPwd" name="userPwd" placeholder="비밀번호를 입력하세요" required>
                 </div>
 
-                <div class="mb-3 form-check">
-                    <input type="checkbox" class="form-check-input" id="saveId">
-                    <label class="form-check-label text-secondary" for="saveId">아이디 저장</label>
-                </div>
-
                 <div class="d-grid gap-2">
                     <button type="submit" class="btn btn-custom btn-lg">로그인</button>
                 </div>
 
                 <div class="mt-4 text-center">
                     <span class="text-secondary">아직 회원이 아니신가요?</span>
-                    <a href="/member/signup" class="text-decoration-none fw-bold ms-2" style="color: #FFC107;">회원가입</a>
+                    <a href="${pageContext.request.contextPath}/user/signup.me" class="text-decoration-none fw-bold ms-2" style="color: #FFC107;">회원가입</a>
                 </div>
-                <div class="mt-2 text-center">
-                     <a href="/member/findInfo" class="text-decoration-none text-secondary small">아이디 / 비밀번호 찾기</a>
-                </div>
+<!--                 <div class="mt-2 text-center"> -->
+<!--                      <a href="/member/findInfo" class="text-decoration-none text-secondary small">아이디 / 비밀번호 찾기</a> -->
+<!--                 </div> -->
 
             </form>
             </div>

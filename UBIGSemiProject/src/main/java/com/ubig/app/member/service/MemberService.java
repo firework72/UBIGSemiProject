@@ -6,4 +6,8 @@ public interface MemberService {
 
 	MemberVO loginMember(MemberVO inputMember);
 
+	int insertMember(MemberVO m);
+
+	int checkId(String userId);
+
 }
