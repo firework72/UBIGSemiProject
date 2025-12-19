@@ -2,32 +2,72 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-  
-  
- <mapper namespace="volunteerMapper">
- 
- 
 
- 
- <select id="selectActivityList" resultType="activity">
-		SELECT 
-			ACT_ID, 
-			ADMIN_ID, 
-			ACT_TITLE, 
-			ACT_ADDRESS, 
-			ACT_DATE, 
-			ACT_END, 
-			ACT_CUR, 
-			ACT_MAX 
+
+<mapper namespace="volunteerMapper">
+
+
+
+
+	<select id="selectActivityList" resultType="activity">
+		SELECT
+		ACT_ID,
+		ADMIN_ID,
+		ACT_TITLE,
+		ACT_ADDRESS,
+		ACT_DATE,
+		ACT_END,
+		ACT_CUR,
+		ACT_MAX
 		FROM ACTIVITIES
 		ORDER BY ACT_ID DESC
 	</select>
- 
- 
- 
- 
- 
- 
- 
- 
- </mapper>
+
+
+
+
+
+	<insert id="insertActivity" parameterType="activity">
+		INSERT INTO ACTIVITIES (
+		ACT_ID,
+		ADMIN_ID,
+		ACT_TITLE,
+		ACT_ADDRESS,
+		ACT_DATE,
+		ACT_END,
+		ACT_MAX,
+		ACT_CUR,
+		ACT_LAT,
+		ACT_LON,
+		ACT_LOAD,
+		ACT_MONEY
+		) VALUES (
+		SEQ_ACTIVITIES.NEXTVAL,
+		#{adminId},
+		#{actTitle},
+		#{actAddress},
+		#{actDate},
+		#{actEnd},
+		#{actMax},
+		0, -- 현재 인원은 처음엔 0명
+		#{actLat},
+		#{actLon},
+		SYSDATE, -- 등록일은 현재 시간
+		#{actMoney}
+		)
+	</insert>
+
+
+
+	<select id="selectActivityOne" parameterType="int"
+		resultType="activity">
+		SELECT * FROM ACTIVITIES
+		WHERE ACT_ID = #{actId}
+	</select>
+
+
+
+
+
+
+</mapper>
