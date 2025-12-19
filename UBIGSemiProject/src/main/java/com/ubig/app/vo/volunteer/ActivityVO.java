@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Builder
-public class ActivitieVO {
+public class ActivityVO {
 	//수정
 	private int actId;          // ACT_ID (PK예상)
 	private String adminId;     // ADMIN_ID (작성자 ID)
