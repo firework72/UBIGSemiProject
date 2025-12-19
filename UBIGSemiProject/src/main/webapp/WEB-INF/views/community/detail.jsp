@@ -335,6 +335,12 @@
                                 },
                                 error: function (xhr, status, error) {
                                     console.log("통신 실패", status, error);
+                                    console.log("서버 응답:", xhr.responseText);
+
+                                    // JSON 파싱 실패 시 원본 메시지를 알림창으로 보여주기 시도
+                                    if (status === "parsererror") {
+                                        alert("서버 오류 내용: " + xhr.responseText);
+                                    }
                                 }
                             });
                         });

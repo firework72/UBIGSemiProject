@@ -53,7 +53,7 @@ public class CommunityController {
     @GetMapping("/detail")
     public String detail(int boardId, Model model, javax.servlet.http.HttpSession session) {
         // 1. 조회수 증가 (쿠키 등을 이용해 중복 방지 처리는 생략하고 단순 증가)
-        // communityService.increaseCount(boardId); // Service에 없음
+        communityService.increaseCount(boardId);
 
         // 2. 게시글 상세 조회
         com.ubig.app.vo.community.BoardVO board = communityService.getBoardDetail(boardId);
@@ -242,7 +242,16 @@ public class CommunityController {
             return "{\"isLiked\":" + (status == 1) + ", \"count\":" + count + "}";
         } catch (Exception e) {
             e.printStackTrace(); // 서버 콘솔에 로그 출력
-            return "{\"error\":\"" + e.getMessage() + "\"}";
+            String errorMessage = e.getMessage();
+            if (errorMessage != null) {
+                // 줄바꿈, 탭 등은 공백으로, 큰따옴표는 작은따옴표로, 백슬래시는 슬래시로 변경
+                errorMessage = errorMessage.replaceAll("[\\r\\n\\t]", " ")
+                        .replace("\"", "'")
+                        .replace("\\", "/");
+            } else {
+                errorMessage = "Unknown Error";
+            }
+            return "{\"error\":\"" + errorMessage + "\"}";
         }
     }
 
@@ -253,19 +262,35 @@ public class CommunityController {
     @org.springframework.web.bind.annotation.ResponseBody
     public String heart(int boardId, javax.servlet.http.HttpSession session) {
 
-        com.ubig.app.vo.member.MemberVO loginUser = (com.ubig.app.vo.member.MemberVO) session.getAttribute("loginUser");
-        if (loginUser == null) {
-            return "{\"result\": \"login_required\"}";
+        try {
+            com.ubig.app.vo.member.MemberVO loginUser = (com.ubig.app.vo.member.MemberVO) session
+                    .getAttribute("loginUser");
+            if (loginUser == null) {
+                return "{\"result\": \"login_required\"}";
+            }
+
+            // Vo 객체에 담아서 서비스로 전달
+            com.ubig.app.vo.community.BoardLikeVO like = new com.ubig.app.vo.community.BoardLikeVO();
+            like.setBoardId(boardId);
+            like.setUserId(loginUser.getUserId());
+
+            int status = communityService.toggleLike(like); // 1: Like, 0: Unlike
+            int count = communityService.getLikeCount(boardId);
+
+            return "{\"isLiked\":" + (status == 1) + ", \"count\":" + count + "}";
+        } catch (Exception e) {
+            e.printStackTrace();
+            String errorMessage = e.getMessage();
+            if (errorMessage != null) {
+                // 줄바꿈, 탭 등은 공백으로, 큰따옴표는 작은따옴표로, 백슬래시는 슬래시로 변경
+                errorMessage = errorMessage.replaceAll("[\\r\\n\\t]", " ")
+                        .replace("\"", "'")
+                        .replace("\\", "/");
+            } else {
+                errorMessage = "Unknown Error";
+            }
+            return "{\"error\":\"" + errorMessage + "\"}"; // 에러 메시지 반환
         }
-
-        com.ubig.app.vo.community.BoardLikeVO like = new com.ubig.app.vo.community.BoardLikeVO();
-        like.setBoardId(boardId);
-        like.setUserId(loginUser.getUserId());
-
-        int status = communityService.toggleLike(like); // 1: Like, 0: Unlike
-        int count = communityService.getLikeCount(boardId);
-
-        return "{\"isLiked\":" + (status == 1) + ", \"count\":" + count + "}";
     }
 
 }

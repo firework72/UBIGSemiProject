@@ -93,13 +93,19 @@
     <update id="deleteComment" parameterType="_int">
         UPDATE COMMENTS SET IS_DELETED = 'Y' WHERE COMMENT_ID = #{commentId}
     </update>
+
+    <update id="increaseCount" parameterType="_int">
+        UPDATE BOARDS
+        SET VIEW_COUNT = VIEW_COUNT + 1
+        WHERE BOARD_ID = #{boardId}
+    </update>
     
     <!-- Likes -->
     <insert id="insertBoardLike" parameterType="com.ubig.app.vo.community.BoardLikeVO">
         INSERT INTO BOARD_LIKES (
-            LIKE_ID, BOARD_ID, USER_ID, CREATE_DATE
+            LIKE_ID, BOARD_ID, USER_ID, TARGET_TYPE, CREATE_DATE
         ) VALUES (
-            SEQ_LIKES.NEXTVAL, #{boardId}, #{userId}, SYSDATE
+            SEQ_LIKES.NEXTVAL, #{boardId}, #{userId}, 'BOARD', SYSDATE
         )
     </insert>
     
@@ -121,9 +127,9 @@
     <!-- Comment Likes -->
     <insert id="insertCommentLike" parameterType="com.ubig.app.vo.community.CommentLikeVO">
         INSERT INTO COMMENT_LIKES (
-            LIKE_ID, COMMENT_ID, USER_ID, CREATE_DATE
+            LIKE_ID, COMMENT_ID, USER_ID, TARGET_TYPE, CREATE_DATE
         ) VALUES (
-            SEQ_LIKES.NEXTVAL, #{commentId}, #{userId}, SYSDATE
+            SEQ_LIKES.NEXTVAL, #{commentId}, #{userId}, 'COMMENT', SYSDATE
         )
     </insert>
     

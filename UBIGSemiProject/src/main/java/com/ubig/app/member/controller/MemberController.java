@@ -13,21 +13,21 @@ import com.ubig.app.member.service.MemberService;
 import com.ubig.app.vo.member.MemberVO;
 
 @Controller
-@RequestMapping("/user")
+@RequestMapping("/member")
 public class MemberController {
 
 	@Autowired
 	private MemberService service;
 
 	// 로그인 페이지로 이동
-	@GetMapping("/login.me")
+	@GetMapping("/login")
 	public String login() {
 
 		return "member/login";
 	}
 
 	// 로그인 처리
-	@PostMapping("/login.me")
+	@PostMapping("/login")
 	public String loginMember(HttpSession session,
 			String userId,
 			String userPwd,

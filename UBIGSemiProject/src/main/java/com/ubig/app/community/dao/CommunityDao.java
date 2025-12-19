@@ -35,8 +35,12 @@ public class CommunityDao {
         return sqlSession.update("communityMapper.updateBoard", board);
     }
 
-    public int deleteBoard(int boardId) {
-        return sqlSession.delete("communityMapper.deleteBoard", boardId);
+    public int deleteBoard(SqlSessionTemplate sqlSession, int boardId) {
+        return sqlSession.update("communityMapper.deleteBoard", boardId);
+    }
+
+    public int increaseCount(SqlSessionTemplate sqlSession, int boardId) {
+        return sqlSession.update("communityMapper.increaseCount", boardId);
     }
 
     // Comment

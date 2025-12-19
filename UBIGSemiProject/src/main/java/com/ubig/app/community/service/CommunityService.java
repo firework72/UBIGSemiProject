@@ -23,6 +23,8 @@ public interface CommunityService {
 
     int deleteBoard(int boardId);
 
+    int increaseCount(int boardId);
+
     // Comment
     List<CommentVO> getCommentList(int boardId);
 
