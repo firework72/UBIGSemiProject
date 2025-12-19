@@ -1,6 +1,7 @@
 package com.ubig.app.admin.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.servlet.http.HttpSession;
 
@@ -23,37 +24,60 @@ public class AdminController {
 	@RequestMapping("")
 	public String adminPage() {
 		
-		return "admin/admin";
+		return "admin/adminPage2";
 	}
 	
-	//정지된 회원들 목록
-	@RequestMapping("/userStatus")
+	//회원 관리 페이지
+	@RequestMapping("userStatus")
 	public String selectUser(Model model) {
 		
 		ArrayList<MemberVO> list = service.selectUser();
 		
-		model.addAttribute(list);
+		model.addAttribute("list",list);
 		
-		return "admin/userStatus";
+		return "admin/userStatusView";
 	}
 	
 	//회원 정지
-	@RequestMapping("/stop")
-	public String updateStatus(HttpSession session,String userId) {
+	@RequestMapping("/stopUser")
+	public String updateStatus(HttpSession session,String userId,String days) {
 		
-		int result = service.updateStatus(userId);
-			
+		HashMap<String,String> map = new HashMap<>();
+		map.put("days", days);
+		map.put("userId", userId);
+		
+		int result = service.updateStatus(map);
+		
 		if(result>0) {
 			session.setAttribute("alertMsg", "회원 정지 성공");
 		}else {
 			session.setAttribute("alertMsg", "회원 정지 실패");
 		}
 		
-		return "";
+		return "redirect:userStatus";
+	}
+	
+	//회원 정지 해제
+	@RequestMapping("/openUser")
+	public String changeStatus(HttpSession session,String userId,String days) {
+	
+		HashMap<String,String> map = new HashMap<>();
+		map.put("days", days);
+		map.put("userId", userId);
+		
+		int result = service.changeStatus(map);
+		
+		if(result>0) {
+			session.setAttribute("alertMsg", "회원 정지 해제 성공");
+		}else {
+			session.setAttribute("alertMsg", "회원 정지 해제 실패");
+		}
+		
+		return "redirect:userStatus";
 	}
 	
 	//회원 추방
-	@RequestMapping("/delete")
+	@RequestMapping("/deleteUser")
 	public String deleteUser(HttpSession session,String userId) {
 		
 		int result = service.deleteUser(userId);
@@ -64,7 +88,7 @@ public class AdminController {
 			session.setAttribute("alertMsg", "회원 추방 성공");
 		}
 		
-		return "";
+		return "redirect:userStatus";
 	}
 	
 	//공지글 등록
@@ -77,6 +101,21 @@ public class AdminController {
 			session.setAttribute("alertMsg", "공지글 등록 성공");
 		}else {
 			session.setAttribute("alertMsg", "공지글 등록 성공");
+		}
+		
+		return "";
+	}
+	
+	//봉사활동 등록
+	@RequestMapping("insertBoard")
+	public String insertActivity(HttpSession session) {
+		
+		int result = service.insertActivity();
+			
+		if(result>0) {
+			session.setAttribute("alertMsg", "봉사활동 등록 성공");
+		}else {
+			session.setAttribute("alertMsg", "봉사활동 등록 실패");
 		}
 		
 		return "";

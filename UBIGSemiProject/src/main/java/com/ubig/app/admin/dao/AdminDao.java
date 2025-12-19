@@ -1,6 +1,7 @@
 package com.ubig.app.admin.dao;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
@@ -15,9 +16,14 @@ public class AdminDao {
 		return (ArrayList)sqlSession.selectList("adminMapper.selectUser");
 	}
 
-	public int updateStatus(SqlSessionTemplate sqlSession, String userId) {
+	public int updateStatus(SqlSessionTemplate sqlSession, HashMap<String,String> map) {
 		
-		return sqlSession.update("adminMapper.updateStatus",userId);
+		return sqlSession.update("adminMapper.updateStatus",map);
+	}
+	
+	public int changeStatus(SqlSessionTemplate sqlSession, HashMap<String, String> map) {
+		
+		return sqlSession.update("adminMapper.changeStatus",map);
 	}
 
 	public int deleteUser(SqlSessionTemplate sqlSession, String userId) {
@@ -29,5 +35,12 @@ public class AdminDao {
 		
 		return sqlSession.insert("adminMapper.insertBoard");
 	}
+
+	public int insertActivity(SqlSessionTemplate sqlSession) {
+		
+		return sqlSession.insert("adminMapper.insertActivity");
+	}
+
+	
 
 }
