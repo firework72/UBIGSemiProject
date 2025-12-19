@@ -46,10 +46,13 @@
     </select>
     
     <insert id="insertBoard" parameterType="com.ubig.app.vo.community.BoardVO">
+        <selectKey keyProperty="boardId" resultType="_int" order="BEFORE">
+            SELECT SEQ_BOARDS.NEXTVAL FROM DUAL
+        </selectKey>
         INSERT INTO BOARDS (
             BOARD_ID, USER_ID, CATEGORY, TITLE, CONTENT, CREATE_DATE, UPDATE_DATE, VIEW_COUNT, IS_DELETED
         ) VALUES (
-            SEQ_BOARDS.NEXTVAL, #{userId}, #{category}, #{title}, #{content}, SYSDATE, SYSDATE, 0, 'N'
+            #{boardId}, #{userId}, #{category}, #{title}, #{content}, SYSDATE, SYSDATE, 0, 'N'
         )
     </insert>
     
@@ -77,10 +80,13 @@
     </select>
     
     <insert id="insertComment" parameterType="com.ubig.app.vo.community.CommentVO">
+        <selectKey keyProperty="commentId" resultType="_int" order="BEFORE">
+            SELECT SEQ_COMMENTS.NEXTVAL FROM DUAL
+        </selectKey>
         INSERT INTO COMMENTS (
             COMMENT_ID, USER_ID, BOARD_ID, CONTENT, CREATE_DATE, UPDATE_DATE, IS_DELETED, PARENT_ID
         ) VALUES (
-            SEQ_COMMENTS.NEXTVAL, #{userId}, #{boardId}, #{content}, SYSDATE, SYSDATE, 'N', #{parentId}
+            #{commentId}, #{userId}, #{boardId}, #{content}, SYSDATE, SYSDATE, 'N', #{parentId}
         )
     </insert>
     
@@ -93,13 +99,19 @@
     <update id="deleteComment" parameterType="_int">
         UPDATE COMMENTS SET IS_DELETED = 'Y' WHERE COMMENT_ID = #{commentId}
     </update>
+
+    <update id="increaseCount" parameterType="_int">
+        UPDATE BOARDS
+        SET VIEW_COUNT = VIEW_COUNT + 1
+        WHERE BOARD_ID = #{boardId}
+    </update>
     
     <!-- Likes -->
     <insert id="insertBoardLike" parameterType="com.ubig.app.vo.community.BoardLikeVO">
         INSERT INTO BOARD_LIKES (
-            LIKE_ID, BOARD_ID, USER_ID, CREATE_DATE
+            LIKE_ID, BOARD_ID, USER_ID, TARGET_TYPE, CREATE_DATE
         ) VALUES (
-            SEQ_LIKES.NEXTVAL, #{boardId}, #{userId}, SYSDATE
+            SEQ_BOARD_LIKES.NEXTVAL, #{boardId}, #{userId}, 'BOARD', SYSDATE
         )
     </insert>
     
@@ -121,9 +133,9 @@
     <!-- Comment Likes -->
     <insert id="insertCommentLike" parameterType="com.ubig.app.vo.community.CommentLikeVO">
         INSERT INTO COMMENT_LIKES (
-            LIKE_ID, COMMENT_ID, USER_ID, CREATE_DATE
+            LIKE_ID, COMMENT_ID, USER_ID, TARGET_TYPE, CREATE_DATE
         ) VALUES (
-            SEQ_LIKES.NEXTVAL, #{commentId}, #{userId}, SYSDATE
+            SEQ_COMMENT_LIKES.NEXTVAL, #{commentId}, #{userId}, 'COMMENT', SYSDATE
         )
     </insert>
     
@@ -142,4 +154,31 @@
         WHERE COMMENT_ID = #{commentId}
     </select>
 
+    <!-- Attachments -->
+    <insert id="insertBoardAttachment" parameterType="com.ubig.app.vo.community.BoardAttachmentVO">
+        INSERT INTO BOARD_ATTACHMENTS (
+            FILE_ID, BOARD_ID, REF_TYPE, REF_ID, ORIGINAL_NAME, SAVED_NAME, FILE_PATH, FILE_SIZE, CREATE_DATE
+        ) VALUES (
+            SEQ_BOARD_ATTACH.NEXTVAL, #{boardId}, #{refType}, #{refId}, #{originalName}, #{savedName}, #{filePath}, #{fileSize}, SYSDATE
+        )
+    </insert>
+
+    <insert id="insertCommentAttachment" parameterType="com.ubig.app.vo.community.CommentAttachmentVO">
+        INSERT INTO COMMENT_ATTACHMENTS (
+            FILE_ID, COMMENT_ID, REF_TYPE, REF_ID, ORIGINAL_NAME, SAVED_NAME, FILE_PATH, FILE_SIZE, CREATE_DATE
+        ) VALUES (
+            SEQ_CMT_ATTACH.NEXTVAL, #{commentId}, #{refType}, #{refId}, #{originalName}, #{savedName}, #{filePath}, #{fileSize}, SYSDATE
+        )
+    </insert>
+    
+    <select id="selectBoardAttachment" parameterType="_int" resultType="com.ubig.app.vo.community.BoardAttachmentVO">
+        SELECT * FROM BOARD_ATTACHMENTS
+        WHERE BOARD_ID = #{boardId}
+    </select>
+    
+    <select id="selectCommentAttachment" parameterType="_int" resultType="com.ubig.app.vo.community.CommentAttachmentVO">
+        SELECT * FROM COMMENT_ATTACHMENTS
+        WHERE COMMENT_ID = #{commentId}
+    </select>
+    
 </mapper>

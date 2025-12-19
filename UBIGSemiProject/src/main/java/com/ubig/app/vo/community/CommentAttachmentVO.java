@@ -1,23 +1,17 @@
 package com.ubig.app.vo.community;
 
 import java.sql.Date;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
-@AllArgsConstructor
 @Data
-@Builder
 public class CommentAttachmentVO {
-    private int fileId;
-    private int commentId;
-    private String refType;
-    private String refId;
-    private String originalName;
-    private String savedName;
-    private String filePath;
-    private int fileSize;
-    private Date createDate;
+    private int fileId; // FILE_ID
+    private int commentId; // COMMENT_ID (Also used for REF_ID)
+    private String refType; // REF_TYPE ('COMMENT')
+    private String refId; // REF_ID (String version of commentId)
+    private String originalName; // ORIGINAL_NAME
+    private String savedName; // SAVED_NAME
+    private String filePath; // FILE_PATH
+    private long fileSize; // FILE_SIZE
+    private Date createDate; // CREATE_DATE
 }

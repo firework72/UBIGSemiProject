@@ -15,6 +15,9 @@ import com.ubig.app.vo.community.BoardVO;
 public class CommunityController {
 
     @Autowired
+    private javax.servlet.ServletContext servletContext; // For real path
+
+    @Autowired
     private CommunityService communityService;
 
     /*
@@ -53,7 +56,7 @@ public class CommunityController {
     @GetMapping("/detail")
     public String detail(int boardId, Model model, javax.servlet.http.HttpSession session) {
         // 1. 조회수 증가 (쿠키 등을 이용해 중복 방지 처리는 생략하고 단순 증가)
-        // communityService.increaseCount(boardId); // Service에 없음
+        communityService.increaseCount(boardId);
 
         // 2. 게시글 상세 조회
         com.ubig.app.vo.community.BoardVO board = communityService.getBoardDetail(boardId);
@@ -89,7 +92,19 @@ public class CommunityController {
         model.addAttribute("board", board);
         model.addAttribute("commentList", commentList);
         model.addAttribute("likeCount", likeCount);
+        model.addAttribute("likeCount", likeCount);
         model.addAttribute("isLiked", isLiked);
+
+        // 5. 게시글 첨부파일 조회
+        com.ubig.app.vo.community.BoardAttachmentVO attachment = communityService.getBoardAttachment(boardId);
+        model.addAttribute("attachment", attachment);
+
+        // 댓글별 첨부파일은 CommentVO에 필드를 추가하거나, Map으로 따로 처리해야 함.
+        // 여기서는 CommentVO에 attachment 필드를 추가했다고 가정하거나,
+        // 편의상 댓글 리스트 루프 돌면서 세팅.
+        for (com.ubig.app.vo.community.CommentVO c : commentList) {
+            c.setAttachment(communityService.getCommentAttachment(c.getCommentId()));
+        }
 
         return "community/detail";
     }
@@ -98,7 +113,9 @@ public class CommunityController {
      * [Step 19: 댓글 작성 Controller]
      */
     @org.springframework.web.bind.annotation.PostMapping("/insertComment")
-    public String insertComment(com.ubig.app.vo.community.CommentVO comment, javax.servlet.http.HttpSession session) {
+    public String insertComment(com.ubig.app.vo.community.CommentVO comment,
+            @org.springframework.web.bind.annotation.RequestParam(value = "upfile", required = false) org.springframework.web.multipart.MultipartFile upfile,
+            javax.servlet.http.HttpSession session) {
 
         // 로그인한 사용자 정보 가져오기
         com.ubig.app.vo.member.MemberVO loginUser = (com.ubig.app.vo.member.MemberVO) session.getAttribute("loginUser");
@@ -109,7 +126,28 @@ public class CommunityController {
             return "redirect:list";
         }
 
-        communityService.insertComment(comment);
+        // 댓글 등록
+        communityService.insertComment(comment); // commentId가 생성됨 (selectKey 필요하지만 여기선 시퀀스라...)
+        // MyBatis insert 후 generatedKey를 받아오려면 Mapper 수정 필요.
+        // 일단 insert 후 가장 최근 댓글을 조회하거나,
+        // 서비스에서 insert와 동시에 시퀀스 값을 받아 처리한다고 가정.
+        // (단순화를 위해 여기서는 commentId를 못 가져오는 문제 발생 가능 -> 해결책: Mapper에 selectKey 추가 혹은
+        // refactoring)
+        // [수정] VO에 selectKey로 id가 담겨온다고 가정합니다.
+
+        // 파일 업로드 처리
+        if (upfile != null && !upfile.isEmpty()) {
+            String savedName = saveFile(upfile, session, "comment");
+            com.ubig.app.vo.community.CommentAttachmentVO at = new com.ubig.app.vo.community.CommentAttachmentVO();
+            at.setCommentId(comment.getCommentId());
+            at.setRefType("COMMENT");
+            at.setRefId(String.valueOf(comment.getCommentId()));
+            at.setOriginalName(upfile.getOriginalFilename());
+            at.setSavedName(savedName);
+            at.setFilePath("resources/upload/comment/");
+            at.setFileSize(upfile.getSize());
+            communityService.insertCommentAttachment(at);
+        }
 
         // 댓글 작성 후 상세 페이지로 리다이렉트 (댓글 위치로 스크롤 이동)
         return "redirect:detail?boardId=" + comment.getBoardId() + "#comment-list";
@@ -168,10 +206,28 @@ public class CommunityController {
      * 폼에서 날아온 데이터들이 BoardVO라는 상자에 예쁘게 담겨옵니다.
      */
     @org.springframework.web.bind.annotation.PostMapping("/write")
-    public String write(BoardVO board) {
+    public String write(BoardVO board,
+            @org.springframework.web.bind.annotation.RequestParam(value = "upfile", required = false) org.springframework.web.multipart.MultipartFile upfile,
+            javax.servlet.http.HttpSession session) {
 
         // 1. Service에게 "이거 DB에 넣어줘"라고 시킵니다.
         int result = communityService.insertBoard(board);
+
+        // 2. 파일 업로드 처리
+        if (upfile != null && !upfile.isEmpty()) {
+            String savedName = saveFile(upfile, session, "board");
+
+            com.ubig.app.vo.community.BoardAttachmentVO at = new com.ubig.app.vo.community.BoardAttachmentVO();
+            at.setBoardId(board.getBoardId());
+            at.setRefType("BOARD");
+            at.setRefId(String.valueOf(board.getBoardId()));
+            at.setOriginalName(upfile.getOriginalFilename());
+            at.setSavedName(savedName);
+            at.setFilePath("resources/upload/board/");
+            at.setFileSize(upfile.getSize());
+
+            communityService.insertBoardAttachment(at);
+        }
 
         // 2. 성공 여부에 따라 다르게 반응합니다.
         if (result > 0) {
@@ -242,7 +298,16 @@ public class CommunityController {
             return "{\"isLiked\":" + (status == 1) + ", \"count\":" + count + "}";
         } catch (Exception e) {
             e.printStackTrace(); // 서버 콘솔에 로그 출력
-            return "{\"error\":\"" + e.getMessage() + "\"}";
+            String errorMessage = e.getMessage();
+            if (errorMessage != null) {
+                // 줄바꿈, 탭, 따옴표, 백슬래시 등 JSON 파싱을 방해하는 문자 제거
+                errorMessage = errorMessage.replaceAll("[\\r\\n\\t]", " ")
+                        .replace("\"", "'")
+                        .replace("\\", "/");
+            } else {
+                errorMessage = "Unknown Error";
+            }
+            return "{\"error\":\"" + errorMessage + "\"}";
         }
     }
 
@@ -268,4 +333,60 @@ public class CommunityController {
         return "{\"isLiked\":" + (status == 1) + ", \"count\":" + count + "}";
     }
 
+    // [공통] 파일 저장 메소드
+    public String saveFile(org.springframework.web.multipart.MultipartFile file, javax.servlet.http.HttpSession session,
+            String type) {
+        String resources = session.getServletContext().getRealPath("resources");
+        String savePath = resources + "//upload//" + type + "//";
+
+        java.io.File folder = new java.io.File(savePath);
+        if (!folder.exists()) {
+            folder.mkdirs();
+        }
+
+        String originName = file.getOriginalFilename();
+        String ext = originName.substring(originName.lastIndexOf("."));
+        String savedName = java.util.UUID.randomUUID().toString().replace("-", "") + ext;
+
+        try {
+            file.transferTo(new java.io.File(savePath + savedName));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return savedName;
+    }
+
+    // [공통] 파일 다운로드
+    @GetMapping("/fileDownload")
+    public void fileDownload(String originalName, String savedName, String path,
+            javax.servlet.http.HttpServletResponse response, javax.servlet.http.HttpServletRequest request)
+            throws Exception {
+
+        String realPath = request.getSession().getServletContext().getRealPath(path);
+        java.io.File file = new java.io.File(realPath + savedName);
+
+        if (!file.exists()) {
+            return;
+        }
+
+        // 다운로드 파일명 생성: YYYYMMDDHHmmss_OriginalName
+        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyyMMddHHmmss");
+        String timestamp = sdf.format(new java.util.Date());
+        String downName = timestamp + "_" + originalName;
+
+        // 한글 파일명 인코딩
+        downName = new String(downName.getBytes("UTF-8"), "ISO-8859-1");
+
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + downName + "\"");
+        response.setContentLength((int) file.length());
+
+        java.io.OutputStream os = response.getOutputStream();
+        java.io.FileInputStream fis = new java.io.FileInputStream(file);
+
+        org.springframework.util.FileCopyUtils.copy(fis, os);
+
+        fis.close();
+        os.close();
+    }
 }

@@ -108,6 +108,16 @@
                                     </span>
                                 </span>
                             </div>
+                            <!-- 첨부파일 (게시글) -->
+                            <c:if test="${not empty attachment}">
+                                <div style="margin-top: 10px; font-size: 0.9em; padding: 10px; background: #eee;">
+                                    <strong>첨부파일:</strong>
+                                    <a
+                                        href="${pageContext.request.contextPath}/community/fileDownload?originalName=${attachment.originalName}&savedName=${attachment.savedName}&path=${attachment.filePath}">
+                                        ${attachment.originalName}
+                                    </a>
+                                </div>
+                            </c:if>
                         </div>
 
                         <div class="detail-content">
@@ -188,11 +198,21 @@
                                                                 style="color: red; cursor: pointer;">삭제</a>
                                                         </c:if>
                                                     </span>
+                                                    </span>
                                                 </div>
 
                                                 <!-- 댓글 내용 -->
                                                 <div id="comment-content-${c.commentId}">
                                                     ${c.content}
+                                                    <c:if test="${not empty c.attachment}">
+                                                        <div style="margin-top: 5px; font-size: 0.85em; color: #555;">
+                                                            <i class="fas fa-paperclip"></i>
+                                                            <a
+                                                                href="${pageContext.request.contextPath}/community/fileDownload?originalName=${c.attachment.originalName}&savedName=${c.attachment.savedName}&path=${c.attachment.filePath}">
+                                                                ${c.attachment.originalName}
+                                                            </a>
+                                                        </div>
+                                                    </c:if>
                                                 </div>
 
                                                 <!-- 댓글 수정 폼 (숨김) -->
@@ -247,15 +267,18 @@
                             style="margin-top: 20px; background: #f9f9f9; padding: 15px; border-radius: 5px;">
                             <c:choose>
                                 <c:when test="${not empty loginUser}">
-                                    <form action="insertComment" method="post">
+                                    <form action="insertComment" method="post" enctype="multipart/form-data">
                                         <input type="hidden" name="boardId" value="${board.boardId}">
-                                        <!-- parentId 없음 (null) -->
-                                        <div style="display: flex;">
+                                        <div style="display: flex; flex-direction: column;">
                                             <textarea name="content" placeholder="댓글을 남겨보세요"
-                                                style="flex: 1; height: 60px; padding: 10px; border: 1px solid #ddd; resize: none; margin-right: 10px;"
+                                                style="width: 100%; height: 60px; padding: 10px; border: 1px solid #ddd; resize: none; margin-bottom: 5px;"
                                                 required></textarea>
-                                            <button type="submit" class="btn"
-                                                style="background: #333; color: white; border: none; cursor: pointer;">등록</button>
+                                            <div
+                                                style="display: flex; justify-content: space-between; align-items: center;">
+                                                <input type="file" name="upfile" style="font-size: 0.8em;">
+                                                <button type="submit" class="btn"
+                                                    style="background: #333; color: white; border: none; cursor: pointer;">등록</button>
+                                            </div>
                                         </div>
                                     </form>
                                 </c:when>
@@ -335,6 +358,9 @@
                                 },
                                 error: function (xhr, status, error) {
                                     console.log("통신 실패", status, error);
+                                    if (status === "parsererror") {
+                                        alert("서버 오류 내용: " + xhr.responseText);
+                                    }
                                 }
                             });
                         });
@@ -370,6 +396,9 @@
                                 },
                                 error: function (xhr, status, error) {
                                     console.log("통신 실패", status, error);
+                                    if (status === "parsererror") {
+                                        alert("서버 오류 내용: " + xhr.responseText);
+                                    }
                                 }
                             });
                         });

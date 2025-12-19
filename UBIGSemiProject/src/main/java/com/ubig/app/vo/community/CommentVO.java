@@ -18,4 +18,6 @@ public class CommentVO {
     // UI purposes
     private int likeCount;
     private boolean isLiked;
+
+    private CommentAttachmentVO attachment; // For file attachment info
 }

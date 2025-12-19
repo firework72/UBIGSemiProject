@@ -35,8 +35,12 @@ public class CommunityDao {
         return sqlSession.update("communityMapper.updateBoard", board);
     }
 
-    public int deleteBoard(int boardId) {
-        return sqlSession.delete("communityMapper.deleteBoard", boardId);
+    public int deleteBoard(SqlSessionTemplate sqlSession, int boardId) {
+        return sqlSession.update("communityMapper.deleteBoard", boardId);
+    }
+
+    public int increaseCount(SqlSessionTemplate sqlSession, int boardId) {
+        return sqlSession.update("communityMapper.increaseCount", boardId);
     }
 
     // Comment
@@ -88,5 +92,22 @@ public class CommunityDao {
 
     public int countCommentLike(int commentId) {
         return sqlSession.selectOne("communityMapper.countCommentLike", commentId);
+    }
+
+    // Attachments
+    public int insertBoardAttachment(com.ubig.app.vo.community.BoardAttachmentVO attachment) {
+        return sqlSession.insert("communityMapper.insertBoardAttachment", attachment);
+    }
+
+    public int insertCommentAttachment(com.ubig.app.vo.community.CommentAttachmentVO attachment) {
+        return sqlSession.insert("communityMapper.insertCommentAttachment", attachment);
+    }
+
+    public com.ubig.app.vo.community.BoardAttachmentVO selectBoardAttachment(int boardId) {
+        return sqlSession.selectOne("communityMapper.selectBoardAttachment", boardId);
+    }
+
+    public com.ubig.app.vo.community.CommentAttachmentVO selectCommentAttachment(int commentId) {
+        return sqlSession.selectOne("communityMapper.selectCommentAttachment", commentId);
     }
 }
