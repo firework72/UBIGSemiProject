@@ -26,12 +26,18 @@
     </resultMap>
     
     <!-- Boards -->
-    <select id="selectBoardList" resultMap="boardResultMap">
+    <!-- 
+        [Step 1: SQL 수정] 
+        게시판 종류(공지사항, 자유게시판 등)별로 데이터를 가져오기 위해 
+        CATEGORY 조건을 추가했습니다. 이제 DB는 '어떤 카테고리 줘?'라고 물어볼 것입니다.
+    -->
+    <select id="selectBoardList" parameterType="string" resultMap="boardResultMap">
         SELECT 
             BOARD_ID, USER_ID, CATEGORY, TITLE, CONTENT, 
             CREATE_DATE, UPDATE_DATE, VIEW_COUNT, IS_DELETED
         FROM BOARDS
         WHERE IS_DELETED = 'N'
+        AND CATEGORY = #{category}
         ORDER BY BOARD_ID DESC
     </select>
     
@@ -41,9 +47,9 @@
     
     <insert id="insertBoard" parameterType="com.ubig.app.vo.community.BoardVO">
         INSERT INTO BOARDS (
-            BOARD_ID, USER_ID, CATEGORY, TITLE, CONTENT, CREATE_DATE, VIEW_COUNT, IS_DELETED
+            BOARD_ID, USER_ID, CATEGORY, TITLE, CONTENT, CREATE_DATE, UPDATE_DATE, VIEW_COUNT, IS_DELETED
         ) VALUES (
-            SEQ_BOARD_NO.NEXTVAL, #{userId}, #{category}, #{title}, #{content}, SYSDATE, 0, 'N'
+            SEQ_BOARDS.NEXTVAL, #{userId}, #{category}, #{title}, #{content}, SYSDATE, SYSDATE, 0, 'N'
         )
     </insert>
     
@@ -59,21 +65,81 @@
     
     <!-- Comments -->
     <select id="selectCommentList" parameterType="_int" resultMap="commentResultMap">
-        SELECT * FROM COMMENTS 
-        WHERE BOARD_ID = #{boardId} AND IS_DELETED = 'N'
-        ORDER BY COMMENT_ID ASC
+        SELECT 
+            C.*, 
+            LEVEL AS "LEVEL",
+            (SELECT COUNT(*) FROM COMMENT_LIKES WHERE COMMENT_ID = C.COMMENT_ID) AS LIKE_COUNT
+        FROM COMMENTS C
+        WHERE BOARD_ID = #{boardId}
+        START WITH PARENT_ID IS NULL
+        CONNECT BY PRIOR COMMENT_ID = PARENT_ID
+        ORDER SIBLINGS BY COMMENT_ID ASC
     </select>
     
     <insert id="insertComment" parameterType="com.ubig.app.vo.community.CommentVO">
         INSERT INTO COMMENTS (
-            COMMENT_ID, USER_ID, BOARD_ID, CONTENT, CREATE_DATE, IS_DELETED, PARENT_ID
+            COMMENT_ID, USER_ID, BOARD_ID, CONTENT, CREATE_DATE, UPDATE_DATE, IS_DELETED, PARENT_ID
         ) VALUES (
-            SEQ_COMMENT_NO.NEXTVAL, #{userId}, #{boardId}, #{content}, SYSDATE, 'N', #{parentId}
+            SEQ_COMMENTS.NEXTVAL, #{userId}, #{boardId}, #{content}, SYSDATE, SYSDATE, 'N', #{parentId}
         )
     </insert>
+    
+    <update id="updateComment" parameterType="com.ubig.app.vo.community.CommentVO">
+        UPDATE COMMENTS
+        SET CONTENT = #{content}, UPDATE_DATE = SYSDATE
+        WHERE COMMENT_ID = #{commentId}
+    </update>
     
     <update id="deleteComment" parameterType="_int">
         UPDATE COMMENTS SET IS_DELETED = 'Y' WHERE COMMENT_ID = #{commentId}
     </update>
+    
+    <!-- Likes -->
+    <insert id="insertBoardLike" parameterType="com.ubig.app.vo.community.BoardLikeVO">
+        INSERT INTO BOARD_LIKES (
+            LIKE_ID, BOARD_ID, USER_ID, CREATE_DATE
+        ) VALUES (
+            SEQ_LIKES.NEXTVAL, #{boardId}, #{userId}, SYSDATE
+        )
+    </insert>
+    
+    <delete id="deleteBoardLike" parameterType="com.ubig.app.vo.community.BoardLikeVO">
+        DELETE FROM BOARD_LIKES 
+        WHERE BOARD_ID = #{boardId} AND USER_ID = #{userId}
+    </delete>
+    
+    <select id="checkBoardLike" parameterType="com.ubig.app.vo.community.BoardLikeVO" resultType="_int">
+        SELECT COUNT(*) FROM BOARD_LIKES 
+        WHERE BOARD_ID = #{boardId} AND USER_ID = #{userId}
+    </select>
+    
+    <select id="countBoardLike" parameterType="_int" resultType="_int">
+        SELECT COUNT(*) FROM BOARD_LIKES 
+        WHERE BOARD_ID = #{boardId}
+    </select>
+    
+    <!-- Comment Likes -->
+    <insert id="insertCommentLike" parameterType="com.ubig.app.vo.community.CommentLikeVO">
+        INSERT INTO COMMENT_LIKES (
+            LIKE_ID, COMMENT_ID, USER_ID, CREATE_DATE
+        ) VALUES (
+            SEQ_LIKES.NEXTVAL, #{commentId}, #{userId}, SYSDATE
+        )
+    </insert>
+    
+    <delete id="deleteCommentLike" parameterType="com.ubig.app.vo.community.CommentLikeVO">
+        DELETE FROM COMMENT_LIKES 
+        WHERE COMMENT_ID = #{commentId} AND USER_ID = #{userId}
+    </delete>
+    
+    <select id="checkCommentLike" parameterType="com.ubig.app.vo.community.CommentLikeVO" resultType="_int">
+        SELECT COUNT(*) FROM COMMENT_LIKES 
+        WHERE COMMENT_ID = #{commentId} AND USER_ID = #{userId}
+    </select>
+    
+    <select id="countCommentLike" parameterType="_int" resultType="_int">
+        SELECT COUNT(*) FROM COMMENT_LIKES 
+        WHERE COMMENT_ID = #{commentId}
+    </select>
 
 </mapper>

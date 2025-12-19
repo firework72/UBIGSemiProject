@@ -8,17 +8,37 @@
 	<select id="selectUser" resultType="MemberVO">
 		SELECT *
 		FROM MEMBERS
-		WHERE USER_RESTRICT_END_DATE = SYSDATE
 	</select>
 
-	<update id="updateStatus" parameterType="_int">
+	<update id="updateStatus" parameterType="map">
 		UPDATE MEMBERS
-		SET STATUS = SYSDATE
+		SET USER_RESTRICT_END_DATE
+		<choose>
+			<when test="days == 3">
+				= SYSDATE + 3
+			</when>
+			<when test="days == 7">
+				= SYSDATE + 7
+			</when>
+			<when test="days == 30">
+				= SYSDATE + 30
+			</when>
+			<otherwise>
+				= ADD_MONTHS(SYSDATE, 240)
+			</otherwise>
+		</choose>
 		WHERE USER_ID = #{userId}
 		AND USER_STATUS = 'Y'
 	</update>
 	
-	<update id="deleteUser" parameterType="_int">
+	<update id="changeStatus" parameterType="map">
+		UPDATE MEMBERS
+		SET USER_RESTRICT_END_DATE = SYSDATE
+		WHERE USER_ID = #{userId}
+		AND USER_STATUS = 'Y'
+	</update>
+	
+	<update id="deleteUser" parameterType="string">
 		UPDATE MEMBERS
 		SET USER_STATUS = 'N'
 		WHERE USER_ID = #{userId} 
@@ -45,5 +65,34 @@
 			  ,#{isDeleted})
 			  
 	</insert>
+	
+	<insert id="insertActivity">
+		INSERT INTO (ACT_ID
+					,ADMIN_ID
+					,ACT_DATE
+					,ACT_END
+					,ACT_ADDRESS
+					,ACT_LAT
+					,ACT_LON
+					,ACT_LOAD
+					,ACT_TITLE
+					,ACT_MAX
+					,ACT_CUR
+					,ACT_MONEY)
+		VALUES(SEQ_ACTIVITIES
+			  ,#{adminId}
+			  ,#{actDate}
+			  ,#{actEnd}
+			  ,#{actAddress}
+			  ,#{actLat}
+			  ,#{actLon}
+			  ,#{actLoad}
+			  ,#{actTitle}
+			  ,#{actMax}
+			  ,#{actCur}
+			  ,#{actMoney})
+	</insert>
+	
+	
 	
 </mapper>

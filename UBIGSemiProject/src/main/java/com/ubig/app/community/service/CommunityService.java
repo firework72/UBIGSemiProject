@@ -7,7 +7,13 @@ import com.ubig.app.vo.community.CommentVO;
 public interface CommunityService {
 
     // Board
-    List<BoardVO> getBoardList();
+    // Board
+    /*
+     * [Step 3: Service Interface 수정]
+     * Controller와 DAO 사이의 약속(Interface)도 수정합니다.
+     * 목록 요청 시 반드시 카테고리를 받도록 강제합니다.
+     */
+    List<BoardVO> getBoardList(String category);
 
     BoardVO getBoardDetail(int boardId);
 
@@ -22,5 +28,21 @@ public interface CommunityService {
 
     int insertComment(CommentVO comment);
 
+    int updateComment(CommentVO comment);
+
     int deleteComment(int commentId);
+
+    // Likes
+    int toggleLike(com.ubig.app.vo.community.BoardLikeVO like); // Returns new count or status
+
+    int getLikeCount(int boardId);
+
+    int checkLike(com.ubig.app.vo.community.BoardLikeVO like);
+
+    // Comment Likes
+    int toggleCommentLike(com.ubig.app.vo.community.CommentLikeVO like);
+
+    int getCommentLikeCount(int commentId);
+
+    int checkCommentLike(com.ubig.app.vo.community.CommentLikeVO like);
 }

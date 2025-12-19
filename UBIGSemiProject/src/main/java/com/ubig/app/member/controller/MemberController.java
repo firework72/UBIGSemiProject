@@ -29,10 +29,10 @@ public class MemberController {
 	// 로그인 페이지로 이동
 	@GetMapping("/login.me")
 	public String login() {
-		
+
 		return "member/login";
 	}
-	
+
 	// 로그인 처리
 	@PostMapping("/login.me")
 	public String loginMember(HttpSession session,
@@ -43,7 +43,7 @@ public class MemberController {
 		System.out.println(userId);
 		System.out.println(userPwd);
 		// 사용자가 입력한 아이디와 비밀번호를 가져온다.
-		
+
 		MemberVO inputMember = MemberVO.builder().userId(userId).userPwd(userPwd).build();
 		
 		inputMember.setUserPwd(bcrypt.encode(inputMember.getUserPwd()));
