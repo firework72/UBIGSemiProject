@@ -51,12 +51,18 @@
                         <td><fmt:formatDate value="${m.userEnrollDate}" pattern="yyyy-MM-dd"/></td>
                         <td><span class="badge bg-info text-dark">${m.userAttendedCount}회</span></td>
                         <td>
+                        	<jsp:useBean id="now" class="java.util.Date" />
                             <c:choose>
-                                <c:when test="${m.userStatus == 'Y'}"><span class="status-active">정상</span></c:when>
                                 <c:when test="${m.userStatus == 'N'}"><span class="status-banned">탈퇴/추방</span></c:when>
+                                <c:when test="${m.userStatus eq 'Y'
+               									and m.userRestrictEndDate.time gt now.time}">
+    											<span class="status-stoped">정지</span>
+								</c:when>
+                                <c:otherwise><span class="status-active">정상</span></c:otherwise>
                             </c:choose>
                         </td>
                         <td>
+                        	
                             <c:if test="${not empty m.userRestrictEndDate}">
                                 <fmt:formatDate value="${m.userRestrictEndDate}" pattern="yyyy-MM-dd"/>
                             </c:if>
@@ -66,8 +72,11 @@
                             <c:if test="${m.userStatus == 'Y'}">
                                 <button class="btn btn-sm btn-warning" onclick="openRestrictModal('${m.userId}')">정지</button>
                                 <button class="btn btn-sm btn-danger" onclick="confirmKick('${m.userId}')">추방</button>
-                                <button class="btn btn-sm btn-open" onclick="changeStatus('${m.userId}')">정지 해제</button>
                             </c:if>
+                            <c:if test="${m.userStatus eq 'Y'
+               							  and m.userRestrictEndDate.time gt now.time}">
+    							<button class="btn btn-sm btn-open" onclick="changeStatus('${m.userId}')">정지 해제</button>				
+    						</c:if>
                         </td>
                     </tr>
                 </c:forEach>

@@ -44,54 +44,65 @@
 		WHERE USER_ID = #{userId} 
 	</update>
 	
-	<insert id="insertBoard">
-		INSERT INTO (BOARD_ID
-					,USER_ID
-					,CATEGORY
-					,TITLE
-					,CONTENT
-					,CREATE_DATE
-					,UPDATE_DATE
-					,VIEW_COUNT
-					,IS_DELETED)
-		VALUES(SEQ_BOARDS
+	<select id="selectBoard" resultType="BoardVO">
+		SELECT *
+		FROM BOARDS
+	</select>
+	
+	<insert id="insertBoard" parameterType="BoardVO">
+		INSERT INTO BOARDS (BOARD_ID
+						   ,USER_ID
+						   ,CATEGORY
+						   ,TITLE
+						   ,CONTENT
+						   ,CREATE_DATE
+						   ,UPDATE_DATE
+						   ,VIEW_COUNT
+						   ,IS_DELETED)
+		VALUES(SEQ_BOARDS.NEXTVAL
 			  ,#{userId}
 			  ,#{category}
 			  ,#{title}
 			  ,#{content}
-			  ,#{createDate}
-			  ,#{updateDate}
-			  ,#{viewCount}
-			  ,#{isDeleted})
-			  
+			  ,SYSDATE
+			  ,SYSDATE
+			  ,0
+			  ,'N')
 	</insert>
 	
-	<insert id="insertActivity">
-		INSERT INTO (ACT_ID
-					,ADMIN_ID
-					,ACT_DATE
-					,ACT_END
-					,ACT_ADDRESS
-					,ACT_LAT
-					,ACT_LON
-					,ACT_LOAD
-					,ACT_TITLE
-					,ACT_MAX
-					,ACT_CUR
-					,ACT_MONEY)
-		VALUES(SEQ_ACTIVITIES
-			  ,#{adminId}
+	<select id="selectActivity" resultType="activity">
+		SELECT *
+		FROM ACTIVITIES
+	</select>
+	
+	<insert id="insertActivity" parameterType="activity">
+		INSERT INTO ACTIVITIES(ACT_ID
+							  ,ADMIN_ID
+							  ,ACT_DATE
+							  ,ACT_END
+							  ,ACT_ADDRESS
+						  	  ,ACT_LAT
+						 	  ,ACT_LON
+						 	  ,ACT_LOAD
+							  ,ACT_TITLE
+							  ,ACT_MAX
+							  ,ACT_CUR
+						 	  ,ACT_MONEY)
+		VALUES(SEQ_ACTIVITIES.NEXTVAL
+			  ,'user01'
 			  ,#{actDate}
 			  ,#{actEnd}
 			  ,#{actAddress}
 			  ,#{actLat}
 			  ,#{actLon}
-			  ,#{actLoad}
+			  ,SYSDATE
 			  ,#{actTitle}
 			  ,#{actMax}
 			  ,#{actCur}
 			  ,#{actMoney})
 	</insert>
+	
+	
 	
 	
 	

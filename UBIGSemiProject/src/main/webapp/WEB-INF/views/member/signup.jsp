@@ -8,6 +8,7 @@
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="">
     
     <style>
         body { background-color: #f8f9fa; }
@@ -37,7 +38,6 @@
     </style>
 </head>
 <body>
-
 <div class="card signup-card">
     <div class="signup-header">
         유봉일공 회원가입
@@ -50,9 +50,9 @@
                 <label for="userId" class="form-label">아이디</label>
                 <div class="input-group">
                     <input type="text" class="form-control" id="userId" name="userId" placeholder="영문, 숫자 포함 6~20자" required>
-                    <button class="btn btn-outline-secondary" type="button" id="btnIdCheck">중복확인</button>
                 </div>
                 <div id="idCheckResult" class="form-text"></div>
+                <div class="error-msg" id="idError">영문 또는 숫자를 포함하여 6~20자로 작성해주세요.</div>
             </div>
 
             <div class="mb-3">
@@ -79,6 +79,7 @@
             <div class="mb-3">
                 <label for="userContact" class="form-label">연락처</label>
                 <input type="text" class="form-control" id="userContact" name="userContact" placeholder="01012345678" required>
+                <div class="error-msg" id="contactError">숫자로만 11자리 입력해주세요.</div>
             </div>
 
             <div class="row mb-3">
@@ -141,11 +142,12 @@
     // 2. 유효성 검사 및 폼 제출 로직
     $(document).ready(function() {
     	
-    	// 아이디 중복 확인
+    	// 아이디 중복 확인 및 영문, 숫자 6~20자리인지 확인
     	$("#userId").on("keyup", function() {
     		var userId = $("#userId").val();
+    		
 
-            // 실제 구현 시 Controller에 user/checkId.me 매핑 필요
+            // 아이디 중복 확인
             $.ajax({
                 url: "${pageContext.request.contextPath}/user/checkId.me", 
                 type: "post",
@@ -162,7 +164,18 @@
                     alert("통신 오류가 발생했습니다.");
                 }
             });
+            
+            // 영문, 숫자 6~20자리인지 확인
+            let regExp = /^[a-zA-Z0-9]{6,20}$/;
+            
+            if (!regExp.test(userId)) {
+            	$("#idError").show();
+            }
+            else {
+            	$("#idError").hide();
+            }
     	});
+    
         
         // 비밀번호 일치 확인
         $("#userPwdConfirm").on("keyup", function() {
