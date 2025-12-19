@@ -14,9 +14,6 @@ public class CommunityServiceImpl implements CommunityService {
     @Autowired
     private CommunityDao communityDao;
 
-    @Autowired
-    private org.mybatis.spring.SqlSessionTemplate sqlSession;
-
     /*
      * [Step 4: Service 구현체 수정]
      * 실제로 동작하는 Service 코드입니다.
@@ -44,12 +41,12 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     public int deleteBoard(int boardId) {
-        return communityDao.deleteBoard(sqlSession, boardId);
+        return communityDao.deleteBoard(boardId);
     }
 
     @Override
     public int increaseCount(int boardId) {
-        return communityDao.increaseCount(sqlSession, boardId);
+        return communityDao.increaseCount(boardId);
     }
 
     @Override
