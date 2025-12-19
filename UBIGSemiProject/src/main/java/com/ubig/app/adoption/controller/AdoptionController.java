@@ -106,39 +106,39 @@ public class AdoptionController {
 	}
 	
 
-	//페이징 처리, 페이징 - 메인 페이지용 로직
-	@RequestMapping("/adoption.list")
-	public String AdoptionList(@RequestParam(value="page",defaultValue = "1")int currentPage,Model model){
-		//리스트 갯수
-		int listCount = service.listCount();
-		//현재 페이지 - 받아서 옴
-		//보드를 한 페이지에 몇개 보여줄지(**하드코딩 직접 설정 필요**)
-		int boardLimit = 5;
-		//페이지를 한 페이지에 몇개 보여줄지(**하드코딩 직접 설정 필요**)
-		int pageLimit = 10;
-		
-		AdoptionPageInfoVO pi = AdoptionPagination.getPageInfo(listCount, currentPage, boardLimit, pageLimit);
-		
-		//페이징 처리 정보를 가지고 보여줄 보드를 리스트로 가져오기
-		ArrayList<AdoptionPostVO> postList = service.boardList(pi);
-
-		//해당 보드 동물번호No 리스트화
-		ArrayList<Integer> photo = new ArrayList<>();
-		for(AdoptionPostVO post: postList) {
-			int aniNo = post.getAnimalNo();
-			photo.add(aniNo);
-		}
-		
-		//동물 번호와 파일들만 가져오기
-		ArrayList<AnimalDetailVO> animal = service.getPhoto(photo);
-		
-		//페이징 처리, 페이징용 리스트 model에 담기
-		model.addAttribute("pi",pi);
-		model.addAttribute("postList",postList);
-		model.addAttribute("animalList",animal);
-		
-		return "/adoption/adoptionmainpage";
-	}
+//	//페이징 처리, 페이징 - 메인 페이지용 로직
+//	@RequestMapping("/adoption.list")
+//	public String AdoptionList(@RequestParam(value="page",defaultValue = "1")int currentPage,Model model){
+//		//리스트 갯수
+//		int listCount = service.listCount();
+//		//현재 페이지 - 받아서 옴
+//		//보드를 한 페이지에 몇개 보여줄지(**하드코딩 직접 설정 필요**)
+//		int boardLimit = 5;
+//		//페이지를 한 페이지에 몇개 보여줄지(**하드코딩 직접 설정 필요**)
+//		int pageLimit = 10;
+//		
+//		AdoptionPageInfoVO pi = AdoptionPagination.getPageInfo(listCount, currentPage, boardLimit, pageLimit);
+//		
+//		//페이징 처리 정보를 가지고 보여줄 보드를 리스트로 가져오기
+//		ArrayList<AdoptionPostVO> postList = service.boardList(pi);
+//
+//		//해당 보드 동물번호No 리스트화
+//		ArrayList<Integer> photo = new ArrayList<>();
+//		for(AdoptionPostVO post: postList) {
+//			int aniNo = post.getAnimalNo();
+//			photo.add(aniNo);
+//		}
+//		
+//		//동물 번호와 파일들만 가져오기
+//		ArrayList<AnimalDetailVO> animal = service.getPhoto(photo);
+//		
+//		//페이징 처리, 페이징용 리스트 model에 담기
+//		model.addAttribute("pi",pi);
+//		model.addAttribute("postList",postList);
+//		model.addAttribute("animalList",animal);
+//		
+//		return "/adoption/adoptionmainpage";
+//	}
 	
 	
 	
