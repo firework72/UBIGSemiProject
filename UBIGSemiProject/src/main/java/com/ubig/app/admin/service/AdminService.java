@@ -3,7 +3,9 @@ package com.ubig.app.admin.service;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.ubig.app.vo.community.BoardVO;
 import com.ubig.app.vo.member.MemberVO;
+import com.ubig.app.vo.volunteer.ActivityVO;
 
 public interface AdminService {
 	
@@ -13,10 +15,14 @@ public interface AdminService {
 
 	int deleteUser(String userId);
 
-	int insertBoard();
+	int insertBoard(BoardVO b);
 
-	int insertActivity();
+	int insertActivity(ActivityVO a);
 
 	int changeStatus(HashMap<String, String> map);
+
+	ArrayList<BoardVO> selectBoard();
+
+	ArrayList<ActivityVO> selectActivity();
 
 }
