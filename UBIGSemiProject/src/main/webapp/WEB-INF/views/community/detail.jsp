@@ -417,7 +417,7 @@
                         // likeCount가 비어있으면 0으로 처리
                         if (!likeCount) likeCount = 0;
                         $("#like-count").text(likeCount);
-
+//뭐지
                         console.log("Board Detail Script Loaded. isLiked=" + isLiked);
                     });
                 </script>
