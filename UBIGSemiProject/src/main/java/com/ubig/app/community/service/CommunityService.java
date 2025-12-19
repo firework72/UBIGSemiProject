@@ -23,6 +23,8 @@ public interface CommunityService {
 
     int deleteBoard(int boardId);
 
+    int increaseCount(int boardId);
+
     // Comment
     List<CommentVO> getCommentList(int boardId);
 
@@ -45,4 +47,13 @@ public interface CommunityService {
     int getCommentLikeCount(int commentId);
 
     int checkCommentLike(com.ubig.app.vo.community.CommentLikeVO like);
+
+    // Attachments
+    void insertBoardAttachment(com.ubig.app.vo.community.BoardAttachmentVO attachment);
+
+    void insertCommentAttachment(com.ubig.app.vo.community.CommentAttachmentVO attachment);
+
+    com.ubig.app.vo.community.BoardAttachmentVO getBoardAttachment(int boardId);
+    
+    com.ubig.app.vo.community.CommentAttachmentVO getCommentAttachment(int commentId);
 }

@@ -101,7 +101,7 @@
                 </div>
 
                 <!-- [Step 12: 글쓰기 폼] -->
-                <form action="write" method="post" class="write-form">
+                <form action="write" method="post" class="write-form" enctype="multipart/form-data">
                     <input type="hidden" name="category" value="${category}">
                     <input type="hidden" name="userId" value="${loginUser.userId}">
 
@@ -113,6 +113,11 @@
                     <div class="form-group">
                         <label class="form-label">내용</label>
                         <textarea id="summernote" name="content" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">첨부파일</label>
+                        <input type="file" name="upfile" class="form-input">
                     </div>
 
                     <div class="btn-group">

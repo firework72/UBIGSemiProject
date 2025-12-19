@@ -45,6 +45,11 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
+    public int increaseCount(int boardId) {
+        return communityDao.increaseCount(boardId);
+    }
+
+    @Override
     public List<CommentVO> getCommentList(int boardId) {
         return communityDao.selectCommentList(boardId);
     }
@@ -108,5 +113,26 @@ public class CommunityServiceImpl implements CommunityService {
             communityDao.insertCommentLike(like);
             return 1; // Liked
         }
+    }
+
+    // Attachments
+    @Override
+    public void insertBoardAttachment(com.ubig.app.vo.community.BoardAttachmentVO attachment) {
+        communityDao.insertBoardAttachment(attachment);
+    }
+
+    @Override
+    public void insertCommentAttachment(com.ubig.app.vo.community.CommentAttachmentVO attachment) {
+        communityDao.insertCommentAttachment(attachment);
+    }
+
+    @Override
+    public com.ubig.app.vo.community.BoardAttachmentVO getBoardAttachment(int boardId) {
+        return communityDao.selectBoardAttachment(boardId);
+    }
+
+    @Override
+    public com.ubig.app.vo.community.CommentAttachmentVO getCommentAttachment(int commentId) {
+        return communityDao.selectCommentAttachment(commentId);
     }
 }
