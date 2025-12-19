@@ -5,8 +5,8 @@
   
 <mapper namespace="adoptionMapper">
 
-<insert id="insertAnimal" parameterType="AnimalDetail">
-        INSERT INTO ANIMAL (
+	<insert id="insertAnimal" parameterType="AnimalDetail">
+        INSERT INTO ANIMAL_DETAILS (
             ANIMAL_NO,
             SPECIES,
             ANIMAL_NAME,
@@ -40,7 +40,13 @@
             #{hopeRegion},
             #{deadlineDate},
             #{photoUrl}
-)
+		)
     </insert>
+    
+    <select id="listCount">
+    	SELECT count(*)
+    	FROM ANIMAL_DETAILS
+    </select>
+    
 
 </mapper>
