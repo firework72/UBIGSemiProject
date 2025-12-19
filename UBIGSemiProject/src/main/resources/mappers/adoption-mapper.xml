@@ -5,6 +5,7 @@
   
 <mapper namespace="adoptionMapper">
 
+	<!-- 동물 등록하기 -->
 	<insert id="insertAnimal" parameterType="AnimalDetail">
         INSERT INTO ANIMAL_DETAILS (
             ANIMAL_NO,
@@ -43,10 +44,56 @@
 		)
     </insert>
     
-    <select id="listCount">
+    <!-- 리스트 갯수 세오기 -->
+    <select id="listCount" resultType="_int">
     	SELECT count(*)
     	FROM ANIMAL_DETAILS
     </select>
     
+    <!-- 페이징 처리용 게시글-->
+    <select id="boardList" resultType="AdoptionBoard">
+    	SELECT *
+    	FROM ADOPTION_POSTS
+    	ORDER BY POST_REG_DATE DESC
+    </select>
+    
+    <!-- 페이징 처리용 동물 -->
+    <select id="getPhoto" parameterType="java.util.List" resultType="AnimalDetail">
+	    SELECT ANIMAL_NO,PHOTO_URL
+	    FROM ANIMAL_DETAILS
+	    WHERE ANIMAL_NO IN
+	    <foreach collection="list" item="item" open="(" close=")" separator=",">
+	        #{item}
+	    </foreach>
+	</select>
+	
+	<!-- 보드 등록 -->
+	<insert id="insertBoard" parameterType="AdoptionBoard">
+		INSERT INTO ADOPTION_POSTS(
+									POST_NO,
+									ANIMAL_NO,
+									USER_ID,
+									POST_TITLE,
+									POST_REG_DATE,
+									POST_UPDATE_DATE,
+									VIEWS
+									)
+							VALUES(
+									SEQ_ADOPTION_POSTS.NEXTVAL,
+									#{animalNo},
+									#{userId},
+									#{postTitle},
+									SYSDATE,
+									SYSDATE,
+									#{views}
+							)
+	</insert>
+	
+	<select id="goAdoptionDetail" resultType="AnimalDetail">
+		SELECT *
+		FROM ANIMAL_DETAILS
+		WHERE ANIMAL_NO = #{anino}
+	</select>
+	    
 
 </mapper>
