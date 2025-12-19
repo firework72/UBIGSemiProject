@@ -11,7 +11,7 @@
   
   
   <typeAliases>
-		<typeAlias type="com.ubig.app.vo.volunteer.ActivitieVO" alias="activity"/>
+		<typeAlias type="com.ubig.app.vo.volunteer.ActivityVO" alias="activity"/>
 		<typeAlias type="com.ubig.app.vo.volunteer.SignVO" alias="sign"/>
 		<typeAlias type="com.ubig.app.vo.volunteer.VolunteerCommentVO" alias="comment"/>
 		<typeAlias type="com.ubig.app.vo.volunteer.VolunteerReviewVO" alias="review"/>
