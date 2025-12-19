@@ -3,10 +3,47 @@
 
 <mapper namespace="memberMapper">
 
-	<select id="loginMember" parameterType="MemberVO">
-		SELECT * FROM MEMBER
+	<select id="loginMember" parameterType="MemberVO" resultType="MemberVO">
+		SELECT * FROM MEMBERS
 		WHERE USER_ID = #{userId}
 		AND USER_PWD = #{userPwd}
 		AND USER_STATUS = 'Y'
+	</select>
+	
+	<insert id="insertMember" parameterType="MemberVO">
+		INSERT INTO MEMBERS( USER_ID
+							,USER_PWD
+							,USER_NAME
+							,USER_NICKNAME
+							,USER_ADDRESS
+							,USER_CONTACT
+							,USER_GENDER
+							,USER_AGE
+							,USER_ATTENDED_COUNT
+							,USER_RESTRICT_END_DATE
+							,USER_STATUS
+							,USER_ROLE
+							,USER_ENROLL_DATE
+							,USER_MODIFY_DATE)
+		VALUES(#{userId}
+			  ,#{userPwd}
+			  ,#{userName}
+			  ,#{userNickname}
+			  ,#{userAddress}
+			  ,#{userContact}
+			  ,#{userGender}
+			  ,#{userAge}
+			  ,0
+			  ,SYSDATE
+			  ,'Y'
+			  ,'MEMBER'
+			  ,SYSDATE
+			  ,SYSDATE)
+	</insert>
+	
+	<select id="checkId" parameterType="string" resultType="_int">
+		SELECT COUNT(*)
+		FROM MEMBERS
+		WHERE USER_ID = #{userId}
 	</select>
 </mapper>
