@@ -65,7 +65,7 @@ public class AdoptionController {
 	//입양 신청서 작성submit
 	@RequestMapping("/adoption.insertapplication")
 	public String insertapplication(AdoptionApplicationVO application,RedirectAttributes redirectAtt) {
-		//아직 로직이 없음 구현 필요!
+		//아직 로직이 없음 구현 필요
 		redirectAtt.addAttribute("anino",application.getAnimalNo());
 		return "redirect:/adoption.detailpage";
 	}
