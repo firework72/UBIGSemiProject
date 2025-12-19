@@ -6,7 +6,6 @@
 	<select id="loginMember" parameterType="MemberVO" resultType="MemberVO">
 		SELECT * FROM MEMBERS
 		WHERE USER_ID = #{userId}
-		AND USER_PWD = #{userPwd}
 		AND USER_STATUS = 'Y'
 	</select>
 	
