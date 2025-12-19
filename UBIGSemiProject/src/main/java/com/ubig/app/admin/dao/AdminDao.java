@@ -6,7 +6,9 @@ import java.util.HashMap;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.ubig.app.vo.community.BoardVO;
 import com.ubig.app.vo.member.MemberVO;
+import com.ubig.app.vo.volunteer.ActivityVO;
 
 @Repository
 public class AdminDao {
@@ -30,16 +32,28 @@ public class AdminDao {
 		
 		return sqlSession.update("adminMapper.deleteUser",userId);
 	}
-
-	public int insertBoard(SqlSessionTemplate sqlSession) {
+	
+	public ArrayList<BoardVO> selectBoard(SqlSessionTemplate sqlSession) {
 		
-		return sqlSession.insert("adminMapper.insertBoard");
+		return (ArrayList)sqlSession.selectList("adminMapper.selectBoard");
 	}
 
-	public int insertActivity(SqlSessionTemplate sqlSession) {
+	public int insertBoard(SqlSessionTemplate sqlSession,BoardVO b) {
 		
-		return sqlSession.insert("adminMapper.insertActivity");
+		return sqlSession.insert("adminMapper.insertBoard",b);
 	}
+
+	public int insertActivity(SqlSessionTemplate sqlSession,ActivityVO a) {
+		
+		return sqlSession.insert("adminMapper.insertActivity",a);
+	}
+
+	public ArrayList<ActivityVO> selectActivity(SqlSessionTemplate sqlSession) {
+		
+		return (ArrayList)sqlSession.selectList("adminMapper.selectActivity");
+	}
+
+	
 
 	
 
