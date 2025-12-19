@@ -58,10 +58,9 @@ public class VolunteerController {
 	@RequestMapping("volunteerInsert.vo")
 	public String volunteerInsert(ActivityVO a) {
 
-		// 폼에서 넘어오지 않은 나머지 데이터들은 여기서 기본값으로 채워줍니다.
-		// (나중에는 달력 API나 지도 API로 받겠지만, 지금은 에러 방지용 임시값입니다)
-		a.setActDate(new java.util.Date()); // 시작일: 오늘
-		a.setActEnd(new java.util.Date()); // 종료일: 오늘
+		
+		
+		
 		a.setActLat(37.5); // 위도: 서울 어딘가
 		a.setActLon(127.0); // 경도: 서울 어딘가
 		a.setActMoney(10000); // 참가비 : 고정 1만원
@@ -133,6 +132,7 @@ public class VolunteerController {
 			} else {
 				System.out.println("❌ 수정 실패...");
 			}
+			
 			
 			// 수정이 끝나면 다시 '상세 페이지'로 돌아가서 바뀐 걸 확인시켜 줍니다.
 			// 이때 actId를 꼭 같이 가져가야 에러가 안 납니다.
