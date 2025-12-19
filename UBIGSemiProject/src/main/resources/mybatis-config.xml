@@ -19,5 +19,6 @@
 		<typeAlias type="com.ubig.app.vo.volunteer.TagInfoVO" alias="tagInfo"/>
     <typeAlias type="com.ubig.app.vo.adoption.AnimalDetailVO" alias="AnimalDetail"/>
   	<typeAlias type="com.ubig.app.vo.member.MemberVO" alias="MemberVO"/>
+  	<typeAlias type="com.ubig.app.vo.adoption.AdoptionPostVO" alias="AdoptionBoard"/>
 	</typeAliases>
 </configuration>
