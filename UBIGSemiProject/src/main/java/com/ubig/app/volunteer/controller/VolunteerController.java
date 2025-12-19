@@ -133,6 +133,7 @@ public class VolunteerController {
 				System.out.println("❌ 수정 실패...");
 			}
 			
+			
 			// 수정이 끝나면 다시 '상세 페이지'로 돌아가서 바뀐 걸 확인시켜 줍니다.
 			// 이때 actId를 꼭 같이 가져가야 에러가 안 납니다.
 			return "redirect:volunteerDetail.vo?actId=" + a.getActId();
