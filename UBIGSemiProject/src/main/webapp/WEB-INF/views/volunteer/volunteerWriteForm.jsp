@@ -24,9 +24,19 @@
                 <td><input type="text" name="actAddress" required placeholder="장소를 입력하세요"></td>
             </tr>
             <tr>
-                <th>최대 인원</th>
-                <td><input type="number" name="actMax" value="10"></td>
-            </tr>
+                <th>참여 인원</th>
+                <!-- min으로 최소인원 5명으로 제한 걸어놨음, max를 안넣음으로서 속성 제한 풀어놨음(전체회원) -->
+				<td><input type="number" name="actMax" min="5" value="10"
+					placeholder="최소 5명"></td>
+			</tr>
+			<tr>
+				<th>봉사 시작일</th>
+				<td><input type="date" name="actDate" required></td>
+			</tr>
+			<tr>
+				<th>봉사 종료일</th>
+				<td><input type="date" name="actEnd" required></td>
+			</tr>
             <tr>
              	  <th>참가비</th>
    				 <td>10,000원(고정)</td>
