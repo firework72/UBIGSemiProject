@@ -13,10 +13,10 @@
 		<h3>[게시글 등록]</h3>
 		
 		<label>게시물 제목 : </label>
-		<input type="text" name="boardTitle" placeholder="제목을 입력하세요"><br>
+		<input type="text" name="postTitle" placeholder="제목을 입력하세요"><br>
 		
 		<label>관리자 아이디 : </label>
-		<input type="text" name="adminId" placeholder="ID 입력"><br>
+		<input type="text" name="userId" placeholder="ID 입력"><br>
 		
 		<label>동물 고유 번호 : </label>
 		<input type="number" name="animalNo" placeholder="숫자만 입력"><br>

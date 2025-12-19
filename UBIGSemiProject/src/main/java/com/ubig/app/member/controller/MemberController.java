@@ -1,5 +1,9 @@
 package com.ubig.app.member.controller;
 
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,16 +64,25 @@ public class MemberController {
 		// 사용자가 입력한 아이디와 비밀번호를 가져온다.
 
 		MemberVO inputMember = MemberVO.builder().userId(userId).userPwd(userPwd).build();
-
-		inputMember.setUserPwd(bcrypt.encode(inputMember.getUserPwd()));
-
+		
 		MemberVO loginMember = service.loginMember(inputMember);
-
+		
+		System.out.println(inputMember);
+		System.out.println(loginMember);
+		
 		// 아이디와 암호화된 비밀번호가 일치하는 컬럼이 데이터베이스에 존재한다면 로그인 성공 및 세션에 로그인 정보 저장
 		if (loginMember != null && bcrypt.matches(inputMember.getUserPwd(), loginMember.getUserPwd())) {
-
-			// TODO : 현재 날짜가 정지 일자를 지나지 않았다면, 정지된 상태임을 알리고 로그인 처리를 거부해야 한다.
-
+			
+			LocalDate userRestrictEndDate = loginMember.getUserRestrictEndDate().toLocalDate(); // 정지가 걸려있는 일자
+			LocalDate currentDate = new Date(System.currentTimeMillis()).toLocalDate(); // 현재 일자
+			
+			// 현재 날짜가 정지 일자를 지나지 않았다면, 정지된 상태임을 알리고 로그인 처리를 거부해야 한다.
+			if (currentDate.isBefore(userRestrictEndDate)) {
+				String dateFormatString = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(userRestrictEndDate);
+				session.setAttribute("msg", "현재 " + dateFormatString + "까지 계정이 정지되어있습니다. 자세한 사항은 관리자에게 문의해주세요.");
+				return "member/login";
+			}
+			
 			session.setAttribute("loginMember", loginMember);
 			return "redirect:/";
 		}
@@ -105,12 +118,12 @@ public class MemberController {
 	// TODO 회원가입 처리
 	@PostMapping("/signup.me")
 	public String insertMember(HttpSession session, MemberVO m) {
-
-		int result = service.insertMember(m);
-
+		
 		// 비밀번호 암호화
 		m.setUserPwd(bcrypt.encode(m.getUserPwd()));
-
+		
+		int result = service.insertMember(m);
+		
 		if (result > 0) {
 			session.setAttribute("alerMsg", "회원가입에 성공하였습니다.");
 		} else {
@@ -137,10 +150,39 @@ public class MemberController {
 	}
 
 	// TODO 마이페이지 이동
-
-	// TODO 회원수정 페이지 이동
-
+	@RequestMapping("/mypage.me")
+	public String mypage() {
+		return "member/mypage";
+	}
+	
 	// TODO 회원수정 처리
 
 	// TODO 회원탈퇴 처리
+	@RequestMapping("/delete.me")
+	public String deleteMember(HttpSession session, Model model) {
+		
+		// 현재 로그인되어 있는 상태일 경우 로그인 되어있는 ID에 해당하는 유저의 가입 상태를 N으로 변경한다.
+		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
+		
+		if (loginMember != null) {
+			// 회원탈퇴 처리
+			int result = 0;
+			// int result = service.deleteMember(loginMember);
+			if (result > 0) {
+				session.removeAttribute("loginMember");
+				session.setAttribute("alertMsg", "회원 탈퇴가 정상적으로 처리되었습니다.");
+				return "redirect:/";
+			}
+			else {
+				session.setAttribute("alertMsg", "회원 탈퇴에 실패했습니다.");
+			}
+			
+			
+		}
+		else {
+			session.setAttribute("alertMsg", "회원 탈퇴에 실패했습니다.");
+		}
+		
+		return "redirect:/";
+	}
 }

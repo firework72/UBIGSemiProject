@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ubig.app.admin.dao.AdminDao;
+import com.ubig.app.vo.community.BoardVO;
 import com.ubig.app.vo.member.MemberVO;
+import com.ubig.app.vo.volunteer.ActivityVO;
 
 @Service
 public class AdminServiceImpl implements AdminService{
@@ -44,16 +46,29 @@ public class AdminServiceImpl implements AdminService{
 	}
 	
 	@Override
-	public int insertBoard() {
+	public ArrayList<BoardVO> selectBoard() {
 		
-		return dao.insertBoard(sqlSession);
+		return dao.selectBoard(sqlSession);
 	}
 	
 	@Override
-	public int insertActivity() {
+	public int insertBoard(BoardVO b) {
 		
-		return dao.insertActivity(sqlSession);
+		return dao.insertBoard(sqlSession,b);
 	}
+	
+	@Override
+	public ArrayList<ActivityVO> selectActivity() {
+
+		return dao.selectActivity(sqlSession);
+	}
+	
+	@Override
+	public int insertActivity(ActivityVO a) {
+		
+		return dao.insertActivity(sqlSession,a);
+	}
+	
 	
 	
 	
