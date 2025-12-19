@@ -111,7 +111,11 @@
         INSERT INTO BOARD_LIKES (
             LIKE_ID, BOARD_ID, USER_ID, TARGET_TYPE, CREATE_DATE
         ) VALUES (
+
             SEQ_BOARD_LIKES.NEXTVAL, #{boardId}, #{userId}, 'BOARD', SYSDATE
+
+    
+
         )
     </insert>
     
@@ -135,7 +139,10 @@
         INSERT INTO COMMENT_LIKES (
             LIKE_ID, COMMENT_ID, USER_ID, TARGET_TYPE, CREATE_DATE
         ) VALUES (
+
             SEQ_COMMENT_LIKES.NEXTVAL, #{commentId}, #{userId}, 'COMMENT', SYSDATE
+
+
         )
     </insert>
     
@@ -157,17 +164,17 @@
     <!-- Attachments -->
     <insert id="insertBoardAttachment" parameterType="com.ubig.app.vo.community.BoardAttachmentVO">
         INSERT INTO BOARD_ATTACHMENTS (
-            FILE_ID, BOARD_ID, REF_TYPE, REF_ID, ORIGINAL_NAME, SAVED_NAME, FILE_PATH, FILE_SIZE, CREATE_DATE
+            FILE_ID, BOARD_ID, ORIGINAL_NAME, SAVED_NAME, FILE_PATH, FILE_SIZE, CREATE_DATE
         ) VALUES (
-            SEQ_BOARD_ATTACH.NEXTVAL, #{boardId}, #{refType}, #{refId}, #{originalName}, #{savedName}, #{filePath}, #{fileSize}, SYSDATE
+            SEQ_BOARD_ATTACH.NEXTVAL, #{boardId}, #{originalName}, #{savedName}, #{filePath}, #{fileSize}, SYSDATE
         )
     </insert>
 
     <insert id="insertCommentAttachment" parameterType="com.ubig.app.vo.community.CommentAttachmentVO">
         INSERT INTO COMMENT_ATTACHMENTS (
-            FILE_ID, COMMENT_ID, REF_TYPE, REF_ID, ORIGINAL_NAME, SAVED_NAME, FILE_PATH, FILE_SIZE, CREATE_DATE
+            FILE_ID, COMMENT_ID, ORIGINAL_NAME, SAVED_NAME, FILE_PATH, FILE_SIZE, CREATE_DATE
         ) VALUES (
-            SEQ_CMT_ATTACH.NEXTVAL, #{commentId}, #{refType}, #{refId}, #{originalName}, #{savedName}, #{filePath}, #{fileSize}, SYSDATE
+            SEQ_CMT_ATTACH.NEXTVAL, #{commentId}, #{originalName}, #{savedName}, #{filePath}, #{fileSize}, SYSDATE
         )
     </insert>
     

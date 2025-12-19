@@ -1,6 +1,7 @@
 package com.ubig.app.community.controller;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -300,7 +301,7 @@ public class CommunityController {
             e.printStackTrace(); // 서버 콘솔에 로그 출력
             String errorMessage = e.getMessage();
             if (errorMessage != null) {
-                // 줄바꿈, 탭, 따옴표, 백슬래시 등 JSON 파싱을 방해하는 문자 제거
+
                 errorMessage = errorMessage.replaceAll("[\\r\\n\\t]", " ")
                         .replace("\"", "'")
                         .replace("\\", "/");
@@ -318,19 +319,35 @@ public class CommunityController {
     @org.springframework.web.bind.annotation.ResponseBody
     public String heart(int boardId, javax.servlet.http.HttpSession session) {
 
-        com.ubig.app.vo.member.MemberVO loginUser = (com.ubig.app.vo.member.MemberVO) session.getAttribute("loginUser");
-        if (loginUser == null) {
-            return "{\"result\": \"login_required\"}";
+        try {
+            com.ubig.app.vo.member.MemberVO loginUser = (com.ubig.app.vo.member.MemberVO) session
+                    .getAttribute("loginUser");
+            if (loginUser == null) {
+                return "{\"result\": \"login_required\"}";
+            }
+
+            // Vo 객체에 담아서 서비스로 전달
+            com.ubig.app.vo.community.BoardLikeVO like = new com.ubig.app.vo.community.BoardLikeVO();
+            like.setBoardId(boardId);
+            like.setUserId(loginUser.getUserId());
+
+            int status = communityService.toggleLike(like); // 1: Like, 0: Unlike
+            int count = communityService.getLikeCount(boardId);
+
+            return "{\"isLiked\":" + (status == 1) + ", \"count\":" + count + "}";
+        } catch (Exception e) {
+            e.printStackTrace();
+            String errorMessage = e.getMessage();
+            if (errorMessage != null) {
+                // 줄바꿈, 탭 등은 공백으로, 큰따옴표는 작은따옴표로, 백슬래시는 슬래시로 변경
+                errorMessage = errorMessage.replaceAll("[\\r\\n\\t]", " ")
+                        .replace("\"", "'")
+                        .replace("\\", "/");
+            } else {
+                errorMessage = "Unknown Error";
+            }
+            return "{\"error\":\"" + errorMessage + "\"}"; // 에러 메시지 반환
         }
-
-        com.ubig.app.vo.community.BoardLikeVO like = new com.ubig.app.vo.community.BoardLikeVO();
-        like.setBoardId(boardId);
-        like.setUserId(loginUser.getUserId());
-
-        int status = communityService.toggleLike(like); // 1: Like, 0: Unlike
-        int count = communityService.getLikeCount(boardId);
-
-        return "{\"isLiked\":" + (status == 1) + ", \"count\":" + count + "}";
     }
 
     // [공통] 파일 저장 메소드

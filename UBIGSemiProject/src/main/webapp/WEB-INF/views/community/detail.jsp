@@ -358,6 +358,7 @@
                                 },
                                 error: function (xhr, status, error) {
                                     console.log("통신 실패", status, error);
+
                                     if (status === "parsererror") {
                                         alert("서버 오류 내용: " + xhr.responseText);
                                     }
