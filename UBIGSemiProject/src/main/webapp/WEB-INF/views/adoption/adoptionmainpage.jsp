@@ -19,19 +19,15 @@
 					<td>게시물 수정일</td>
 					<td>게시물 조회수</td>
 				</tr>
-			<c:forEach var="post" items="${postList}">
-			    <tr data-anino="${post.animalNo }">
-			        <td>${post.postNo}</td>
-			        <td>${post.postTitle}</td>
+			<c:forEach var="item" items="${adoptionList}">
+			    <tr data-anino="${item.animalNo}">
+			        <td>${item.postNo}</td>
+			        <td>${item.postTitle}</td>
 					<td>
-		                <c:forEach var="ani" items="${animalList}">
-		                    <c:if test="${post.animalNo eq ani.animalNo}">
-		                        <img src="${pageContext.request.contextPath}/resources/download/adoption/${ani.photoUrl}" width="100" height="100">
-		                    </c:if>
-		                </c:forEach>
+		                <img src="${pageContext.request.contextPath}/resources/download/adoption/${item.photoUrl}" width="100" height="100">
            			</td>
-			        <td>${post.postUpdateDate }</td>
-			        <td>${post.views}</td>
+			        <td>${item.postUpdateDate}</td>
+			        <td>${item.views}</td>
 			    </tr>
 			</c:forEach>
 		</table>

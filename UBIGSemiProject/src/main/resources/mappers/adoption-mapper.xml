@@ -44,17 +44,26 @@
 		)
     </insert>
     
-    <!-- 리스트 갯수 세오기 -->
+    <!-- 리스트 갯수 세오기 (게시글 기준) -->
     <select id="listCount" resultType="_int">
     	SELECT count(*)
-    	FROM ANIMAL_DETAILS
+    	FROM ADOPTION_POSTS
     </select>
     
-    <!-- 페이징 처리용 게시글-->
-    <select id="boardList" resultType="AdoptionBoard">
-    	SELECT *
-    	FROM ADOPTION_POSTS
-    	ORDER BY POST_REG_DATE DESC
+    <!-- 페이징 처리용 게시글 (JOIN) -->
+    <select id="selectAdoptionMainList" resultType="com.ubig.app.vo.adoption.AdoptionMainListVO">
+        SELECT 
+            P.POST_NO,
+            P.POST_TITLE,
+            P.POST_UPDATE_DATE,
+            P.VIEWS,
+            P.ANIMAL_NO,
+            A.PHOTO_URL,
+            A.ANIMAL_NAME,
+            A.ADOPTION_STATUS
+        FROM ADOPTION_POSTS P
+        JOIN ANIMAL_DETAILS A ON P.ANIMAL_NO = A.ANIMAL_NO
+        ORDER BY P.POST_REG_DATE DESC
     </select>
     
     <!-- 페이징 처리용 동물 -->
