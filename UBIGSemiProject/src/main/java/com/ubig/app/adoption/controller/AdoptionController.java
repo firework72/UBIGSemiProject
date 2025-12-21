@@ -137,13 +137,9 @@ public class AdoptionController {
 		// jsp에서 사용할 이름: adoptionList (기존 postList, animalList 대체)
 		model.addAttribute("adoptionList", adoptionList);
 
-		// 호환성을 위해 빈 리스트라도 넘겨줄 경우 (필요 시)
-		// model.addAttribute("postList", ...); // 더 이상 필요 없음
-		// model.addAttribute("animalList", ...); // 더 이상 필요 없음
-
 		return "/adoption/adoptionmainpage";
 	}
 
-	// 조회수 관련 로직 만들어야함
+	// 조회수 관련 로직 만들어야함? 만들어야 하나?
 
 }

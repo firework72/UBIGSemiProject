@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+// adoption 게시물 조회용 VO(table없음)
 public class AdoptionMainListVO {
     // Post Data
     private int postNo; // 게시물 번호
