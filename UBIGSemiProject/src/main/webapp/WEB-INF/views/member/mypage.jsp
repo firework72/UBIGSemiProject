@@ -17,6 +17,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <link rel="stylesheet" href="<c:url value='/resources/css/style.css'/>">
 
     <style>
         body { background-color: #f8f9fa; }
@@ -51,7 +52,7 @@
     </style>
 </head>
 <body>
-
+	<%@ include file="/WEB-INF/views/common/menubar.jsp" %>
     <div class="mypage-header text-center">
         <div class="container">
             <h2 class="fw-bold">MY PAGE</h2>

@@ -23,7 +23,7 @@ public class FundingController {
 	}
 		
 	//일시 후원
-	@RequestMapping()
+	@RequestMapping("/test")
 	public String donation(HttpSession session,String userId) {
 		
 		int result = service.donation(userId);

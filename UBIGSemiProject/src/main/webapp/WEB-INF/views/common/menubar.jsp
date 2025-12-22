@@ -2,6 +2,12 @@
     <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
         <header>
+        	<c:if test="${not empty alertMsg}">
+	            <script>
+	                alert('${alertMsg}');
+	            </script>
+	            <c:remove var="alertMsg"/>
+	        </c:if>
             <nav>
                 <div class="logo">
                     <a href="${pageContext.request.contextPath}/">유봉일공</a>

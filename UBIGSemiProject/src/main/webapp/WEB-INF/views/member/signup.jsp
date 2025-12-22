@@ -44,7 +44,7 @@
     </div>
     <div class="card-body p-4">
         
-        <form action="${pageContext.request.contextPath}/user/signup.me" method="post" id="signupForm">
+        <form action="${pageContext.request.contextPath}/user/sign.me" method="post" id="signupForm">
             
             <div class="mb-3">
                 <label for="userId" class="form-label">아이디</label>
