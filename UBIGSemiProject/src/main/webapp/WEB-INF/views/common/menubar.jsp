@@ -54,18 +54,19 @@
                         <a href="#">회원</a>
                         <ul class="dropdown-content">
                             <c:choose>
-                                <c:when test="${empty loginUser}">
-                                    <li><a href="${pageContext.request.contextPath}/member/login">로그인</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/member/enroll">회원가입</a></li>
+                                <c:when test="${empty loginMember}">
+                                    <li><a href="${pageContext.request.contextPath}/user/login.me">로그인</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/user/signup.me">회원가입</a></li>
                                 </c:when>
                                 <c:otherwise>
-                                    <li><a href="#">${loginUser.userName}님</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/member/mypage">마이페이지</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/member/logout">로그아웃</a></li>
+                                    <li><a href="#">${loginMember.userNickname}님</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/user/mypage.me">마이페이지</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/user/logout.me">로그아웃</a></li>
                                 </c:otherwise>
                             </c:choose>
                         </ul>
                     </li>
                 </ul>
             </nav>
+			<!-- logout이 post 방식이기 때문에 a href로 보내면 로그아웃 처리가 안 된다. 이 부분을 추후에 수정해야 한다. -->
         </header>
