@@ -102,6 +102,12 @@
 			  ,#{actMoney})
 	</insert>
 	
+	<select id="selectDonation" resultType="DonationVO">
+	    SELECT *
+	    FROM DONATIONS
+	    WHERE USER_ID = #{userId}
+	    AND DONATION_TYPE = 1
+	</select>
 	
 	
 	
