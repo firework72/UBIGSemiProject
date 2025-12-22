@@ -4,12 +4,12 @@
 <mapper namespace="messageMapper">
 
 	<select id="selectInbox" parameterType="string" resultType="MessageVO">
-		SELECT (MESSAGE_NO
+		SELECT  MESSAGE_NO
 			   ,MESSAGE_SEND_USER_ID
 			   ,MESSAGE_RECEIVE_USER_ID
 			   ,MESSAGE_CONTENT
 			   ,MESSAGE_IS_CHECK
-			   ,MESSAGE_CREATE_DATE)
+			   ,MESSAGE_CREATE_DATE
 		FROM MESSAGES
 		WHERE MESSAGE_RECEIVE_USER_ID = #{userId}
 	</select>

@@ -34,6 +34,10 @@ public class MessageController {
 		
 		ArrayList<MessageVO> list = service.selectInbox(loginMember.getUserId());
 		
+		for (MessageVO msg : list) {
+			System.out.println(msg);
+		}
+		
 		model.addAttribute("list", list);
 		
 		return "member/inbox";

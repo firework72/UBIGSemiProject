@@ -62,15 +62,14 @@
                     <tr>
                         <th scope="col" style="width: 10%;">상태</th>
                         <th scope="col" style="width: 15%;">보낸 사람</th>
-                        <th scope="col" style="width: 50%;">내용</th>
+                        <th scope="col" style="width: 60%;">내용</th>
                         <th scope="col" style="width: 15%;">날짜</th>
-                        <th scope="col" style="width: 10%;">관리</th>
                     </tr>
                 </thead>
                 <tbody>
+                	<!-- 받은 쪽지가 없으면 받은 쪽지가 없습니다. 텍스트를 출력하고, 아니라면 받은 메시지 리스트를 보여주기 -->
                     <c:choose>
-                    	<!-- 받은 쪽지가 없는 경우 받은 쪽지가 없습니다. 를 출력 -->
-                        <c:when test="${empty messageList}">
+                        <c:when test="${empty list}">
                             <tr>
                                 <td colspan="5" class="py-5 text-secondary">받은 쪽지가 없습니다.</td>
                             </tr>
@@ -78,7 +77,7 @@
                         <c:otherwise>
                             <c:forEach var="msg" items="${list}">
                                 <tr class="${msg.messageIsCheck == 'N' ? 'unread-msg' : ''}" 
-                                    onclick="openMessageDetail(${msg.messageNo}, '${msg.senderNickname}', '${msg.messageContent}', '${msg.messageCreateDate}', '${msg.messageIsCheck}')">
+                                    onclick="openMessageDetail(${msg.messageNo}, '${msg.messageSendUserId}', '${msg.messageContent}', '${msg.messageCreateDate}', '${msg.messageIsCheck}')">
                                     
                                     <td>
                                         <c:if test="${msg.messageIsCheck == 'N'}">
@@ -89,7 +88,7 @@
                                         </c:if>
                                     </td>
 
-                                    <td>${msg.senderNickname}</td>
+                                    <td>${msg.messageSendUserId}</td>
 
                                     <td class="text-start ps-4">
                                         <span class="msg-preview text-dark text-decoration-none">
@@ -99,10 +98,6 @@
 
                                     <td class="text-secondary small">
                                         <fmt:formatDate value="${msg.messageCreateDate}" pattern="yyyy.MM.dd HH:mm"/>
-                                    </td>
-
-                                    <td>
-                                        <button class="btn btn-outline-secondary btn-sm" onclick="deleteMessage(event, ${msg.messageNo})">삭제</button>
                                     </td>
                                 </tr>
                             </c:forEach>
@@ -190,14 +185,14 @@
              // 쓰기 모달 열기 + ID 세팅 (여기선 닉네임이 아니라 ID가 필요하므로, 실제론 ID도 파라미터로 넘겨야 함. 예시에선 닉네임으로 가정)
              // 주의: 실제 답장을 보내려면 senderId(USER_ID)가 필요합니다. 
              // JSP 루프에서 senderId도 같이 넘겨주는 것을 권장합니다.
-             $("#receiveIdInput").val(""); // 일단 초기화 (ID를 넘겨받았다면 .val(senderId))
+             $("#receiveIdInput").val(sender); // 일단 초기화 (ID를 넘겨받았다면 .val(senderId))
              $("#writeModal").modal("show");
         });
 
         // 모달 띄우기
         $("#detailModal").modal("show");
 
-        // [중요] 읽지 않은 쪽지라면 '읽음 처리' AJAX 호출
+        // 만약 선택된 쪽지가 아직 읽지 않은 쪽지라면, 읽음 상태로 변경한다.
         if(isCheck === 'N') {
             $.ajax({
                 url: "/message/read",
