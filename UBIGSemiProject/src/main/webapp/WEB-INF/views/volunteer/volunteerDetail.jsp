@@ -112,7 +112,7 @@
 				<hr style="margin: 30px 0;">
 
 				<div style="width: 800px;">
-					<h3>💬 궁금한 점을 남겨주세요 (Q&A)</h3>
+					<h3>💬 봉사활동 댓글</h3>
 
 					<div style="background: #eee; padding: 15px; border-radius: 5px;">
 						<strong>작성자: admin1</strong>
