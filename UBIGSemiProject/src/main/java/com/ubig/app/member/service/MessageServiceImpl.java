@@ -36,5 +36,11 @@ public class MessageServiceImpl implements MessageService{
 	public int insertMessage(MessageVO message) {
 		return dao.insertMessage(sqlSession, message);
 	}
+	
+	// 메시지 발신함 가져오기
+	@Override
+	public ArrayList<MessageVO> selectSent(String userId) {
+		return dao.selectSent(sqlSession, userId);
+	}
 
 }

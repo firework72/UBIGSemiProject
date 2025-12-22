@@ -12,4 +12,6 @@ public interface MessageService {
 
 	int insertMessage(MessageVO message);
 
+	ArrayList<MessageVO> selectSent(String userId);
+
 }

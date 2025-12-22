@@ -54,7 +54,7 @@ public class MessageController {
 		
 		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
 		
-		ArrayList<MessageVO> list = service.selectInbox(loginMember.getUserId());
+		ArrayList<MessageVO> list = service.selectSent(loginMember.getUserId());
 		
 		int unreadCount = service.unreadCount(loginMember.getUserId());
 		
@@ -65,7 +65,7 @@ public class MessageController {
 		model.addAttribute("list", list);
 		model.addAttribute("unreadCount", unreadCount);
 		
-		return "member/inbox";
+		return "member/sent";
 	}
 
 	
