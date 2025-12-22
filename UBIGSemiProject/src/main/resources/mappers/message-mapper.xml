@@ -12,6 +12,7 @@
 			   ,MESSAGE_CREATE_DATE
 		FROM MESSAGES
 		WHERE MESSAGE_RECEIVE_USER_ID = #{userId}
+		ORDER BY MESSAGE_CREATE_DATE DESC
 	</select>
 	
 	<select id="unreadCount" parameterType="string" resultType="_int">

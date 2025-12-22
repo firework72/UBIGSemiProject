@@ -227,14 +227,14 @@
     	// 존재하지 않는 유저에게 쪽지를 보낼 수 없다.
     	// 동기 방식으로 처리한다.
     	$.ajax({
-    		url : "${pageContext.request.contextPath}/user/checkId.me",
+    		url : "${pageContext.request.contextPath}/user/messageCheckId.me",
     		async : false,
     		data : {
     			userId: receiveId
     		},
     		success : function(data) {
     			console.log(data);
-    			if (data == "success") {
+    			if (data == "fail") {
     				alert("존재하지 않는 유저입니다.");
     				isExist = false;
     			}

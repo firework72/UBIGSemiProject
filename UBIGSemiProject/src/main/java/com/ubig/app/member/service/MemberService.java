@@ -10,4 +10,6 @@ public interface MemberService {
 
 	int checkId(String userId);
 
+	int messageCheckId(String userId);
+
 }
