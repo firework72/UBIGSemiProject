@@ -6,6 +6,7 @@ import org.apache.ibatis.session.RowBounds;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.ubig.app.vo.adoption.AdoptionMainListVO;
 import com.ubig.app.vo.adoption.AdoptionPageInfoVO;
 import com.ubig.app.vo.adoption.AdoptionPostVO;
 import com.ubig.app.vo.adoption.AnimalDetailVO;
@@ -21,27 +22,25 @@ public class AdoptionDao {
 		return sqlSession.selectOne("adoptionMapper.listCount");
 	}
 
-	public ArrayList<AdoptionPostVO> boardList(SqlSessionTemplate sqlSession, AdoptionPageInfoVO pi) {
+	public ArrayList<AdoptionMainListVO> selectAdoptionMainList(SqlSessionTemplate sqlSession,
+			AdoptionPageInfoVO pi) {
 
 		int limit = pi.getBoardLimit();
-		int offset = (pi.getCurrentPage()-1) * limit;
-		
-		RowBounds rowBounds = new RowBounds(offset,limit);
-		
-		return (ArrayList)sqlSession.selectList("adoptionMapper.boardList",null,rowBounds);
+		int offset = (pi.getCurrentPage() - 1) * limit;
+
+		RowBounds rowBounds = new RowBounds(offset, limit);
+
+		return (ArrayList) sqlSession.selectList("adoptionMapper.selectAdoptionMainList", null, rowBounds);
 	}
 
-	public ArrayList<AnimalDetailVO> getPhoto(SqlSessionTemplate sqlSession, ArrayList<Integer> photo) {
-		return (ArrayList)sqlSession.selectList("adoptionMapper.getPhoto",photo);
-	}
+	// getPhoto Removed
 
 	public int insertBoard(SqlSessionTemplate sqlSession, AdoptionPostVO post) {
-		return sqlSession.insert("adoptionMapper.insertBoard",post);
+		return sqlSession.insert("adoptionMapper.insertBoard", post);
 	}
 
 	public AnimalDetailVO goAdoptionDetail(SqlSessionTemplate sqlSession, int anino) {
-		return sqlSession.selectOne("adoptionMapper.goAdoptionDetail",anino);
+		return sqlSession.selectOne("adoptionMapper.goAdoptionDetail", anino);
 	}
-
 
 }

@@ -19,6 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.ubig.app.adoption.common.AdoptionPagination;
 import com.ubig.app.adoption.service.AdoptionService;
 import com.ubig.app.vo.adoption.AdoptionApplicationVO;
+import com.ubig.app.vo.adoption.AdoptionMainListVO;
 import com.ubig.app.vo.adoption.AdoptionPageInfoVO;
 import com.ubig.app.vo.adoption.AdoptionPostVO;
 import com.ubig.app.vo.adoption.AnimalDetailVO;
@@ -28,131 +29,117 @@ public class AdoptionController {
 
 	@Autowired
 	AdoptionService service;
-	
-	//입양 디테일페이지 이동
+
+	// 입양 디테일페이지 이동
 	@RequestMapping("/adoption.detailpage")
 	public String goAdoptionDetail(int anino, Model model) {
-		//animalNo를 가지고 해당 정보를 가지고 와서 디테일 페이지에서 보여주기
+		// animalNo를 가지고 해당 정보를 가지고 와서 디테일 페이지에서 보여주기
 		AnimalDetailVO ani = service.goAdoptionDetail(anino);
-		model.addAttribute("animal",ani);
+		model.addAttribute("animal", ani);
 		return "/adoption/adoptiondetailpage";
 	}
-	
-	//입양 등록 페이지 이동
+
+	// 입양 등록 페이지 이동
 	@RequestMapping("/adoption.enrollpage")
 	public String goAdoptionInsertPage() {
 		return "/adoption/adoptionenrollpage";
 	}
-	
-	//입양 신청 페이지 이동
+
+	// 입양 신청 페이지 이동
 	@RequestMapping("/adoption.applicationpage")
 	public String goAdoptionApplicationPage(int anino) {
 		return "/adoption/adoptionapplication";
 	}
-	
-	//게시글 등록
+
+	// 게시글 등록
 	@RequestMapping("/adoption.insert.board")
-	public String insertBoard(AdoptionPostVO post,Model model) {
+	public String insertBoard(AdoptionPostVO post, Model model) {
 		int result = service.insertBoard(post);
-		if(result>0) {
-			model.addAttribute("alertAd","등록 성공");
-		}else {
-			model.addAttribute("alertAd","등록 실패");
+		if (result > 0) {
+			model.addAttribute("alertAd", "등록 성공");
+		} else {
+			model.addAttribute("alertAd", "등록 실패");
 		}
 		return "redirect:/adoption.enrollpage";
 	}
-	
-	//입양 신청서 작성submit
+
+	// 입양 신청서 작성submit
 	@RequestMapping("/adoption.insertapplication")
-	public String insertapplication(AdoptionApplicationVO application,RedirectAttributes redirectAtt) {
-		//아직 로직이 없음 구현 필요
-		redirectAtt.addAttribute("anino",application.getAnimalNo());
+	public String insertapplication(AdoptionApplicationVO application, RedirectAttributes redirectAtt) {
+		// 아직 로직이 없음 구현 필요
+		redirectAtt.addAttribute("anino", application.getAnimalNo());
 		return "redirect:/adoption.detailpage";
 	}
-	
-	//동물 등록
+
+	// 동물 등록
 	@RequestMapping("/adoption.insert.animal")
-	public String insertAnimal(HttpSession session,MultipartFile uploadFile,AnimalDetailVO animal) {
-		
-		//첨부파일 있는지 확인 로직
-		if(uploadFile != null && !uploadFile.isEmpty()) {
-			//파일 저장 및 이름 변경
-			String changeName = uploadFile(session,uploadFile);
-			//DB 저장을위한 파일정보 갱신
+	public String insertAnimal(HttpSession session, MultipartFile uploadFile, AnimalDetailVO animal) {
+
+		// 첨부파일 있는지 확인 로직
+		if (uploadFile != null && !uploadFile.isEmpty()) {
+			// 파일 저장 및 이름 변경
+			String changeName = uploadFile(session, uploadFile);
+			// DB 저장을위한 파일정보 갱신
 			animal.setPhotoUrl(changeName);
-			//service 호출(파일,내용 등록)
+			// service 호출(파일,내용 등록)
 			int result = service.insertAnimal(animal);
-			
-			if(result>0) {
+
+			if (result > 0) {
 				session.setAttribute("alertMsgAd", "동물 등록 성공!");
-			}else {
+			} else {
 				session.setAttribute("alertMsgAd", "동물 등록 실패!");
 			}
 		}
 		return "redirect:/adoption.list";
 	}
-	
-	
-	//동물파일 등록 전용 메서드
-	public String uploadFile(HttpSession session,MultipartFile uploadFile) {
-		//저장경로 획득
+
+	// 동물파일 등록 전용 메서드
+	public String uploadFile(HttpSession session, MultipartFile uploadFile) {
+		// 저장경로 획득
 		String savePath = session.getServletContext().getRealPath("resources/download/adoption/");
-		//원본 파일명 및 확장자 추출
+		// 원본 파일명 및 확장자 추출
 		String originName = uploadFile.getOriginalFilename();
 		String ext = originName.substring(originName.lastIndexOf("."));
-		//리네임 규칙
+		// 리네임 규칙
 		String currentTime = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-		int ranNum = (int)(Math.random()*90000+10000);
-		//변경된 파일명 조합
+		int ranNum = (int) (Math.random() * 90000 + 10000);
+		// 변경된 파일명 조합
 		String changeName = currentTime + ranNum + ext;
-		//서버에 파일 저장
+		// 서버에 파일 저장
 		try {
 			uploadFile.transferTo(new File(savePath + changeName));
 			return changeName;
 		} catch (IllegalStateException | IOException e) {
 			e.printStackTrace();
-			return ""; //수정 필요
+			return ""; // 수정 필요
 		}
 
 	}
-	
 
-	//페이징 처리, 페이징 - 메인 페이지용 로직
+	// 페이징 처리, 페이징 - 메인 페이지용 로직
 	@RequestMapping("/adoption.mainpage")
-	public String AdoptionList(@RequestParam(value="page",defaultValue = "1")int currentPage,Model model){
-		//리스트 갯수
+	public String AdoptionList(@RequestParam(value = "page", defaultValue = "1") int currentPage, Model model) {
+		// 리스트 갯수
 		int listCount = service.listCount();
-		//현재 페이지 - 받아서 옴
-		//보드를 한 페이지에 몇개 보여줄지(**하드코딩 직접 설정 필요**)
-		int boardLimit = 1;
-		//페이지를 한 페이지에 몇개 보여줄지(**하드코딩 직접 설정 필요**)
+		// 현재 페이지 - 받아서 옴
+		// //보드를 한 페이지에 몇개 보여줄지(**하드코딩 직접 설정 필요**)
+		int boardLimit = 9;
+		// 페이지를 한 페이지에 몇개 보여줄지(**하드코딩 직접 설정 필요**)
 		int pageLimit = 2;
-		
-		AdoptionPageInfoVO pi = AdoptionPagination.getPageInfo(listCount, currentPage, boardLimit, pageLimit);
-		
-		//페이징 처리 정보를 가지고 보여줄 보드를 리스트로 가져오기
-		ArrayList<AdoptionPostVO> postList = service.boardList(pi);
 
-		//해당 보드 동물번호No 리스트화
-		ArrayList<Integer> photo = new ArrayList<>();
-		for(AdoptionPostVO post: postList) {
-			int aniNo = post.getAnimalNo();
-			photo.add(aniNo);
-		}
-		
-		//동물 번호와 파일들만 가져오기
-		ArrayList<AnimalDetailVO> animal = service.getPhoto(photo);
-		
-		//페이징 처리, 페이징용 리스트 model에 담기
-		model.addAttribute("pi",pi);
-		model.addAttribute("postList",postList);
-		model.addAttribute("animalList",animal);
+		AdoptionPageInfoVO pi = AdoptionPagination.getPageInfo(listCount, currentPage, boardLimit, pageLimit);
+
+		// 페이징 처리 정보를 가지고 보여줄 보들을 리스트로 가져오기 (통합 VO 사용)
+		ArrayList<AdoptionMainListVO> adoptionList = service.selectAdoptionMainList(pi);
+
+		// 페이징 처리, 페이징용 리스트 model에 담기
+		model.addAttribute("pi", pi);
+		// jsp에서 사용할 이름: adoptionList (기존 postList, animalList 대체)
+		model.addAttribute("adoptionList", adoptionList);
 
 		return "/adoption/adoptionmainpage";
 	}
-	
-	//조회수 관련 로직 만들어야함
-	
-	
-	
+
+	// 조회수 관련 로직 만들어야함? 만들어야 하나?
+
 }
