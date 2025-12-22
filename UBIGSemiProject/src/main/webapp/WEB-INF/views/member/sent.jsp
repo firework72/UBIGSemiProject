@@ -48,10 +48,10 @@
 
     <ul class="nav nav-tabs mb-3">
         <li class="nav-item">
-            <a class="nav-link active" href="${pageContext.request.contextPath}/message/inbox.ms">받은 쪽지함 <span class="badge bg-danger rounded-pill ms-1">${unreadCount}</span></a>
+            <a class="nav-link" href="${pageContext.request.contextPath}/message/inbox.ms">받은 쪽지함 <span class="badge bg-danger rounded-pill ms-1">${unreadCount}</span></a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="${pageContext.request.contextPath}/message/sent.ms">보낸 쪽지함</a>
+            <a class="nav-link active" href="${pageContext.request.contextPath}/message/sent.ms">보낸 쪽지함</a>
         </li>
     </ul>
 
@@ -61,23 +61,23 @@
                 <thead class="table-light">
                     <tr>
                         <th scope="col" style="width: 10%;">상태</th>
-                        <th scope="col" style="width: 15%;">보낸 사람</th>
+                        <th scope="col" style="width: 15%;">받는 사람</th>
                         <th scope="col" style="width: 60%;">내용</th>
                         <th scope="col" style="width: 15%;">날짜</th>
                     </tr>
                 </thead>
                 <tbody>
-                	<!-- 받은 쪽지가 없으면 받은 쪽지가 없습니다. 텍스트를 출력하고, 아니라면 받은 메시지 리스트를 보여주기 -->
+                	<!-- 보낸 쪽지가 없으면 보낸 쪽지가 없습니다. 텍스트를 출력하고, 아니라면 보낸 메시지 리스트를 보여주기 -->
                     <c:choose>
                         <c:when test="${empty list}">
                             <tr>
-                                <td colspan="5" class="py-5 text-secondary">받은 쪽지가 없습니다.</td>
+                                <td colspan="5" class="py-5 text-secondary">보낸 쪽지가 없습니다.</td>
                             </tr>
                         </c:when>
                         <c:otherwise>
                             <c:forEach var="msg" items="${list}">
                                 <tr class="${msg.messageIsCheck == 'N' ? 'unread-msg' : ''}" 
-                                    onclick="openMessageDetail(${msg.messageNo}, '${msg.messageSendUserId}', '${msg.messageContent}', '${msg.messageCreateDate}', '${msg.messageIsCheck}')">
+                                    onclick="openMessageDetail(${msg.messageNo}, '${msg.messageReceiveUserId}', '${msg.messageContent}', '${msg.messageCreateDate}', '${msg.messageIsCheck}')">
                                     
                                     <td>
                                         <c:if test="${msg.messageIsCheck == 'N'}">
@@ -88,7 +88,7 @@
                                         </c:if>
                                     </td>
 
-                                    <td>${msg.messageSendUserId}</td>
+                                    <td>${msg.messageReceiveUserId}</td>
 
                                     <td class="text-start ps-4">
                                         <span class="msg-preview text-dark text-decoration-none">
@@ -120,7 +120,7 @@
             </div>
             <div class="modal-body">
                 <div class="mb-3 border-bottom pb-2">
-                    <label class="text-secondary small">보낸 사람</label>
+                    <label class="text-secondary small">받는 사람</label>
                     <div class="fw-bold fs-5" id="modalSender"></div>
                 </div>
                 <div class="mb-3 border-bottom pb-2">
@@ -134,7 +134,6 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                <button type="button" class="btn btn-primary" id="btnReply">답장하기</button>
             </div>
         </div>
     </div>
@@ -178,32 +177,9 @@
         $("#modalSender").text(sender);
         $("#modalContent").text(content); // text()로 넣어야 XSS 방지
         $("#modalDate").text(date); // 포맷팅된 문자열이 들어온다고 가정
-        
-        // 답장하기 버튼 클릭 시 -> 쓰기 모달의 받는 사람에 세팅하고 쓰기 모달 띄우기
-        $("#btnReply").off("click").on("click", function() {
-             // 상세 모달 닫고
-             $("#detailModal").modal("hide");
-             // 쓰기 모달 열기 + ID 세팅 (여기선 닉네임이 아니라 ID가 필요하므로, 실제론 ID도 파라미터로 넘겨야 함. 예시에선 닉네임으로 가정)
-             // 주의: 실제 답장을 보내려면 senderId(USER_ID)가 필요합니다. 
-             // JSP 루프에서 senderId도 같이 넘겨주는 것을 권장합니다.
-             $("#receiveIdInput").val(sender); // 일단 초기화 (ID를 넘겨받았다면 .val(senderId))
-             $("#writeModal").modal("show");
-        });
 
         // 모달 띄우기
         $("#detailModal").modal("show");
-
-        // 만약 선택된 쪽지가 아직 읽지 않은 쪽지라면, 읽음 상태로 변경한다.
-        if(isCheck === 'N') {
-            $.ajax({
-                url: "/message/read",
-                type: "POST",
-                data: { messageNo: msgNo },
-                success: function(res) {
-                    console.log("읽음 처리 완료");
-                }
-            });
-        }
     }
     
     // 2. 쪽지 보내기 버튼 함수

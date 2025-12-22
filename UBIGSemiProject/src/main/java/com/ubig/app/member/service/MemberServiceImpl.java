@@ -34,5 +34,11 @@ public class MemberServiceImpl implements MemberService {
 		return dao.checkId(sqlSession, userId);
 	}
 	
+	// 쪽지 전송 시 가입되어 있는 아이디인지 확인
+	@Override
+	public int messageCheckId(String userId) {
+		return dao.messageCheckId(sqlSession, userId);
+	}
+	
 	
 }

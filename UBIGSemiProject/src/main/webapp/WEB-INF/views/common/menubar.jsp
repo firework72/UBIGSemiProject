@@ -61,7 +61,11 @@
                                 <c:otherwise>
                                     <li><a href="#">${loginMember.userNickname}님</a></li>
                                     <li><a href="${pageContext.request.contextPath}/user/mypage.me">마이페이지</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/user/logout.me">로그아웃</a></li>
+                                    <li>
+	                                    <form id="logoutForm" action="${pageContext.request.contextPath}/user/logout.me" method="post">
+	                                    	<a href="javascript:void(0);" onclick="document.getElementById('logoutForm').submit();">로그아웃</a>
+	                                    </form>
+                                    </li>
                                 </c:otherwise>
                             </c:choose>
                         </ul>

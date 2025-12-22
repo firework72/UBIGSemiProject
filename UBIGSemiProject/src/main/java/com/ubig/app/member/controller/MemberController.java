@@ -150,6 +150,21 @@ public class MemberController {
 			return "success";
 		}
 	}
+	
+	// 쪽지 전송 시 가입되어있는 아이디인지 확인
+	@ResponseBody
+	@RequestMapping("/messageCheckId.me")
+	public String messageCheckId(String userId) {
+		// 이미 존재하는 아이디라면 fail, 존재하지 않는 아이디라면 success 추가
+
+		int result = service.messageCheckId(userId);
+
+		if (result > 0) {
+			return "success";
+		} else {
+			return "fail";
+		}
+	}
 
 	// 마이페이지 이동
 	@RequestMapping("/mypage.me")

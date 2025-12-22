@@ -5,13 +5,14 @@
 
 	<select id="selectInbox" parameterType="string" resultType="MessageVO">
 		SELECT  MESSAGE_NO
-			   ,MESSAGE_SEND_USER_ID
-			   ,MESSAGE_RECEIVE_USER_ID
-			   ,MESSAGE_CONTENT
-			   ,MESSAGE_IS_CHECK
-			   ,MESSAGE_CREATE_DATE
-		FROM MESSAGES
-		WHERE MESSAGE_RECEIVE_USER_ID = #{userId}
+	           ,MESSAGE_SEND_USER_ID
+	           ,MESSAGE_RECEIVE_USER_ID
+	           ,MESSAGE_CONTENT
+	           ,MESSAGE_IS_CHECK
+	           ,MESSAGE_CREATE_DATE
+	    FROM MESSAGES
+	    WHERE MESSAGE_RECEIVE_USER_ID = #{userId}
+	    ORDER BY MESSAGE_CREATE_DATE DESC
 	</select>
 	
 	<select id="unreadCount" parameterType="string" resultType="_int">
@@ -33,6 +34,18 @@
 			  ,#{messageReceiveUserId}
 			  ,#{messageContent}
 			  ,'N'
-			  ,SYSDATE);
+			  ,SYSDATE)
 	</insert>
+	
+	<select id="selectSent" parameterType="string" resultType="MessageVO">
+		SELECT  MESSAGE_NO
+			   ,MESSAGE_SEND_USER_ID
+			   ,MESSAGE_RECEIVE_USER_ID
+			   ,MESSAGE_CONTENT
+			   ,MESSAGE_IS_CHECK
+			   ,MESSAGE_CREATE_DATE
+		FROM MESSAGES
+		WHERE MESSAGE_SEND_USER_ID = #{userId}
+		ORDER BY MESSAGE_CREATE_DATE DESC
+	</select>
 </mapper>
