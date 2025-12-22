@@ -4,13 +4,35 @@
 <mapper namespace="messageMapper">
 
 	<select id="selectInbox" parameterType="string" resultType="MessageVO">
-		SELECT (MESSAGE_NO
+		SELECT  MESSAGE_NO
 			   ,MESSAGE_SEND_USER_ID
 			   ,MESSAGE_RECEIVE_USER_ID
 			   ,MESSAGE_CONTENT
 			   ,MESSAGE_IS_CHECK
-			   ,MESSAGE_CREATE_DATE)
+			   ,MESSAGE_CREATE_DATE
 		FROM MESSAGES
 		WHERE MESSAGE_RECEIVE_USER_ID = #{userId}
 	</select>
+	
+	<select id="unreadCount" parameterType="string" resultType="_int">
+		SELECT COUNT(*)
+		FROM MESSAGES
+		WHERE MESSAGE_RECEIVE_USER_ID = #{userId}
+		AND MESSAGE_IS_CHECK = 'N'
+	</select>
+	
+	<insert id="insertMessage" parameterType="MessageVO">
+		INSERT INTO MESSAGES (   MESSAGE_NO
+								,MESSAGE_SEND_USER_ID
+								,MESSAGE_RECEIVE_USER_ID
+								,MESSAGE_CONTENT
+								,MESSAGE_IS_CHECK
+								,MESSAGE_CREATE_DATE)
+		VALUES(SEQ_MESSAGES.NEXTVAL
+			  ,#{messageSendUserId}
+			  ,#{messageReceiveUserId}
+			  ,#{messageContent}
+			  ,'N'
+			  ,SYSDATE);
+	</insert>
 </mapper>

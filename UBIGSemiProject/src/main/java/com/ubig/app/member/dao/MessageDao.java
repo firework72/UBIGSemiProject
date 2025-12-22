@@ -15,4 +15,14 @@ public class MessageDao {
 		return (ArrayList) sqlSession.selectList("messageMapper.selectInbox", userId);
 	}
 
+	public int unreadCount(SqlSessionTemplate sqlSession, String userId) {
+		return sqlSession.selectOne("messageMapper.unreadCount", userId);
+	}
+
+	public int insertMessage(SqlSessionTemplate sqlSession, MessageVO message) {
+		return sqlSession.insert("messageMapper.insertMessage", message);
+	}
+	
+	
+
 }

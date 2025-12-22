@@ -48,10 +48,10 @@
 
     <ul class="nav nav-tabs mb-3">
         <li class="nav-item">
-            <a class="nav-link active" href="/message/inbox">받은 쪽지함 <span class="badge bg-danger rounded-pill ms-1">${unreadCount}</span></a>
+            <a class="nav-link active" href="${pageContext.request.contextPath}/message/inbox.ms">받은 쪽지함 <span class="badge bg-danger rounded-pill ms-1">${unreadCount}</span></a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/message/sent">보낸 쪽지함</a>
+            <a class="nav-link" href="${pageContext.request.contextPath}/message/sent.ms">보낸 쪽지함</a>
         </li>
     </ul>
 
@@ -62,15 +62,14 @@
                     <tr>
                         <th scope="col" style="width: 10%;">상태</th>
                         <th scope="col" style="width: 15%;">보낸 사람</th>
-                        <th scope="col" style="width: 50%;">내용</th>
+                        <th scope="col" style="width: 60%;">내용</th>
                         <th scope="col" style="width: 15%;">날짜</th>
-                        <th scope="col" style="width: 10%;">관리</th>
                     </tr>
                 </thead>
                 <tbody>
+                	<!-- 받은 쪽지가 없으면 받은 쪽지가 없습니다. 텍스트를 출력하고, 아니라면 받은 메시지 리스트를 보여주기 -->
                     <c:choose>
-                    	<!-- 받은 쪽지가 없는 경우 받은 쪽지가 없습니다. 를 출력 -->
-                        <c:when test="${empty messageList}">
+                        <c:when test="${empty list}">
                             <tr>
                                 <td colspan="5" class="py-5 text-secondary">받은 쪽지가 없습니다.</td>
                             </tr>
@@ -78,7 +77,7 @@
                         <c:otherwise>
                             <c:forEach var="msg" items="${list}">
                                 <tr class="${msg.messageIsCheck == 'N' ? 'unread-msg' : ''}" 
-                                    onclick="openMessageDetail(${msg.messageNo}, '${msg.senderNickname}', '${msg.messageContent}', '${msg.messageCreateDate}', '${msg.messageIsCheck}')">
+                                    onclick="openMessageDetail(${msg.messageNo}, '${msg.messageSendUserId}', '${msg.messageContent}', '${msg.messageCreateDate}', '${msg.messageIsCheck}')">
                                     
                                     <td>
                                         <c:if test="${msg.messageIsCheck == 'N'}">
@@ -89,7 +88,7 @@
                                         </c:if>
                                     </td>
 
-                                    <td>${msg.senderNickname}</td>
+                                    <td>${msg.messageSendUserId}</td>
 
                                     <td class="text-start ps-4">
                                         <span class="msg-preview text-dark text-decoration-none">
@@ -99,10 +98,6 @@
 
                                     <td class="text-secondary small">
                                         <fmt:formatDate value="${msg.messageCreateDate}" pattern="yyyy.MM.dd HH:mm"/>
-                                    </td>
-
-                                    <td>
-                                        <button class="btn btn-outline-secondary btn-sm" onclick="deleteMessage(event, ${msg.messageNo})">삭제</button>
                                     </td>
                                 </tr>
                             </c:forEach>
@@ -153,20 +148,21 @@
                 <h5 class="modal-title fw-bold">쪽지 보내기</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form action="/message/send" method="post">
+            <form action="${pageContext.request.contextPath}/message/insert.ms" method="post">
+            	<input type="hidden" name="messageSendUserId" value="${loginMember.userId }">
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label fw-bold">받는 사람 ID</label>
-                        <input type="text" class="form-control" name="messageReceiveUserId" id="receiveIdInput" placeholder="회원 ID를 입력하세요" required>
+                        <input type="text" class="form-control" name="messageReceiveUserId" id="inputMessageReceiveUserId" placeholder="회원 ID를 입력하세요" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">내용</label>
-                        <textarea class="form-control" name="messageContent" rows="5" placeholder="내용을 입력하세요 (최대 200자)" maxlength="200" required></textarea>
+                        <textarea class="form-control" name="messageContent" id="inputMessageContent" rows="5" placeholder="내용을 입력하세요 (최대 200자)" maxlength="200" required></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                    <button type="submit" class="btn btn-warning text-white fw-bold">보내기</button>
+                    <button type="submit" class="btn btn-warning text-white fw-bold" onclick="return sendMessage();">보내기</button>
                 </div>
             </form>
         </div>
@@ -190,25 +186,65 @@
              // 쓰기 모달 열기 + ID 세팅 (여기선 닉네임이 아니라 ID가 필요하므로, 실제론 ID도 파라미터로 넘겨야 함. 예시에선 닉네임으로 가정)
              // 주의: 실제 답장을 보내려면 senderId(USER_ID)가 필요합니다. 
              // JSP 루프에서 senderId도 같이 넘겨주는 것을 권장합니다.
-             $("#receiveIdInput").val(""); // 일단 초기화 (ID를 넘겨받았다면 .val(senderId))
+             $("#receiveIdInput").val(sender); // 일단 초기화 (ID를 넘겨받았다면 .val(senderId))
              $("#writeModal").modal("show");
         });
 
         // 모달 띄우기
         $("#detailModal").modal("show");
 
-        // [중요] 읽지 않은 쪽지라면 '읽음 처리' AJAX 호출
+        // 만약 선택된 쪽지가 아직 읽지 않은 쪽지라면, 읽음 상태로 변경한다.
         if(isCheck === 'N') {
             $.ajax({
                 url: "/message/read",
                 type: "POST",
                 data: { messageNo: msgNo },
                 success: function(res) {
-                    // 성공 시 UI 업데이트 (뱃지 제거 등)는 새로고침 혹은 JS로 처리
                     console.log("읽음 처리 완료");
                 }
             });
         }
+    }
+    
+    // 2. 쪽지 보내기 버튼 함수
+    function sendMessage() {
+    	
+    	let receiveId = $("#inputMessageReceiveUserId").val();
+    	let content = $("#inputMessageContent").val();
+    	
+    	console.log(receiveId);
+    	console.log(content);
+    	
+    	// 자기 자신에게는 쪽지를 보낼 수 없다.
+    	if ('${loginMember.userId}' == receiveId) {
+    		alert("자기 자신에게는 쪽지를 보낼 수 없습니다.");
+    		return false;
+    	}
+    	
+    	let isExist = true;
+    	
+    	// 존재하지 않는 유저에게 쪽지를 보낼 수 없다.
+    	$.ajax({
+    		url : "${pageContext.request.contextPath}/user/checkId.me",
+    		data : {
+    			userId: receiveId
+    		},
+    		success : function(data) {
+    			console.log(data);
+    			if (data == "success") {
+    				alert("존재하지 않는 유저입니다.");
+    				return false;
+    			}
+    			
+    			// 쪽지 보내기 요청
+    			return confirm("쪽지를 보내시겠습니까?");
+    		},
+    		error : function() {
+    			console.log("통신 실패");
+    			alert("알 수 없는 오류가 발생했습니다.");
+    			return false;
+    		}
+    	});
     }
 </script>
 
