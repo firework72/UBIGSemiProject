@@ -20,4 +20,5 @@ public class BoardVO {
     private Date updateDate;
     private int viewCount;
     private String isDeleted;
+    private String isPinned; // 'Y' or 'N'
 }

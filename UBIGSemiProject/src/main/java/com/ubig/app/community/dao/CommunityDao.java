@@ -52,6 +52,19 @@ public class CommunityDao {
         return sqlSession.update("communityMapper.updateBoard", board);
     }
 
+    // [Step 30: Rotation Logic Methods]
+    public int selectPinnedCount(String category) {
+        return sqlSession.selectOne("communityMapper.selectPinnedCount", category);
+    }
+
+    public BoardVO selectOldestPinned(String category) {
+        return sqlSession.selectOne("communityMapper.selectOldestPinned", category);
+    }
+
+    public int updateBoardPinned(java.util.Map<String, Object> params) {
+        return sqlSession.update("communityMapper.updateBoardPinned", params);
+    }
+
     public int deleteBoard(int boardId) {
         return sqlSession.update("communityMapper.deleteBoard", boardId);
     }

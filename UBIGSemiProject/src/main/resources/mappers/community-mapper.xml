@@ -12,6 +12,7 @@
         <result property="updateDate" column="UPDATE_DATE"/>
         <result property="viewCount" column="VIEW_COUNT"/>
         <result property="isDeleted" column="IS_DELETED"/>
+        <result property="isPinned" column="IS_PINNED"/>
     </resultMap>
 
     <resultMap type="com.ubig.app.vo.community.CommentVO" id="commentResultMap">
@@ -26,27 +27,24 @@
     </resultMap>
     
     <!-- Boards -->
-    <!-- 
-        [Step 1: SQL 수정] 
-        게시판 종류(공지사항, 자유게시판 등)별로 데이터를 가져오기 위해 
-        CATEGORY 조건을 추가했습니다. 이제 DB는 '어떤 카테고리 줘?'라고 물어볼 것입니다.
-    -->
     
     <select id="selectListCount" parameterType="string" resultType="_int">
         SELECT COUNT(*) 
         FROM BOARDS 
         WHERE IS_DELETED = 'N' 
         AND CATEGORY = #{category}
+        <!-- 고정 글은 카테고리 목록에서 중복 조회되면 안 되지만, 일단 목록 카운트에는 포함 -->
     </select>
     
     <select id="selectBoardList" parameterType="string" resultMap="boardResultMap">
         SELECT 
             BOARD_ID, USER_ID, CATEGORY, TITLE, CONTENT, 
-            CREATE_DATE, UPDATE_DATE, VIEW_COUNT, IS_DELETED
+            CREATE_DATE, UPDATE_DATE, VIEW_COUNT, IS_DELETED, IS_PINNED
         FROM BOARDS
         WHERE IS_DELETED = 'N'
+        <!-- [Step 31: 수정] 공지사항은 해당 카테고리 내에서만 상단 고정 -->
         AND CATEGORY = #{category}
-        ORDER BY BOARD_ID DESC
+        ORDER BY IS_PINNED DESC, BOARD_ID DESC
     </select>
     
     <select id="selectBoardDetail" parameterType="_int" resultMap="boardResultMap">
@@ -58,9 +56,9 @@
             SELECT SEQ_BOARDS.NEXTVAL FROM DUAL
         </selectKey>
         INSERT INTO BOARDS (
-            BOARD_ID, USER_ID, CATEGORY, TITLE, CONTENT, CREATE_DATE, UPDATE_DATE, VIEW_COUNT, IS_DELETED
+            BOARD_ID, USER_ID, CATEGORY, TITLE, CONTENT, CREATE_DATE, UPDATE_DATE, VIEW_COUNT, IS_DELETED, IS_PINNED
         ) VALUES (
-            #{boardId}, #{userId}, #{category}, #{title}, #{content}, SYSDATE, SYSDATE, 0, 'N'
+            #{boardId}, #{userId}, #{category}, #{title}, #{content}, SYSDATE, SYSDATE, 0, 'N', #{isPinned}
         )
     </insert>
     
@@ -72,6 +70,30 @@
     
     <update id="deleteBoard" parameterType="_int">
         UPDATE BOARDS SET IS_DELETED = 'Y' WHERE BOARD_ID = #{boardId}
+    </update>
+
+    <!-- Rotation Logic Queries -->
+    <select id="selectPinnedCount" parameterType="string" resultType="_int">
+        SELECT COUNT(*) FROM BOARDS 
+        WHERE IS_PINNED = 'Y' 
+        AND IS_DELETED = 'N'
+        AND CATEGORY = #{category}
+    </select>
+    
+    <select id="selectOldestPinned" parameterType="string" resultMap="boardResultMap">
+        SELECT * FROM (
+            SELECT * FROM BOARDS 
+            WHERE IS_PINNED = 'Y' 
+            AND IS_DELETED = 'N' 
+            AND CATEGORY = #{category}
+            ORDER BY CREATE_DATE ASC, BOARD_ID ASC
+        ) WHERE ROWNUM = 1
+    </select>
+    
+    <update id="updateBoardPinned" parameterType="map">
+        UPDATE BOARDS 
+        SET IS_PINNED = #{isPinned}, CATEGORY = #{category}
+        WHERE BOARD_ID = #{boardId}
     </update>
     
     <!-- Comments -->

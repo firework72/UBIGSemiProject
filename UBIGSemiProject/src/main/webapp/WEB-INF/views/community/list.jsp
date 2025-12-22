@@ -8,50 +8,119 @@
             <head>
                 <meta charset="UTF-8">
                 <title>유봉일공 - 커뮤니티</title>
-                <!-- [Step 6: JSP 만들기] 공통 스타일 시트를 연결합니다. -->
                 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
+                <!-- Google Fonts & Icons -->
+                <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap"
+                    rel="stylesheet">
+                <link rel="stylesheet"
+                    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
                 <style>
                     /* 커뮤니티 페이지 전용 스타일 */
+                    body {
+                        font-family: 'Noto Sans KR', sans-serif;
+                        background-color: #f8f9fa;
+                    }
+
                     .community-container {
-                        padding: 120px 0 50px 0;
-                        width: 1200px;
+                        padding: 100px 0;
+                        width: 100%;
+                        max-width: 1200px;
                         margin: 0 auto;
                     }
 
-                    .page-title {
+                    .page-header {
                         text-align: center;
-                        margin-bottom: 40px;
-                        font-size: 2em;
-                        font-weight: bold;
+                        margin-bottom: 60px;
                     }
 
-                    /* 탭 스타일 */
+                    .page-title {
+                        font-size: 2.5em;
+                        font-weight: 700;
+                        color: #2c3e50;
+                        margin-bottom: 15px;
+                    }
+
+                    .page-desc {
+                        color: #6c757d;
+                        font-size: 1.1em;
+                    }
+
+                    /* 탭 스타일 개선 */
                     .tab-menu {
                         display: flex;
                         justify-content: center;
-                        margin-bottom: 30px;
-                        border-bottom: 1px solid #ddd;
+                        margin-bottom: 40px;
+                        gap: 10px;
                     }
 
                     .tab-item {
-                        padding: 15px 30px;
+                        padding: 12px 30px;
                         cursor: pointer;
-                        color: #666;
+                        color: #495057;
                         font-weight: 500;
                         text-decoration: none;
+                        border-radius: 50px;
+                        background-color: white;
+                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+                        transition: all 0.3s ease;
                     }
 
                     .tab-item:hover {
-                        color: #333;
+                        transform: translateY(-2px);
+                        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+                        color: #ff9f43;
                     }
 
                     .tab-item.active {
-                        border-bottom: 3px solid #ff9f43;
-                        color: #ff9f43;
-                        font-weight: bold;
+                        background-color: #ff9f43;
+                        color: white;
+                        font-weight: 700;
+                        box-shadow: 0 4px 10px rgba(255, 159, 67, 0.4);
                     }
 
-                    /* 게시판 테이블 스타일 */
+                    /* 컨트롤 영역 (게시글 수, 글쓰기 버튼) */
+                    .board-controls {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        margin-bottom: 20px;
+                        padding: 0 10px;
+                    }
+
+                    .select-box {
+                        padding: 8px 15px;
+                        border: 1px solid #ddd;
+                        border-radius: 8px;
+                        background-color: white;
+                        color: #555;
+                        outline: none;
+                        cursor: pointer;
+                    }
+
+                    .btn-write {
+                        background: #ff9f43;
+                        color: white;
+                        padding: 10px 25px;
+                        border-radius: 8px;
+                        text-decoration: none;
+                        font-weight: 500;
+                        transition: background 0.3s;
+                        box-shadow: 0 4px 6px rgba(255, 159, 67, 0.2);
+                    }
+
+                    .btn-write:hover {
+                        background: #e58e3c;
+                    }
+
+                    /* 게시판 테이블 스타일 개선 */
+                    .board-card {
+                        background: white;
+                        border-radius: 15px;
+                        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+                        overflow: hidden;
+                    }
+
                     .board-table {
                         width: 100%;
                         border-collapse: collapse;
@@ -59,21 +128,26 @@
                     }
 
                     .board-table th {
-                        padding: 15px;
-                        background-color: #f9f9f9;
-                        border-top: 2px solid #333;
-                        border-bottom: 1px solid #ddd;
-                        font-weight: bold;
+                        padding: 20px;
+                        background-color: #f1f2f6;
+                        color: #2c3e50;
+                        font-weight: 700;
+                        font-size: 0.95em;
                     }
 
                     .board-table td {
-                        padding: 15px;
-                        border-bottom: 1px solid #eee;
-                        color: #333;
+                        padding: 20px;
+                        border-bottom: 1px solid #f1f2f6;
+                        color: #555;
+                        font-size: 0.95em;
+                    }
+
+                    .board-table tr:last-child td {
+                        border-bottom: none;
                     }
 
                     .board-table tr:hover {
-                        background-color: #f8f8f8;
+                        background-color: #fafbfc;
                     }
 
                     .board-title {
@@ -84,10 +158,81 @@
                     .board-title a {
                         text-decoration: none;
                         color: #333;
+                        font-weight: 500;
+                        transition: color 0.2s;
                     }
 
                     .board-title a:hover {
+                        color: #ff9f43;
                         text-decoration: underline;
+                    }
+
+                    /* 공지사항 강조 */
+                    .row-notice {
+                        background-color: #fff9f0;
+                    }
+
+                    /* [Step 30: 고정 공지 스타일] */
+                    .row-pinned {
+                        background-color: #fff3cd !important;
+                        border: 2px solid #ffeeba;
+                    }
+
+                    .row-pinned td {
+                        color: #856404 !important;
+                    }
+
+                    .row-notice .board-title a {
+                        font-weight: 700;
+                        color: #e58e3c;
+                    }
+
+                    .badge-notice {
+                        background-color: #ff9f43;
+                        color: white;
+                        padding: 4px 8px;
+                        font-size: 0.75em;
+                        border-radius: 4px;
+                        margin-right: 8px;
+                    }
+
+                    /* 페이징 바 */
+                    .pagination {
+                        display: flex;
+                        justify-content: center;
+                        gap: 8px;
+                        margin-top: 50px;
+                    }
+
+                    .pagination a {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        width: 40px;
+                        height: 40px;
+                        border-radius: 50%;
+                        background-color: white;
+                        color: #555;
+                        text-decoration: none;
+                        transition: all 0.2s;
+                        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+                    }
+
+                    .pagination a:hover {
+                        background-color: #f1f2f6;
+                        color: #333;
+                    }
+
+                    .pagination a.active {
+                        background-color: #ff9f43;
+                        color: white;
+                        font-weight: bold;
+                        box-shadow: 0 4px 8px rgba(255, 159, 67, 0.3);
+                    }
+
+                    .empty-list {
+                        padding: 50px;
+                        color: #999;
                     }
                 </style>
             </head>
@@ -98,12 +243,12 @@
 
                 <main class="community-container">
 
-                    <div class="page-title">커뮤니티</div>
+                    <div class="page-header">
+                        <div class="page-title">커뮤니티</div>
+                        <p class="page-desc">따뜻한 이야기를 나누고 소통하는 공간입니다.</p>
+                    </div>
 
-                    <!-- [Step 7: 탭 메뉴 구현] 
-             Controller에서 보내준 'category' 변수를 이용해서 
-             현재 보고 있는 탭에 'active' 클래스를 붙여줍니다. (삼항연산자 사용)
-        -->
+                    <!-- 탭 메뉴 -->
                     <div class="tab-menu">
                         <a href="?category=NOTICE" class="tab-item ${category == 'NOTICE' ? 'active' : ''}">공지사항</a>
                         <a href="?category=FREE" class="tab-item ${category == 'FREE' ? 'active' : ''}">자유게시판</a>
@@ -113,35 +258,30 @@
                         <a href="qna" class="tab-item ${category == 'QNA' ? 'active' : ''}">봉사활동 Q&A</a>
                     </div>
 
-                    <!-- [Step 11: 글쓰기 버튼 추가] 
-             관리자(ADMIN)일 때만 글쓰기 버튼이 보입니다.
-             공지사항 탭에서 글쓰기를 누르면 자동으로 category=NOTICE를 들고 갑니다.
-             (테스트를 위해 잠시 권한 체크를 주석 처리합니다)
-        -->
-                    <c:if test="${loginUser.userRole == 'ADMIN'}">
-                        <div style="text-align: right; margin-bottom: 10px;">
-                            <a href="write?category=${category}" class="btn"
-                                style="background: #ff9f43; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">글쓰기</a>
-                        </div>
-                    </c:if>
+                    <!-- 컨트롤 영역 -->
+                    <div class="board-controls">
+                        <!-- 게시글 수 선택 -->
+                        <select id="boardLimit" class="select-box" onchange="changeLimit(this.value)">
+                            <option value="10" ${limit==10 ? 'selected' : '' }>10개씩 보기</option>
+                            <option value="20" ${limit==20 ? 'selected' : '' }>20개씩 보기</option>
+                            <option value="50" ${limit==50 ? 'selected' : '' }>50개씩 보기</option>
+                        </select>
 
-                    <!-- 페이징 처리 및 게시글 수 선택 -->
-                    <div class="paging-area" style="text-align: center; margin-top: 30px;">
+                        <!-- 글쓰기 버튼 -->
+                        <c:if test="${!empty loginMember && (category != 'NOTICE' || loginMember.userRole == 'ADMIN')}">
+                            <a href="write?category=${category}" class="btn-write">
+                                <i class="fas fa-pen"></i> 글쓰기
+                            </a>
+                        </c:if>
+                    </div>
 
-                        <!-- 1. 게시글 수 선택 (limit) -->
-                        <div style="float: right; margin-bottom: 10px;">
-                            <select id="boardLimit" onchange="changeLimit(this.value)">
-                                <option value="10" ${limit==10 ? 'selected' : '' }>10개씩 보기</option>
-                                <option value="20" ${limit==20 ? 'selected' : '' }>20개씩 보기</option>
-                                <option value="50" ${limit==50 ? 'selected' : '' }>50개씩 보기</option>
-                            </select>
-                        </div>
-
+                    <!-- 게시판 테이블 -->
+                    <div class="board-card">
                         <table class="board-table">
                             <colgroup>
-                                <col width="10%">
-                                <col width="50%">
-                                <col width="15%">
+                                <col width="8%">
+                                <col width="55%">
+                                <col width="12%">
                                 <col width="15%">
                                 <col width="10%">
                             </colgroup>
@@ -155,20 +295,43 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- [Step 8: 목록 출력] -->
                                 <c:choose>
                                     <c:when test="${empty list}">
                                         <tr>
-                                            <td colspan="5">게시글이 없습니다.</td>
+                                            <td colspan="5" class="empty-list">
+                                                <i class="far fa-folder-open"
+                                                    style="font-size: 3em; margin-bottom: 10px; display: block;"></i>
+                                                게시글이 없습니다.
+                                            </td>
                                         </tr>
                                     </c:when>
                                     <c:otherwise>
                                         <c:forEach var="b" items="${list}">
-                                            <tr>
-                                                <td>${b.boardId}</td>
+                                            <!-- [Step 30] 고정 글은 row-pinned 클래스 추가 -->
+                                            <tr
+                                                class="${b.isPinned == 'Y' ? 'row-pinned' : (b.category == 'NOTICE' ? 'row-notice' : '')}">
+
+                                                <!-- 번호: 고정글은 아이콘, 나머지는 번호 -->
+                                                <td>
+                                                    <c:choose>
+                                                        <c:when test="${b.isPinned == 'Y'}">
+                                                            <i class="fas fa-bullhorn"
+                                                                style="color:#e58e3c; font-size:1.2em;"></i>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            ${b.boardId}
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </td>
+
                                                 <td class="board-title">
                                                     <a href="detail?boardId=${b.boardId}">
+                                                        <!-- 공지 배지: 고정글이거나 공지사항 카테고리일 때 -->
+                                                        <c:if test="${b.isPinned == 'Y' || b.category == 'NOTICE'}">
+                                                            <span class="badge-notice">공지</span>
+                                                        </c:if>
                                                         ${b.title}
+                                                        <!-- 댓글 수 표시 (추후 구현) -->
                                                     </a>
                                                 </td>
                                                 <td>${b.userId}</td>
@@ -182,51 +345,44 @@
                                 </c:choose>
                             </tbody>
                         </table>
-
-                        <!-- 2. 페이징 바 -->
-                        <div class="pagination" style="margin-top: 20px;">
-                            <!-- 이전 페이지 -->
-                            <c:if test="${pi.currentPage > 1}">
-                                <a href="list?category=${category}&cpage=${pi.currentPage - 1}&limit=${limit}"
-                                    class="btn">&lt;</a>
-                            </c:if>
-
-                            <!-- 페이지 번호 -->
-                            <!-- 
-                             [페이징 로직]
-                             startPage 부터 endPage 까지 반복문을 돌면서 버튼을 생성합니다.
-                             현재 페이지인 경우 강조 표시를 합니다.
-                        -->
-                            <c:forEach var="p" begin="${pi.startPage}" end="${pi.endPage}">
-                                <c:choose>
-                                    <c:when test="${p == pi.currentPage}">
-                                        <a href="#" class="btn"
-                                            style="background : #ff9f43; color : white; border : 1px solid #ff9f43">${p}</a>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <a href="list?category=${category}&cpage=${p}&limit=${limit}"
-                                            class="btn">${p}</a>
-                                    </c:otherwise>
-                                </c:choose>
-                            </c:forEach>
-
-                            <!-- 다음 페이지 -->
-                            <c:if test="${pi.currentPage < pi.maxPage}">
-                                <a href="list?category=${category}&cpage=${pi.currentPage + 1}&limit=${limit}"
-                                    class="btn">&gt;</a>
-                            </c:if>
-                        </div>
-
                     </div>
 
-                    <script>
-                        function changeLimit(limit) {
-                            location.href = "list?category=${category}&cpage=1&limit=" + limit;
-                        }
-                    </script>
+                    <!-- 페이징 바 -->
+                    <div class="pagination">
+                        <!-- 이전 페이지 -->
+                        <c:if test="${pi.currentPage > 1}">
+                            <a href="list?category=${category}&cpage=${pi.currentPage - 1}&limit=${limit}">
+                                <i class="fas fa-chevron-left"></i>
+                            </a>
+                        </c:if>
+
+                        <!-- 페이지 번호 -->
+                        <c:forEach var="p" begin="${pi.startPage}" end="${pi.endPage}">
+                            <c:choose>
+                                <c:when test="${p == pi.currentPage}">
+                                    <a href="#" class="active">${p}</a>
+                                </c:when>
+                                <c:otherwise>
+                                    <a href="list?category=${category}&cpage=${p}&limit=${limit}">${p}</a>
+                                </c:otherwise>
+                            </c:choose>
+                        </c:forEach>
+
+                        <!-- 다음 페이지 -->
+                        <c:if test="${pi.currentPage < pi.maxPage}">
+                            <a href="list?category=${category}&cpage=${pi.currentPage + 1}&limit=${limit}">
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </c:if>
+                    </div>
 
                 </main>
 
+                <script>
+                    function changeLimit(limit) {
+                        location.href = "list?category=${category}&cpage=1&limit=" + limit;
+                    }
+                </script>
             </body>
 
             </html>

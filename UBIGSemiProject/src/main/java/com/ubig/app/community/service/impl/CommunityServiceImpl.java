@@ -37,6 +37,25 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     public int insertBoard(BoardVO board) {
+        // [Step 30: 공지사항 상단 고정 및 로테이션]
+        if ("Y".equals(board.getIsPinned())) {
+            // 1. 현재 카테고리의 고정된 글 개수 확인
+            int pinnedCount = communityDao.selectPinnedCount(board.getCategory());
+
+            // 2. 5개 이상이면 가장 오래된 것 해제
+            if (pinnedCount >= 5) {
+                BoardVO oldest = communityDao.selectOldestPinned(board.getCategory());
+                if (oldest != null) {
+                    // 고정 해제 ('N') 및 카테고리를 'NOTICE'로 변경 (일반 공지사항 게시판으로 이동)
+                    java.util.Map<String, Object> params = new java.util.HashMap<>();
+                    params.put("boardId", oldest.getBoardId());
+                    params.put("isPinned", "N");
+                    params.put("category", "NOTICE");
+
+                    communityDao.updateBoardPinned(params);
+                }
+            }
+        }
         return communityDao.insertBoard(board);
     }
 
