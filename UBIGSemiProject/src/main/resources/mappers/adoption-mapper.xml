@@ -43,6 +43,13 @@
             #{photoUrl}
 		)
     </insert>
+
+    <!-- 입양 신청 상태 변경  -->
+    <update id="updateAdoptionStatus" parameterType="map">
+    	UPDATE ANIMAL_DETAILS
+    	SET ADOPTION_STATUS = #{status}
+    	WHERE ANIMAL_NO = #{animalNo}
+    </update>
     
     <!-- 리스트 갯수 세오기 (게시글 기준) -->
     <select id="listCount" resultType="_int">
@@ -98,11 +105,37 @@
 							)
 	</insert>
 	
+	<!-- anino로 동물 정보 가지고 오기 -->
 	<select id="goAdoptionDetail" resultType="AnimalDetail">
 		SELECT *
 		FROM ANIMAL_DETAILS
 		WHERE ANIMAL_NO = #{anino}
 	</select>
+	
+	<!-- 신청 정보 insert -->
+	<insert id="insertApplication" parameterType="AdoptionApplicationVO">
+		INSERT INTO ADOPTION_APPLICATIONS(
+										ADOPTION_APP_ID,
+										ANIMAL_NO,
+										USER_ID,
+										ADOPT_STATUS,
+										APPLY_DT	
+										)
+								VALUES(
+										SEQ_ADOPTION_APPS.NEXTVAL,
+										#{animalNo},
+										#{userId},
+										#{adoptStatus},
+										SYSDATE
+								)
+	</insert>
+	
+	<!-- 조회수 증가 -->
+	<update id="updateViewCount" parameterType="int">
+		UPDATE ADOPTION_POSTS
+		SET VIEWS = VIEWS+1
+		WHERE ANIMAL_NO = #{animalNo}
+	</update>
 	    
 
 </mapper>

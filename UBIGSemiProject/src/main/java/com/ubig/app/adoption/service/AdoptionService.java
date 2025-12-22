@@ -2,6 +2,7 @@ package com.ubig.app.adoption.service;
 
 import java.util.ArrayList;
 
+import com.ubig.app.vo.adoption.AdoptionApplicationVO;
 import com.ubig.app.vo.adoption.AdoptionMainListVO;
 import com.ubig.app.vo.adoption.AdoptionPageInfoVO;
 import com.ubig.app.vo.adoption.AdoptionPostVO;
@@ -22,4 +23,10 @@ public interface AdoptionService {
 
 	// 동물 디테일 페이지
 	AnimalDetailVO goAdoptionDetail(int anino);
+
+	// 입양 신청 등록
+	int insertApplication(AdoptionApplicationVO application);
+
+	// 조회수 증가
+	int updateViewCount(int animalNo);
 }

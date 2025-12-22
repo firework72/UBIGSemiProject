@@ -1,11 +1,14 @@
 package com.ubig.app.adoption.dao;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.ibatis.session.RowBounds;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.ubig.app.vo.adoption.AdoptionApplicationVO;
 import com.ubig.app.vo.adoption.AdoptionMainListVO;
 import com.ubig.app.vo.adoption.AdoptionPageInfoVO;
 import com.ubig.app.vo.adoption.AdoptionPostVO;
@@ -33,14 +36,27 @@ public class AdoptionDao {
 		return (ArrayList) sqlSession.selectList("adoptionMapper.selectAdoptionMainList", null, rowBounds);
 	}
 
-	// getPhoto Removed
-
 	public int insertBoard(SqlSessionTemplate sqlSession, AdoptionPostVO post) {
 		return sqlSession.insert("adoptionMapper.insertBoard", post);
 	}
 
 	public AnimalDetailVO goAdoptionDetail(SqlSessionTemplate sqlSession, int anino) {
 		return sqlSession.selectOne("adoptionMapper.goAdoptionDetail", anino);
+	}
+
+	public int insertApplication(SqlSessionTemplate sqlSession, AdoptionApplicationVO application) {
+		return sqlSession.insert("adoptionMapper.insertApplication", application);
+	}
+
+	public int updateAdoptionStatus(SqlSessionTemplate sqlSession, int animalNo, String status) {
+		Map<String, Object> map = new HashMap<>();
+		map.put("animalNo", animalNo);
+		map.put("status", status);
+		return sqlSession.update("adoptionMapper.updateAdoptionStatus", map);
+	}
+
+	public int updateViewCount(SqlSessionTemplate sqlSession, int animalNo) {
+		return sqlSession.update("adoptionMapper.updateViewCount", animalNo);
 	}
 
 }
