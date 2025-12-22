@@ -5,7 +5,11 @@
 
         <head>
             <meta charset="UTF-8">
-            <title>Insert title here</title>
+            <title>UBIG - 입양 신청</title>
+            <!-- Global Style -->
+            <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
+            <!-- Adoption Specific Style -->
+            <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/adoption-style.css">
         </head>
 
         <body>
@@ -17,89 +21,86 @@
                 <c:remove var="alertMsgAd" scope="session" />
             </c:if>
 
-            <div align="center">
-                <h1>입양 신청서 작성</h1>
+            <div class="adoption-container">
+                <h1 class="adoption-header">입양 신청서 작성</h1>
 
-                <form action="adoption.insertapplication" method="post">
+                <form action="adoption.insertapplication" method="post" class="adoption-form">
 
-                    <table border="1">
+                    <label>동물 고유 번호</label>
+                    <input type="number" name="animalNo" value="${param.anino}" readonly>
 
-                        <tr align="center">
-                            <th bgcolor="#f2f2f2" width="150">동물 고유 번호</th>
-                            <td>
-                                <input type="number" name="animalNo" value="${param.anino}" readonly
-                                    style="width: 100%; border: none; text-align: center; box-sizing: border-box;">
-                            </td>
-                        </tr>
+                    <label>신청자 ID</label>
+                    <input type="text" name="userId" placeholder="ID를 입력하세요" required value="session.userId값">
+                    <!-- Note: Value seems to be placeholder literal in original -->
+                    <input type="hidden" name="adoptStatus" value="1" />
 
-                        <tr align="center">
-                            <th bgcolor="#f2f2f2">신청자 ID</th>
-                            <td>
-                                <input type="text" name="userId" placeholder="ID를 입력하세요" required
-                                    style="width: 100%; text-align: center; box-sizing: border-box;"
-                                    value="session.userId값" />
-                                <input type="hidden" name="adoptStatus" value="1" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="2" id="requiredcheckbox">
-                                <textarea readonly
-                                    style="width: 100%; height: 80px; resize: none; box-sizing: border-box;">
-                            약관1 어쩌구 저쩌구약관 어쩌구 저쩌구약관 어쩌구 저쩌구약관 어쩌구 저쩌구약관 어쩌구 저쩌구약관 어쩌구 저쩌구
-                        </textarea>
-                                <p align="right">
-                                    <label for="agree1">동의</label><input name="agree1" type="checkbox" required />
-                                </p>
-                                <textarea readonly
-                                    style="width: 100%; height: 80px; resize: none; box-sizing: border-box;">
-                            약관2 어쩌구 저쩌구약관 어쩌구 저쩌구약관 어쩌구 저쩌구약관 어쩌구 저쩌구약관 어쩌구 저쩌구약관 어쩌구 저쩌구
-                        </textarea>
-                                <p align="right">
-                                    <label for="agree2">동의</label><input name="agree2" type="checkbox" required />
-                                </p>
-                                <textarea readonly
-                                    style="width: 100%; height: 80px; resize: none; box-sizing: border-box;">
-                            약관3 어쩌구 저쩌구약관 어쩌구 저쩌구약관 어쩌구 저쩌구약관 어쩌구 저쩌구약관 어쩌구 저쩌구약관 어쩌구 저쩌구
-                        </textarea>
-                                <p align="right">
-                                    <label for="agree3">동의</label><input name="agree3" type="checkbox" required />
-                                    <br>
-                                    <label for="allagree">전부 동의</label><input name="allagree" id="allagree"
-                                        type="checkbox" />
-                                </p>
-                            </td>
-                        </tr>
-                    </table>
+                    <div style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
+                        <label>약관 동의</label>
 
-                    <script>
-                        document.addEventListener("DOMContentLoaded", function () {
-                            const allagree = document.querySelector("#allagree");
-                            const requiredcheckbox = document.querySelector("#requiredcheckbox");
-                            // '전부 동의' 체크박스를 제외한 나머지 체크박스들만 선택
-                            const checkboxes = requiredcheckbox.querySelectorAll("input[type='checkbox']:not(#allagree)");
+                        <div style="margin-bottom: 20px;">
+                            <textarea readonly
+                                style="height: 80px; resize: none;">약관1 어쩌구 저쩌구약관 어쩌구 저쩌구약관 어쩌구 저쩌구약관 어쩌구 저쩌구약관 어쩌구 저쩌구약관 어쩌구 저쩌구</textarea>
+                            <div style="text-align: right; margin-top: 5px;">
+                                <label style="display: inline-block; font-weight: normal;"><input name="agree1"
+                                        type="checkbox" required style="width: auto; margin-bottom: 0;"> 동의</label>
+                            </div>
+                        </div>
 
-                            allagree.addEventListener("change", function () {
-                                checkboxes.forEach(checkbox => {
-                                    checkbox.checked = allagree.checked;
-                                });
-                            });
+                        <div style="margin-bottom: 20px;">
+                            <textarea readonly
+                                style="height: 80px; resize: none;">약관2 어쩌구 저쩌구약관 어쩌구 저쩌구약관 어쩌구 저쩌구약관 어쩌구 저쩌구약관 어쩌구 저쩌구약관 어쩌구 저쩌구</textarea>
+                            <div style="text-align: right; margin-top: 5px;">
+                                <label style="display: inline-block; font-weight: normal;"><input name="agree2"
+                                        type="checkbox" required style="width: auto; margin-bottom: 0;"> 동의</label>
+                            </div>
+                        </div>
 
-                            checkboxes.forEach(checkbox => {
-                                checkbox.addEventListener("change", function () {
-                                    // 개별 체크박스 상태에 따라 '전부 동의' 상태 업데이트
-                                    allagree.checked = Array.from(checkboxes).every(cb => cb.checked);
-                                });
-                            });
-                        });
-                    </script>
+                        <div style="margin-bottom: 20px;">
+                            <textarea readonly
+                                style="height: 80px; resize: none;">약관3 어쩌구 저쩌구약관 어쩌구 저쩌구약관 어쩌구 저쩌구약관 어쩌구 저쩌구약관 어쩌구 저쩌구약관 어쩌구 저쩌구</textarea>
+                            <div style="text-align: right; margin-top: 5px;">
+                                <label style="display: inline-block; font-weight: normal;"><input name="agree3"
+                                        type="checkbox" required style="width: auto; margin-bottom: 0;"> 동의</label>
+                            </div>
+                        </div>
 
-                    <br>
+                        <div
+                            style="text-align: right; margin-top: 20px; border-top: 1px dashed #ddd; padding-top: 15px;">
+                            <label
+                                style="display: inline-block; font-weight: bold; font-size: 1.1rem; color: #ff8e3c;"><input
+                                    name="allagree" id="allagree" type="checkbox"
+                                    style="width: auto; margin-bottom: 0;"> 약관 전체 동의</label>
+                        </div>
+                    </div>
 
-                    <button type="submit">신청하기</button>
-                    <button type="button" onclick="history.back()">취소</button>
+                    <div class="text-center mt-20 btn-group">
+                        <button type="submit" class="btn-primary">신청하기</button>
+                        <button type="button" class="btn-secondary" onclick="history.back()">취소</button>
+                    </div>
 
                 </form>
             </div>
+
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    const allagree = document.querySelector("#allagree");
+                    // Select all required checkboxes (agree1, agree2, agree3)
+                    const checkboxes = document.querySelectorAll("input[name^='agree']");
+
+                    allagree.addEventListener("change", function () {
+                        checkboxes.forEach(checkbox => {
+                            checkbox.checked = allagree.checked;
+                        });
+                    });
+
+                    checkboxes.forEach(checkbox => {
+                        checkbox.addEventListener("change", function () {
+                            // Update allagree based on whether all required checkboxes are checked
+                            allagree.checked = Array.from(checkboxes).every(cb => cb.checked);
+                        });
+                    });
+                });
+            </script>
         </body>
 
         </html>

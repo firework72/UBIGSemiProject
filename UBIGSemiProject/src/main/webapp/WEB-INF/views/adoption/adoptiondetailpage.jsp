@@ -5,7 +5,11 @@
 
 		<head>
 			<meta charset="UTF-8">
-			<title>Insert title here</title>
+			<title>UBIG - 입양 상세</title>
+			<!-- Global Style -->
+			<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
+			<!-- Adoption Specific Style -->
+			<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/adoption-style.css">
 		</head>
 
 		<body>
@@ -17,24 +21,23 @@
 				<c:remove var="alertMsgAd" scope="session" />
 			</c:if>
 
-			<h1>입양 디테일(동물)페이지 입니다.</h1>
-			<div align="center">
-				<table border="1">
-					<c:if test="${not empty animal.photoUrl}">
-						<tr align="center">
-							<td colspan="2">
-								<img src="${pageContext.request.contextPath}/resources/download/adoption/${animal.photoUrl}"
-									alt="ANIMAL PHOTO" width="300">
-							</td>
-						</tr>
-					</c:if>
+			<div class="adoption-container">
+				<h1 class="adoption-header">입양 디테일(동물) 페이지</h1>
 
-					<tr align="center">
-						<th width="150">동물 고유 번호</th>
+				<div class="detail-image-container">
+					<c:if test="${not empty animal.photoUrl}">
+						<img src="${pageContext.request.contextPath}/resources/download/adoption/${animal.photoUrl}"
+							class="detail-image" alt="ANIMAL PHOTO">
+					</c:if>
+				</div>
+
+				<table class="detail-table">
+					<tr>
+						<th>동물 고유 번호</th>
 						<td>${animal.animalNo}</td>
 					</tr>
 
-					<tr align="center">
+					<tr>
 						<th>종류</th>
 						<td>
 							<c:choose>
@@ -45,76 +48,79 @@
 						</td>
 					</tr>
 
-					<tr align="center">
+					<tr>
 						<th>이름</th>
 						<td>${animal.animalName}</td>
 					</tr>
 
-					<tr align="center">
+					<tr>
 						<th>품종</th>
 						<td>${animal.breed}</td>
 					</tr>
 
-					<tr align="center">
+					<tr>
 						<th>성별</th>
 						<td>${animal.gender eq 1 ? '남아' : '여아'}</td>
 					</tr>
 
-					<tr align="center">
+					<tr>
 						<th>나이</th>
 						<td>${animal.age}세</td>
 					</tr>
 
-					<tr align="center">
+					<tr>
 						<th>체중</th>
 						<td>${animal.weight}kg</td>
 					</tr>
 
-					<tr align="center">
+					<tr>
 						<th>크기</th>
 						<td>${animal.petSize}</td>
 					</tr>
 
-					<tr align="center">
+					<tr>
 						<th>중성화 여부</th>
 						<td>${animal.neutered eq 1 ? '완료' : '미완료'}</td>
 					</tr>
 
-					<tr align="center">
+					<tr>
 						<th>접종 상태</th>
 						<td>${animal.vaccinationStatus}</td>
 					</tr>
 
-					<tr align="center">
+					<tr>
 						<th>특이사항</th>
 						<td>${animal.healthNotes}</td>
 					</tr>
 
-					<tr align="center">
+					<tr>
 						<th>입양 상태</th>
 						<td>${animal.adoptionStatus}</td>
 					</tr>
 
-					<tr align="center">
+					<tr>
 						<th>입양 조건</th>
 						<td>${animal.adoptionConditions}</td>
 					</tr>
 
-					<tr align="center">
+					<tr>
 						<th>희망 지역</th>
 						<td>${animal.hopeRegion}</td>
 					</tr>
 
-					<tr align="center">
+					<tr>
 						<th>마감 기한</th>
 						<td>${animal.deadlineDate}</td>
 					</tr>
 				</table>
+
+				<!-- 입양 수정, 삭제는 관리자 또는 작성자만 가능 -->
+				<div class="btn-group">
+					<button id="updatepost" class="btn-secondary">(게시자 전용)수정</button>
+					<button id="deletepost" class="btn-secondary">(게시자 전용)삭제</button>
+					<button id="application" class="btn-primary">입양 신청 페이지로 이동</button>
+				</div>
 			</div>
-			<!-- 입양 수정, 삭제는 관리자 또는 작성자만 가능 -->
-			<button id="updatepost">(게시자 전용)수정</button>
-			<button id="deletepost">(게시자 전용)삭제</button>
-			<button id="application">입양 신청 페이지로 이동(유저가 이용가능한 기능)</button>
 		</body>
 
 		<script>
@@ -124,22 +130,30 @@
 				const deletepost = document.querySelector("#deletepost");
 
 				// 입양 신청페이지로 이동
-				application.addEventListener('click', function (e) {
-					e.preventDefault();
-					location.href = '${pageContext.request.contextPath}/adoption.applicationpage?anino=${animal.animalNo}';
-				});
+				if (application) {
+					application.addEventListener('click', function (e) {
+						e.preventDefault();
+						location.href = '${pageContext.request.contextPath}/adoption.applicationpage?anino=${animal.animalNo}';
+					});
+				}
 
 				// (게시자가)수정
-				updatepost.addEventListener('click', function (e) {
-					e.preventDefault();
-					location.href = '${pageContext.request.contextPath}/adoption.updateanimal?anino=${animal.animalNo}';
-				});
+				if (updatepost) {
+					updatepost.addEventListener('click', function (e) {
+						e.preventDefault();
+						location.href = '${pageContext.request.contextPath}/adoption.updateanimal?anino=${animal.animalNo}';
+					});
+				}
 
 				// (게시자가)삭제
-				deletepost.addEventListener('click', function (e) {
-					e.preventDefault();
-					location.href = '${pageContext.request.contextPath}/adoption.deleteanimal?anino=${animal.animalNo}';
-				});
+				if (deletepost) {
+					deletepost.addEventListener('click', function (e) {
+						e.preventDefault();
+						if (confirm('정말 삭제하시겠습니까?')) {
+							location.href = '${pageContext.request.contextPath}/adoption.deleteanimal?anino=${animal.animalNo}';
+						}
+					});
+				}
 			});
 
 		</script>

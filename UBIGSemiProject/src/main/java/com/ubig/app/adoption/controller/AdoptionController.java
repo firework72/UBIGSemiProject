@@ -52,6 +52,16 @@ public class AdoptionController {
 		return "/adoption/adoptionapplication";
 	}
 
+	// 입양 게시글 등록 페이지 이동 (관리자용)
+	@RequestMapping("/adoption.enrollpagepost")
+	public String goAdoptionEnrollPostPage(@RequestParam(value = "anino", required = false) Integer anino,
+			Model model) {
+		if (anino != null) {
+			model.addAttribute("anino", anino);
+		}
+		return "/adoption/adoptionenrollpagepost";
+	}
+
 	// 게시글 등록
 	@RequestMapping("/adoption.insert.board")
 	public String insertBoard(AdoptionPostVO post, HttpSession session) {
