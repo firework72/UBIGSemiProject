@@ -21,6 +21,8 @@
                 <p>유기견 봉사 일등 공신, 여러분의 따뜻한 손길을 기다립니다.</p>
                 <!-- Content places here -->
             </main>
+            
+        <jsp:include page="/WEB-INF/views/common/chat.jsp"/>
 
         </body>
 
