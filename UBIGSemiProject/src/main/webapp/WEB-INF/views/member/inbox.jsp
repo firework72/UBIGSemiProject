@@ -222,10 +222,13 @@
     	}
     	
     	let isExist = true;
+    	let isError = false;
     	
     	// 존재하지 않는 유저에게 쪽지를 보낼 수 없다.
+    	// 동기 방식으로 처리한다.
     	$.ajax({
     		url : "${pageContext.request.contextPath}/user/checkId.me",
+    		async : false,
     		data : {
     			userId: receiveId
     		},
@@ -233,18 +236,26 @@
     			console.log(data);
     			if (data == "success") {
     				alert("존재하지 않는 유저입니다.");
-    				return false;
+    				isExist = false;
     			}
-    			
-    			// 쪽지 보내기 요청
-    			return confirm("쪽지를 보내시겠습니까?");
     		},
     		error : function() {
     			console.log("통신 실패");
     			alert("알 수 없는 오류가 발생했습니다.");
-    			return false;
+    			isError = false;
     		}
     	});
+    	
+    	if (isError) {
+    		return false;
+    	}
+    	
+    	if (!isExist) {
+    		return false;
+    	}
+    	
+		// 쪽지 보내기 요청
+		return confirm("쪽지를 보내시겠습니까?");
     }
 </script>
 

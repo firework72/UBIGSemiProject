@@ -33,6 +33,6 @@
 			  ,#{messageReceiveUserId}
 			  ,#{messageContent}
 			  ,'N'
-			  ,SYSDATE);
+			  ,SYSDATE)
 	</insert>
 </mapper>
