@@ -19,7 +19,7 @@ import com.ubig.app.member.service.MemberService;
 import com.ubig.app.vo.member.MemberVO;
 
 @Controller
-@RequestMapping("/member")
+@RequestMapping("/user")
 public class MemberController {
 
 	// MemberService
@@ -46,14 +46,14 @@ public class MemberController {
 	private BCryptPasswordEncoder bcrypt;
 
 	// 로그인 페이지로 이동
-	@GetMapping("/login")
+	@GetMapping("/login.me")
 	public String login() {
 
 		return "member/login";
 	}
 
 	// 로그인 처리
-	@PostMapping("/login")
+	@PostMapping("/login.me")
 	public String loginMember(HttpSession session,
 			String userId,
 			String userPwd,
@@ -92,8 +92,8 @@ public class MemberController {
 			return "member/login";
 		}
 	}
-
-	// TODO 로그아웃 처리
+	
+	// 로그아웃 처리
 	@PostMapping("/logout.me")
 	public String logout(HttpSession session, Model model) {
 		// HttpSession에서 loginMember에 대한 정보를 가져온다.
@@ -115,8 +115,8 @@ public class MemberController {
 		return "member/signup";
 	}
 
-	// TODO 회원가입 처리
-	@PostMapping("/signup.me")
+	// 회원가입 처리
+	@PostMapping("/sign.me")
 	public String insertMember(HttpSession session, MemberVO m) {
 		
 		// 비밀번호 암호화
@@ -125,12 +125,14 @@ public class MemberController {
 		int result = service.insertMember(m);
 		
 		if (result > 0) {
-			session.setAttribute("alerMsg", "회원가입에 성공하였습니다.");
+			session.setAttribute("alertMsg", "회원가입에 성공하였습니다.");
+			return "redirect:/user/login.me";
 		} else {
 			session.setAttribute("alertMsg", "회원가입에 실패하였습니다.");
+			return "redirect:/user/signup.me";
 		}
 
-		return "redirect:/user/signup.me";
+		
 		// TODO 회원가입에 실패했을 경우 기존에 입력된 내용이 유지되도록?
 	}
 
@@ -149,7 +151,7 @@ public class MemberController {
 		}
 	}
 
-	// TODO 마이페이지 이동
+	// 마이페이지 이동
 	@RequestMapping("/mypage.me")
 	public String mypage() {
 		return "member/mypage";
@@ -165,7 +167,7 @@ public class MemberController {
 		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
 		
 		if (loginMember != null) {
-			// 회원탈퇴 처리
+			// TODO 회원탈퇴 처리
 			int result = 0;
 			// int result = service.deleteMember(loginMember);
 			if (result > 0) {

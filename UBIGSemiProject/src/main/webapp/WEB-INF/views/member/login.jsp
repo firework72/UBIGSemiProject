@@ -67,7 +67,7 @@
                         <c:remove var="msg" />
                     </c:if>
 
-                    <form action="${pageContext.request.contextPath}/member/login" method="post">
+                    <form action="${pageContext.request.contextPath}/user/login.me" method="post">
 
                         <div class="mb-3">
                             <label for="userId" class="form-label">아이디</label>
