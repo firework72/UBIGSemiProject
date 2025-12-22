@@ -148,20 +148,21 @@
                 <h5 class="modal-title fw-bold">쪽지 보내기</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form action="/message/send" method="post">
+            <form action="${pageContext.request.contextPath}/message/insert.ms" method="post">
+            	<input type="hidden" name="messageSendUserId" value="${loginMember.userId }">
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label fw-bold">받는 사람 ID</label>
-                        <input type="text" class="form-control" name="messageReceiveUserId" id="receiveIdInput" placeholder="회원 ID를 입력하세요" required>
+                        <input type="text" class="form-control" name="messageReceiveUserId" id="inputMessageReceiveUserId" placeholder="회원 ID를 입력하세요" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">내용</label>
-                        <textarea class="form-control" name="messageContent" rows="5" placeholder="내용을 입력하세요 (최대 200자)" maxlength="200" required></textarea>
+                        <textarea class="form-control" name="messageContent" id="inputMessageContent" rows="5" placeholder="내용을 입력하세요 (최대 200자)" maxlength="200" required></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                    <button type="submit" class="btn btn-warning text-white fw-bold">보내기</button>
+                    <button type="submit" class="btn btn-warning text-white fw-bold" onclick="return sendMessage();">보내기</button>
                 </div>
             </form>
         </div>
@@ -199,11 +200,51 @@
                 type: "POST",
                 data: { messageNo: msgNo },
                 success: function(res) {
-                    // 성공 시 UI 업데이트 (뱃지 제거 등)는 새로고침 혹은 JS로 처리
                     console.log("읽음 처리 완료");
                 }
             });
         }
+    }
+    
+    // 2. 쪽지 보내기 버튼 함수
+    function sendMessage() {
+    	
+    	let receiveId = $("#inputMessageReceiveUserId").val();
+    	let content = $("#inputMessageContent").val();
+    	
+    	console.log(receiveId);
+    	console.log(content);
+    	
+    	// 자기 자신에게는 쪽지를 보낼 수 없다.
+    	if ('${loginMember.userId}' == receiveId) {
+    		alert("자기 자신에게는 쪽지를 보낼 수 없습니다.");
+    		return false;
+    	}
+    	
+    	let isExist = true;
+    	
+    	// 존재하지 않는 유저에게 쪽지를 보낼 수 없다.
+    	$.ajax({
+    		url : "${pageContext.request.contextPath}/user/checkId.me",
+    		data : {
+    			userId: receiveId
+    		},
+    		success : function(data) {
+    			console.log(data);
+    			if (data == "success") {
+    				alert("존재하지 않는 유저입니다.");
+    				return false;
+    			}
+    			
+    			// 쪽지 보내기 요청
+    			return confirm("쪽지를 보내시겠습니까?");
+    		},
+    		error : function() {
+    			console.log("통신 실패");
+    			alert("알 수 없는 오류가 발생했습니다.");
+    			return false;
+    		}
+    	});
     }
 </script>
 

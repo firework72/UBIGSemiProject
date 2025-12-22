@@ -10,4 +10,6 @@ public interface MessageService {
 
 	int unreadCount(String userId);
 
+	int insertMessage(MessageVO message);
+
 }

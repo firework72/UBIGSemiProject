@@ -20,4 +20,19 @@
 		WHERE MESSAGE_RECEIVE_USER_ID = #{userId}
 		AND MESSAGE_IS_CHECK = 'N'
 	</select>
+	
+	<insert id="insertMessage" parameterType="MessageVO">
+		INSERT INTO MESSAGES (   MESSAGE_NO
+								,MESSAGE_SEND_USER_ID
+								,MESSAGE_RECEIVE_USER_ID
+								,MESSAGE_CONTENT
+								,MESSAGE_IS_CHECK
+								,MESSAGE_CREATE_DATE)
+		VALUES(SEQ_MESSAGES.NEXTVAL
+			  ,#{messageSendUserId}
+			  ,#{messageReceiveUserId}
+			  ,#{messageContent}
+			  ,'N'
+			  ,SYSDATE);
+	</insert>
 </mapper>

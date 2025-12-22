@@ -19,4 +19,10 @@ public class MessageDao {
 		return sqlSession.selectOne("messageMapper.unreadCount", userId);
 	}
 
+	public int insertMessage(SqlSessionTemplate sqlSession, MessageVO message) {
+		return sqlSession.insert("messageMapper.insertMessage", message);
+	}
+	
+	
+
 }

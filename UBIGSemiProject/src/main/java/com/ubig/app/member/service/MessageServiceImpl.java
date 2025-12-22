@@ -30,5 +30,11 @@ public class MessageServiceImpl implements MessageService{
 	public int unreadCount(String userId) {
 		return dao.unreadCount(sqlSession, userId);
 	}
+	
+	// 메시지 전송 기능
+	@Override
+	public int insertMessage(MessageVO message) {
+		return dao.insertMessage(sqlSession, message);
+	}
 
 }
