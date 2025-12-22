@@ -111,16 +111,35 @@
 					</tr>
 				</table>
 			</div>
-			<button id="application">입양 신청 페이지로 이동</button>
+			<!-- 입양 수정, 삭제는 관리자 또는 작성자만 가능 -->
+			<button id="updatepost">(게시자 전용)수정</button>
+			<button id="deletepost">(게시자 전용)삭제</button>
+			<button id="application">입양 신청 페이지로 이동(유저가 이용가능한 기능)</button>
 		</body>
 
 		<script>
 			document.addEventListener("DOMContentLoaded", function () {
 				const application = document.querySelector("#application");
+				const updatepost = document.querySelector("#updatepost");
+				const deletepost = document.querySelector("#deletepost");
 
-				application.addEventListener('click', function () {
-					location.href = 'adoption.applicationpage?anino=${animal.animalNo}';
-				})
+				// 입양 신청페이지로 이동
+				application.addEventListener('click', function (e) {
+					e.preventDefault();
+					location.href = '${pageContext.request.contextPath}/adoption.applicationpage?anino=${animal.animalNo}';
+				});
+
+				// (게시자가)수정
+				updatepost.addEventListener('click', function (e) {
+					e.preventDefault();
+					location.href = '${pageContext.request.contextPath}/adoption.updateanimal?anino=${animal.animalNo}';
+				});
+
+				// (게시자가)삭제
+				deletepost.addEventListener('click', function (e) {
+					e.preventDefault();
+					location.href = '${pageContext.request.contextPath}/adoption.deleteanimal?anino=${animal.animalNo}';
+				});
 			});
 
 		</script>
