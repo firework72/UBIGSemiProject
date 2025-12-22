@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -25,6 +26,22 @@
 				<th>장소</th>
 				<td><input type="text" name="actAddress" value="${vo.actAddress}" required></td>
 			</tr>
+			
+			<tr>
+                <th>봉사 시작일</th>
+                <td>
+                    <fmt:formatDate value="${vo.actDate}" pattern="yyyy-MM-dd" var="startDate"/>
+                    
+                    <input type="date" name="actDate" value="${startDate}" required>
+                </td>
+            </tr>
+            <tr>
+                <th>봉사 종료일</th>
+                <td>
+                    <fmt:formatDate value="${vo.actEnd}" pattern="yyyy-MM-dd" var="endDate"/>
+                    <input type="date" name="actEnd" value="${endDate}" required>
+                </td>
+            </tr>
 			<tr>
 				<th>최대 인원</th>
 				<td><input type="number" name="actMax" min="5" value="${vo.actMax}"></td>
