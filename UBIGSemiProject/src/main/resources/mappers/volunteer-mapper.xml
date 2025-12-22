@@ -80,6 +80,8 @@
 		UPDATE ACTIVITIES
 		SET ACT_TITLE = #{actTitle},
 		    ACT_ADDRESS = #{actAddress},
+		    ACT_DATE = #{actDate},
+		    ACT_END = #{actEnd},
 		    ACT_MAX = #{actMax}
 		WHERE ACT_ID = #{actId}
 	</update>
