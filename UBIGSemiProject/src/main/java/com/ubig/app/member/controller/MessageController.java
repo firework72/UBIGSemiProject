@@ -34,20 +34,18 @@ public class MessageController {
 		
 		ArrayList<MessageVO> list = service.selectInbox(loginMember.getUserId());
 		
+		int unreadCount = service.unreadCount(loginMember.getUserId());
+		
 		for (MessageVO msg : list) {
 			System.out.println(msg);
 		}
 		
 		model.addAttribute("list", list);
+		model.addAttribute("unreadCount", unreadCount);
 		
 		return "member/inbox";
 	}
-	
-	// TODO 쪽지 보내기 페이지로 이동
-	@GetMapping("/insert.ms")
-	public String sendMessage() {
-		return "";
-	}
+
 	
 	// TODO 쪽지 보내기 기능
 	@PostMapping("/insert.ms")

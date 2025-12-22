@@ -48,10 +48,10 @@
 
     <ul class="nav nav-tabs mb-3">
         <li class="nav-item">
-            <a class="nav-link active" href="/message/inbox">받은 쪽지함 <span class="badge bg-danger rounded-pill ms-1">${unreadCount}</span></a>
+            <a class="nav-link active" href="${pageContext.request.contextPath}/message/inbox.ms">받은 쪽지함 <span class="badge bg-danger rounded-pill ms-1">${unreadCount}</span></a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/message/sent">보낸 쪽지함</a>
+            <a class="nav-link" href="${pageContext.request.contextPath}/message/sent.ms">보낸 쪽지함</a>
         </li>
     </ul>
 

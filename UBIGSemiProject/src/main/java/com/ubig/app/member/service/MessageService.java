@@ -8,4 +8,6 @@ public interface MessageService {
 
 	ArrayList<MessageVO> selectInbox(String userId);
 
+	int unreadCount(String userId);
+
 }

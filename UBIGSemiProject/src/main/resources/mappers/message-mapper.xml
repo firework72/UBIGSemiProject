@@ -13,4 +13,11 @@
 		FROM MESSAGES
 		WHERE MESSAGE_RECEIVE_USER_ID = #{userId}
 	</select>
+	
+	<select id="unreadCount" parameterType="string" resultType="_int">
+		SELECT COUNT(*)
+		FROM MESSAGES
+		WHERE MESSAGE_RECEIVE_USER_ID = #{userId}
+		AND MESSAGE_IS_CHECK = 'N'
+	</select>
 </mapper>

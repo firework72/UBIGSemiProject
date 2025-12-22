@@ -24,5 +24,11 @@ public class MessageServiceImpl implements MessageService{
 	public ArrayList<MessageVO> selectInbox(String userId) {
 		return dao.selectInbox(sqlSession, userId);
 	}
+	
+	// 읽지 않은 메시지 개수 가져오기
+	@Override
+	public int unreadCount(String userId) {
+		return dao.unreadCount(sqlSession, userId);
+	}
 
 }

@@ -15,4 +15,8 @@ public class MessageDao {
 		return (ArrayList) sqlSession.selectList("messageMapper.selectInbox", userId);
 	}
 
+	public int unreadCount(SqlSessionTemplate sqlSession, String userId) {
+		return sqlSession.selectOne("messageMapper.unreadCount", userId);
+	}
+
 }
