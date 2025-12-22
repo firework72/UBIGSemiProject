@@ -158,14 +158,4 @@ public class AdminController {
 		return "redirect:activityPage";
 	}
 	
-	//후원,펀딩 페이지 이동
-	@RequestMapping("/fundingPage")
-	public String fundingPage() {
-		
-		return "funding/fundingPage";
-	}
-	
-	
-	
-	
 }
