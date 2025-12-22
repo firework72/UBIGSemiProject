@@ -8,6 +8,13 @@
     </head>
 
     <body>
+
+        <c:if test="${alertMsgAd != null}">
+            <script>
+                alert('${alertMsgAd}');
+            </script>
+        </c:if>
+
         <div align="center">
             <h1>입양 신청서 작성</h1>
 
@@ -60,27 +67,25 @@
                 </table>
 
                 <script>
-                    //전부 동의 체크박스
-                    const allagree = document.querySelector("#allagree");
-                    const requiredcheckbox = document.querySelector("#requiredcheckbox");
-                    //약관 동의 체크박스
-                    const checkboxes = requiredcheckbox.querySelectorAll("input[type='checkbox']");
+                    document.addEventListener("DOMContentLoaded", function () {
+                        const allagree = document.querySelector("#allagree");
+                        const requiredcheckbox = document.querySelector("#requiredcheckbox");
+                        // '전부 동의' 체크박스를 제외한 나머지 체크박스들만 선택
+                        const checkboxes = requiredcheckbox.querySelectorAll("input[type='checkbox']:not(#allagree)");
 
-                    //전부 동의 체크박스 클릭 이벤트
-                    allagree.addEventListener("click", function () {
+                        allagree.addEventListener("change", function () {
+                            checkboxes.forEach(checkbox => {
+                                checkbox.checked = allagree.checked;
+                            });
+                        });
+
                         checkboxes.forEach(checkbox => {
-                            checkbox.checked = allagree.checked;
+                            checkbox.addEventListener("change", function () {
+                                // 개별 체크박스 상태에 따라 '전부 동의' 상태 업데이트
+                                allagree.checked = Array.from(checkboxes).every(cb => cb.checked);
+                            });
                         });
                     });
-
-                    //약관 동의 체크박스 클릭 이벤트
-                    checkboxes.forEach(checkbox => {
-                        checkbox.addEventListener("click", function () {
-                            allagree.checked = checkboxes.every(checkbox => checkbox.checked);
-                        })
-                    });
-
-
                 </script>
 
                 <br>

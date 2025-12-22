@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ubig.app.adoption.dao.AdoptionDao;
+import com.ubig.app.vo.adoption.AdoptionApplicationVO;
 import com.ubig.app.vo.adoption.AdoptionMainListVO;
 import com.ubig.app.vo.adoption.AdoptionPageInfoVO;
 import com.ubig.app.vo.adoption.AdoptionPostVO;
@@ -49,6 +50,25 @@ public class AdoptionServiceImpl implements AdoptionService {
 	@Override
 	public AnimalDetailVO goAdoptionDetail(int anino) {
 		return dao.goAdoptionDetail(sqlSession, anino);
+	}
+
+	// 입양 신청 등록
+	@Override
+	public int insertApplication(AdoptionApplicationVO application) {
+		int result = dao.insertApplication(sqlSession, application);
+
+		if (result > 0) {
+			// 신청 성공 시 해당 동물의 입양 상태를 '신청중'으로 변경
+			dao.updateAdoptionStatus(sqlSession, application.getAnimalNo(), "신청중");
+		}
+
+		return result;
+	}
+
+	// 조회수 증가 로직
+	@Override
+	public int updateViewCount(int animalNo) {
+		return dao.updateViewCount(sqlSession, animalNo);
 	}
 
 }
