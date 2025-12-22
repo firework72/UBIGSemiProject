@@ -21,5 +21,6 @@
   	<typeAlias type="com.ubig.app.vo.member.MemberVO" alias="MemberVO"/>
   	<typeAlias type="com.ubig.app.vo.adoption.AdoptionPostVO" alias="AdoptionBoard"/>
   	<typeAlias type="com.ubig.app.vo.community.BoardVO" alias="BoardVO"/>
+  	<typeAlias type="com.ubig.app.vo.member.MessageVO" alias="MessageVO"/>
 	</typeAliases>
 </configuration>
