@@ -297,9 +297,9 @@
                         <a href="list?category=${board.category}" class="btn">목록으로</a>
 
                         <!-- [Step 15: 수정/삭제 버튼] 
-                             관리자(ADMIN)만 수정하거나 삭제할 수 있습니다.
+                             작성자 본인 또는 관리자(ADMIN)만 수정하거나 삭제할 수 있습니다.
                         -->
-                        <c:if test="${loginUser.userRole == 'ADMIN'}">
+                        <c:if test="${loginUser.userId == board.userId || loginUser.userRole == 'ADMIN'}">
                             <a href="update?boardId=${board.boardId}" class="btn">수정</a>
                             <a href="delete?boardId=${board.boardId}" class="btn"
                                 onclick="return confirm('정말 삭제하시겠습니까?');">삭제</a>
@@ -418,7 +418,7 @@
                         // likeCount가 비어있으면 0으로 처리
                         if (!likeCount) likeCount = 0;
                         $("#like-count").text(likeCount);
-//뭐지
+                        //뭐지
                         console.log("Board Detail Script Loaded. isLiked=" + isLiked);
                     });
                 </script>

@@ -19,8 +19,25 @@ public class CommunityDao {
      * Mapper에게 '이 카테고리 데이터만 줘'라고 전달하기 위해
      * 매개변수에 category를 추가했습니다.
      */
-    public List<BoardVO> selectBoardList(String category) {
-        return sqlSession.selectList("communityMapper.selectBoardList", category);
+    /*
+     * [Step 3: DAO 메소드 작성]
+     * DB에게 SQL을 실행하라고 명령하는 메소드입니다.
+     * sqlSession을 이용해서 쿼리를 실행합니다.
+     */
+
+    public int selectListCount(String category) {
+        return sqlSession.selectOne("communityMapper.selectListCount", category);
+    }
+
+    public List<BoardVO> selectBoardList(com.ubig.app.common.model.vo.PageInfo pi, String category) {
+
+        // RowBounds 객체 생성 (건너뛸 갯수 offset, 가져올 갯수 limit)
+        // offset : (currentPage - 1) * boardLimit
+        int offset = (pi.getCurrentPage() - 1) * pi.getBoardLimit();
+        org.apache.ibatis.session.RowBounds rowBounds = new org.apache.ibatis.session.RowBounds(offset,
+                pi.getBoardLimit());
+
+        return sqlSession.selectList("communityMapper.selectBoardList", category, rowBounds);
     }
 
     public BoardVO selectBoardDetail(int boardId) {

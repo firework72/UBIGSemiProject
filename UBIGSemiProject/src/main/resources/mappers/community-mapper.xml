@@ -31,6 +31,14 @@
         게시판 종류(공지사항, 자유게시판 등)별로 데이터를 가져오기 위해 
         CATEGORY 조건을 추가했습니다. 이제 DB는 '어떤 카테고리 줘?'라고 물어볼 것입니다.
     -->
+    
+    <select id="selectListCount" parameterType="string" resultType="_int">
+        SELECT COUNT(*) 
+        FROM BOARDS 
+        WHERE IS_DELETED = 'N' 
+        AND CATEGORY = #{category}
+    </select>
+    
     <select id="selectBoardList" parameterType="string" resultMap="boardResultMap">
         SELECT 
             BOARD_ID, USER_ID, CATEGORY, TITLE, CONTENT, 
@@ -164,17 +172,17 @@
     <!-- Attachments -->
     <insert id="insertBoardAttachment" parameterType="com.ubig.app.vo.community.BoardAttachmentVO">
         INSERT INTO BOARD_ATTACHMENTS (
-            FILE_ID, BOARD_ID, ORIGINAL_NAME, SAVED_NAME, FILE_PATH, FILE_SIZE, CREATE_DATE
+            FILE_ID, BOARD_ID, REF_TYPE, REF_ID, ORIGINAL_NAME, SAVED_NAME, FILE_PATH, FILE_SIZE, CREATE_DATE
         ) VALUES (
-            SEQ_BOARD_ATTACH.NEXTVAL, #{boardId}, #{originalName}, #{savedName}, #{filePath}, #{fileSize}, SYSDATE
+            SEQ_BOARD_ATTACH.NEXTVAL, #{boardId}, #{refType}, #{refId}, #{originalName}, #{savedName}, #{filePath}, #{fileSize}, SYSDATE
         )
     </insert>
 
     <insert id="insertCommentAttachment" parameterType="com.ubig.app.vo.community.CommentAttachmentVO">
         INSERT INTO COMMENT_ATTACHMENTS (
-            FILE_ID, COMMENT_ID, ORIGINAL_NAME, SAVED_NAME, FILE_PATH, FILE_SIZE, CREATE_DATE
+            FILE_ID, COMMENT_ID, REF_TYPE, REF_ID, ORIGINAL_NAME, SAVED_NAME, FILE_PATH, FILE_SIZE, CREATE_DATE
         ) VALUES (
-            SEQ_CMT_ATTACH.NEXTVAL, #{commentId}, #{originalName}, #{savedName}, #{filePath}, #{fileSize}, SYSDATE
+            SEQ_CMT_ATTACH.NEXTVAL, #{commentId}, #{refType}, #{refId}, #{originalName}, #{savedName}, #{filePath}, #{fileSize}, SYSDATE
         )
     </insert>
     
