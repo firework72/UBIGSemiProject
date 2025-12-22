@@ -103,7 +103,19 @@
                 <!-- [Step 12: 글쓰기 폼] -->
                 <form action="write" method="post" class="write-form" enctype="multipart/form-data">
                     <input type="hidden" name="category" value="${category}">
-                    <input type="hidden" name="userId" value="${loginUser.userId}">
+                    <input type="hidden" name="userId" value="${loginMember.userId}">
+
+                    <!-- [Step 30: 공지글 등록 (관리자 전용)] -->
+                    <c:if test="${loginMember.userRole == 'ADMIN'}">
+                        <div class="form-group"
+                            style="background:#fff3cd; padding:10px; border-radius:5px; margin-bottom:20px;">
+                            <label
+                                style="cursor:pointer; display:flex; align-items:center; gap:8px; font-weight:bold; color:#856404;">
+                                <input type="checkbox" name="isPinned" value="Y" style="width:18px; height:18px;">
+                                📢 공지글로 등록 (목록 최상단 고정)
+                            </label>
+                        </div>
+                    </c:if>
 
                     <div class="form-group">
                         <label class="form-label">제목</label>

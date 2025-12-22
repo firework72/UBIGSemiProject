@@ -9,78 +9,313 @@
                 <meta charset="UTF-8">
                 <title>유봉일공 - 게시글 상세</title>
                 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
+                <!-- Google Fonts & Icons -->
+                <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap"
+                    rel="stylesheet">
+                <link rel="stylesheet"
+                    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
                 <style>
+                    body {
+                        font-family: 'Noto Sans KR', sans-serif;
+                        background-color: #f8f9fa;
+                    }
+
                     .community-container {
-                        padding: 120px 0 50px 0;
-                        width: 800px;
+                        padding: 100px 0;
+                        width: 100%;
+                        max-width: 900px;
+                        /* 상세페이지는 가독성을 위해 너비를 약간 줄임 */
                         margin: 0 auto;
                     }
 
-                    .board-detail {
-                        border-top: 2px solid #333;
-                        border-bottom: 1px solid #ddd;
+                    /* 게시글 카드 스타일 */
+                    .board-card {
+                        background: white;
+                        border-radius: 15px;
+                        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+                        padding: 40px;
+                        margin-bottom: 30px;
                     }
 
                     .detail-header {
-                        background-color: #f9f9f9;
-                        padding: 20px;
                         border-bottom: 1px solid #eee;
+                        padding-bottom: 20px;
+                        margin-bottom: 30px;
                     }
 
                     .detail-title {
-                        font-size: 1.5em;
-                        font-weight: bold;
-                        color: #333;
-                        margin-bottom: 10px;
+                        font-size: 2em;
+                        font-weight: 700;
+                        color: #2c3e50;
+                        margin-bottom: 15px;
+                        line-height: 1.3;
                     }
 
-                    .detail-info {
-                        color: #666;
-                        font-size: 0.9em;
+                    .detail-meta {
                         display: flex;
                         justify-content: space-between;
+                        align-items: center;
+                        color: #7f8c8d;
+                        font-size: 0.95em;
+                    }
+
+                    .meta-left {
+                        display: flex;
+                        gap: 15px;
+                        align-items: center;
+                    }
+
+                    .meta-item i {
+                        margin-right: 5px;
+                        color: #bdc3c7;
                     }
 
                     .detail-content {
-                        padding: 40px 20px;
                         min-height: 300px;
-                        line-height: 1.6;
-                        color: #333;
+                        line-height: 1.8;
+                        color: #34495e;
+                        font-size: 1.05em;
+                        margin-bottom: 40px;
                     }
 
-                    /* 이미지 첨부 시 화면 밖으로 나가는 현상 방지 */
                     .detail-content img {
                         max-width: 100%;
                         height: auto;
+                        border-radius: 10px;
+                        margin: 10px 0;
+                    }
+
+                    /* 첨부파일 영역 */
+                    .attachment-area {
+                        background-color: #f1f2f6;
+                        padding: 15px 20px;
+                        border-radius: 10px;
+                        margin-bottom: 30px;
+                        font-size: 0.9em;
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                    }
+
+                    .attachment-area a {
+                        color: #333;
+                        text-decoration: none;
+                        font-weight: 500;
+                    }
+
+                    .attachment-area a:hover {
+                        text-decoration: underline;
+                    }
+
+                    /* 좋아요 & 버튼 그룹 */
+                    .action-area {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        margin-top: 50px;
+                        padding-top: 30px;
+                        border-top: 1px solid #eee;
+                    }
+
+                    .btn-like {
+                        background-color: white;
+                        border: 2px solid #ff5e57;
+                        color: #ff5e57;
+                        padding: 8px 15px;
+                        border-radius: 30px;
+                        cursor: pointer;
+                        font-weight: 600;
+                        transition: all 0.2s;
+                        display: flex;
+                        align-items: center;
+                        gap: 5px;
+                        font-size: 1rem;
+                    }
+
+                    .btn-like:hover,
+                    .btn-like.active {
+                        background-color: #ff5e57;
+                        color: white;
+                        box-shadow: 0 4px 10px rgba(255, 94, 87, 0.3);
                     }
 
                     .btn-group {
-                        margin-top: 20px;
-                        text-align: center;
+                        display: flex;
+                        gap: 10px;
                     }
 
-                    .btn {
-                        padding: 10px 25px;
-                        border: 1px solid #ddd;
-                        background: #fff;
-                        cursor: pointer;
+                    .btn-action {
+                        padding: 10px 20px;
+                        border-radius: 8px;
+                        font-weight: 500;
                         text-decoration: none;
-                        color: #333;
-                        display: inline-block;
+                        font-size: 0.9em;
+                        transition: all 0.2s;
                     }
 
-                    .btn:hover {
-                        background: #f1f1f1;
-                    }
-
-                    .btn-primary {
-                        background: #ff9f43;
+                    .btn-list {
+                        background-color: #34495e;
                         color: white;
+                    }
+
+                    .btn-list:hover {
+                        background-color: #2c3e50;
+                    }
+
+                    .btn-edit {
+                        background-color: #f1f2f6;
+                        color: #333;
+                    }
+
+                    .btn-edit:hover {
+                        background-color: #e2e6ea;
+                    }
+
+                    .btn-delete {
+                        background-color: #fff0f0;
+                        color: #e74c3c;
+                    }
+
+                    .btn-delete:hover {
+                        background-color: #ffe6e6;
+                    }
+
+
+                    /* 댓글 스타일 */
+                    .comment-section {
+                        background: white;
+                        border-radius: 15px;
+                        padding: 30px;
+                        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+                    }
+
+                    .comment-header {
+                        font-size: 1.2em;
+                        font-weight: 700;
+                        color: #2c3e50;
+                        margin-bottom: 20px;
+                        padding-bottom: 10px;
+                        border-bottom: 2px solid #f1f2f6;
+                    }
+
+                    .comment-list {
+                        list-style: none;
+                        padding: 0;
+                        margin: 0;
+                    }
+
+                    .comment-item {
+                        padding: 20px 0;
+                        border-bottom: 1px solid #f8f9fa;
+                    }
+
+                    .comment-item:last-child {
+                        border-bottom: none;
+                    }
+
+                    .comment-meta {
+                        display: flex;
+                        justify-content: space-between;
+                        margin-bottom: 8px;
+                        font-size: 0.9em;
+                    }
+
+                    .comment-writer {
+                        font-weight: 600;
+                        color: #333;
+                    }
+
+                    .comment-date {
+                        color: #999;
+                        font-size: 0.9em;
+                    }
+
+                    .comment-content {
+                        color: #555;
+                        line-height: 1.5;
+                        white-space: pre-wrap;
+                        /* 줄바꿈 유지 */
+                    }
+
+                    .comment-actions {
+                        margin-top: 10px;
+                        font-size: 0.85em;
+                        display: flex;
+                        gap: 10px;
+                        color: #888;
+                    }
+
+                    .comment-actions span,
+                    .comment-actions a {
+                        cursor: pointer;
+                        transition: color 0.2s;
+                        text-decoration: none;
+                        color: inherit;
+                    }
+
+                    .comment-actions span:hover,
+                    .comment-actions a:hover {
+                        color: #333;
+                    }
+
+                    .comment-like-btn i {
+                        color: #ff5e57;
+                    }
+
+                    /* 대댓글 들여쓰기 시각적 효과 */
+                    .reply-item {
+                        background-color: #fafbfc;
+                        padding: 15px 15px 15px 30px;
+                        /* 왼쪽 여백 추가 */
+                        margin-top: 5px;
+                        border-radius: 8px;
+                    }
+
+                    /* 댓글 입력 폼 */
+                    .comment-form-container {
+                        margin-top: 30px;
+                        background-color: #f8f9fa;
+                        padding: 20px;
+                        border-radius: 10px;
+                    }
+
+                    .comment-textarea {
+                        width: 100%;
+                        height: 80px;
+                        padding: 15px;
+                        border: 1px solid #ddd;
+                        border-radius: 8px;
+                        resize: none;
+                        margin-bottom: 10px;
+                        font-family: inherit;
+                    }
+
+                    .comment-textarea:focus {
+                        outline: none;
                         border-color: #ff9f43;
                     }
 
-                    .btn-primary:hover {
-                        background: #e58e3c;
+                    .btn-submit {
+                        background-color: #333;
+                        color: white;
+                        border: none;
+                        padding: 8px 20px;
+                        border-radius: 5px;
+                        cursor: pointer;
+                        font-weight: 500;
+                    }
+
+                    .login-plz {
+                        text-align: center;
+                        padding: 30px;
+                        color: #7f8c8d;
+                    }
+
+                    .login-link {
+                        color: #ff9f43;
+                        font-weight: bold;
+                        text-decoration: none;
                     }
                 </style>
             </head>
@@ -91,223 +326,204 @@
 
                 <main class="community-container">
 
-                    <div class="board-detail">
+                    <!-- 게시글 상세 카드 -->
+                    <article class="board-card">
+                        <!-- 헤더 -->
                         <div class="detail-header">
                             <div class="detail-title">${board.title}</div>
-                            <div class="detail-info">
-                                <span>작성자: ${board.userId}</span>
-                                <span>
-                                    작성일:
-                                    <fmt:formatDate value="${board.createDate}" pattern="yyyy.MM.dd HH:mm" /> |
-                                    조회수: ${board.viewCount}
-
-                                    <!-- 게시글 좋아요 (조회수 옆에 배치) -->
-                                    <span id="like-btn" style="cursor: pointer; color: #ff5e57; margin-left: 10px;">
-                                        <i id="heart-icon" class="far fa-heart"></i>
-                                        <span id="like-count">0</span>
+                            <div class="detail-meta">
+                                <div class="meta-left">
+                                    <span class="meta-item"><i class="fas fa-user"></i> ${board.userId}</span>
+                                    <span class="meta-item"><i class="far fa-clock"></i>
+                                        <fmt:formatDate value="${board.createDate}" pattern="yyyy.MM.dd HH:mm" />
                                     </span>
-                                </span>
-                            </div>
-                            <!-- 첨부파일 (게시글) -->
-                            <c:if test="${not empty attachment}">
-                                <div style="margin-top: 10px; font-size: 0.9em; padding: 10px; background: #eee;">
-                                    <strong>첨부파일:</strong>
-                                    <a
-                                        href="${pageContext.request.contextPath}/community/fileDownload?originalName=${attachment.originalName}&savedName=${attachment.savedName}&path=${attachment.filePath}">
-                                        ${attachment.originalName}
-                                    </a>
                                 </div>
-                            </c:if>
+                                <span class="meta-item"><i class="far fa-eye"></i> ${board.viewCount}</span>
+                            </div>
                         </div>
 
+                        <!-- 첨부파일 -->
+                        <c:if test="${not empty attachment}">
+                            <div class="attachment-area">
+                                <i class="fas fa-paperclip" style="color: #666;"></i>
+                                <a
+                                    href="${pageContext.request.contextPath}/community/fileDownload?originalName=${attachment.originalName}&savedName=${attachment.savedName}&path=${attachment.filePath}">
+                                    ${attachment.originalName}
+                                </a>
+                            </div>
+                        </c:if>
+
+                        <!-- 본문 -->
                         <div class="detail-content">
-                            <!-- 줄바꿈 처리를 위해 pre 태그나 CSS white-space를 사용할 수도 있지만,
-                     여기서는 간단히 내용만 출력합니다. 실제로는 <br> 변환 등이 필요할 수 있습니다. -->
-                            ${board.content}
+                            ${board.content} <!-- Summernote 등 에디터 내용이 그대로 출력됨 -->
                         </div>
-                    </div>
 
-                    <!-- jQuery (Summernote를 위해 필수) -->
-                    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+                        <!-- 하단 액션 (좋아요 / 삭제 / 목록 등) -->
+                        <div class="action-area">
+                            <!-- 좋아요 버튼 -->
+                            <button id="like-btn" class="btn-like">
+                                <i id="heart-icon" class="far fa-heart"></i>
+                                <span id="like-count">0</span>
+                            </button>
 
-                    <!-- Font Awesome (아이콘) -->
-                    <link rel="stylesheet"
-                        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+                            <!-- 버튼 그룹 -->
+                            <div class="btn-group">
+                                <a href="list?category=${board.category}" class="btn-action btn-list">
+                                    <i class="fas fa-list"></i> 목록
+                                </a>
 
-                    <!-- Summernote CSS/JS -->
-                    <!-- [Step 21: 댓글 영역] -->
-                    <div class="comment-container"
-                        style="margin-top: 30px; border-top: 2px solid #ddd; padding-top: 20px;">
-                        <h3>댓글</h3>
+                                <c:if test="${loginMember.userId == board.userId || loginMember.userRole == 'ADMIN'}">
+                                    <a href="update?boardId=${board.boardId}" class="btn-action btn-edit">수정</a>
+                                    <a href="delete?boardId=${board.boardId}" class="btn-action btn-delete"
+                                        onclick="return confirm('정말 삭제하시겠습니까?');">삭제</a>
+                                </c:if>
+                            </div>
+                        </div>
+                    </article>
 
-                        <!-- 댓글 리스트 -->
-                        <ul id="comment-list" class="comment-list" style="list-style: none; padding: 0;">
+                    <!-- 댓글 섹션 -->
+                    <section class="comment-section">
+                        <div class="comment-header">댓글 <span
+                                style="font-weight: 400; font-size: 0.9em; color:#777;">(소통해요)</span></div>
+
+                        <ul id="comment-list" class="comment-list">
                             <c:choose>
                                 <c:when test="${empty commentList}">
-                                    <li style="padding: 10px 0; color: #666;">등록된 댓글이 없습니다.</li>
+                                    <li style="padding: 30px 0; text-align: center; color: #999;">첫 번째 댓글을 남겨보세요! ✨</li>
                                 </c:when>
                                 <c:otherwise>
                                     <c:forEach var="c" items="${commentList}">
-                                        <!-- level-1 만큼 들여쓰기 (대댓글) -->
-                                        <li
-                                            style="border-bottom: 1px solid #eee; padding: 10px 0; margin-left: ${(c.level - 1) * 40}px;">
+                                        <!-- level에 따른 클래스 부여 (대댓글 구분) -->
+                                        <li class="comment-item ${c.level > 1 ? 'reply-item' : ''}"
+                                            style="${c.level > 1 ? 'margin-left:' += (c.level-1)*20 += 'px;' : ''}">
+                                            <!-- 단순 인라인 스타일로 깊이 표현 보조 -->
 
-                                            <!-- 삭제된 댓글인 경우 -->
                                             <c:if test="${c.isDeleted == 'Y'}">
-                                                <div style="color: #999; padding: 10px;">
-                                                    [삭제] 삭제된 댓글입니다.
+                                                <div style="color: #bbb; font-style: italic;">
+                                                    <i class="fas fa-exclamation-circle"></i> 삭제된 댓글입니다.
                                                 </div>
                                             </c:if>
 
-                                            <!-- 삭제되지 않은 정상 댓글인 경우 -->
                                             <c:if test="${c.isDeleted == 'N'}">
-                                                <div
-                                                    style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                                                    <div>
-                                                        <c:if test="${c.level > 1}">
-                                                            <span style="color: #aaa; margin-right: 5px;">↳</span>
-                                                        </c:if>
-                                                        <strong>${c.userId}</strong>
-                                                    </div>
-                                                    <span style="font-size: 0.8em; color: #888;">
+                                                <div class="comment-meta">
+                                                    <span class="comment-writer">
+                                                        <c:if test="${c.level > 1}"><i
+                                                                class="fas fa-reply fa-rotate-180"
+                                                                style="color:#bdc3c7; margin-right:5px;"></i></c:if>
+                                                        ${c.userId}
+                                                    </span>
+                                                    <span class="comment-date">
                                                         <fmt:formatDate value="${c.createDate}"
                                                             pattern="yyyy.MM.dd HH:mm" />
-
-                                                        <!-- 댓글 좋아요 -->
-                                                        <span class="comment-like-btn" data-comment-id="${c.commentId}"
-                                                            style="cursor: pointer; margin-left: 5px; color: #ff5e57;">
-                                                            <i class="${c.liked ? 'fas' : 'far'} fa-heart"></i>
-                                                            <span class="like-count">${c.likeCount}</span>
-                                                        </span>
-
-                                                        <!-- 답글달기 (로그인한 경우) -->
-                                                        <c:if test="${not empty loginUser}">
-                                                            | <a href="javascript:void(0)"
-                                                                onclick="toggleReplyForm('${c.commentId}')"
-                                                                style="cursor: pointer;">답글</a>
-                                                        </c:if>
-
-                                                        <!-- 수정/삭제 (본인 또는 관리자) -->
-                                                        <c:if
-                                                            test="${loginUser.userId == c.userId || loginUser.userRole == 'ADMIN'}">
-                                                            | <a href="javascript:void(0)"
-                                                                onclick="toggleEditForm('${c.commentId}')"
-                                                                style="cursor: pointer;">수정</a>
-                                                            | <a href="deleteComment?commentId=${c.commentId}&boardId=${board.boardId}"
-                                                                onclick="return confirm('댓글을 삭제하시겠습니까?')"
-                                                                style="color: red; cursor: pointer;">삭제</a>
-                                                        </c:if>
-                                                    </span>
                                                     </span>
                                                 </div>
 
-                                                <!-- 댓글 내용 -->
-                                                <div id="comment-content-${c.commentId}">
+                                                <div id="comment-content-${c.commentId}" class="comment-content">
                                                     ${c.content}
                                                     <c:if test="${not empty c.attachment}">
-                                                        <div style="margin-top: 5px; font-size: 0.85em; color: #555;">
+                                                        <div style="margin-top: 5px; font-size: 0.85em;">
                                                             <i class="fas fa-paperclip"></i>
-                                                            <a
-                                                                href="${pageContext.request.contextPath}/community/fileDownload?originalName=${c.attachment.originalName}&savedName=${c.attachment.savedName}&path=${c.attachment.filePath}">
+                                                            <a href="${pageContext.request.contextPath}/community/fileDownload?originalName=${c.attachment.originalName}&savedName=${c.attachment.savedName}&path=${c.attachment.filePath}"
+                                                                style="color: #666;">
                                                                 ${c.attachment.originalName}
                                                             </a>
                                                         </div>
                                                     </c:if>
                                                 </div>
 
-                                                <!-- 댓글 수정 폼 (숨김) -->
+                                                <!-- 댓글 액션 (좋아요/답글/수정/삭제) -->
+                                                <div class="comment-actions">
+                                                    <span class="comment-like-btn" data-comment-id="${c.commentId}">
+                                                        <i class="${c.liked ? 'fas' : 'far'} fa-heart"></i>
+                                                        <span class="like-count">${c.likeCount}</span>
+                                                    </span>
+
+                                                    <c:if test="${not empty loginMember}">
+                                                        | <span onclick="toggleReplyForm('${c.commentId}')">답글</span>
+                                                    </c:if>
+
+                                                    <c:if
+                                                        test="${loginMember.userId == c.userId || loginMember.userRole == 'ADMIN'}">
+                                                        | <span onclick="toggleEditForm('${c.commentId}')">수정</span>
+                                                        | <a href="deleteComment?commentId=${c.commentId}&boardId=${board.boardId}"
+                                                            onclick="return confirm('댓글을 삭제하시겠습니까?')"
+                                                            style="color:#e74c3c;">삭제</a>
+                                                    </c:if>
+                                                </div>
+
+                                                <!-- 수정 폼 (Hidden) -->
                                                 <div id="comment-edit-${c.commentId}"
-                                                    style="display: none; margin-top: 10px;">
+                                                    style="display: none; margin-top: 15px;">
                                                     <form action="updateComment" method="post">
                                                         <input type="hidden" name="boardId" value="${board.boardId}">
                                                         <input type="hidden" name="commentId" value="${c.commentId}">
-                                                        <div style="display: flex;">
-                                                            <textarea name="content"
-                                                                style="flex: 1; height: 60px; padding: 10px; border: 1px solid #ddd; resize: none; margin-right: 10px;"
-                                                                required>${c.content}</textarea>
-                                                            <button type="submit" class="btn"
-                                                                style="background: #333; color: white; border: none; cursor: pointer;">수정</button>
-                                                            <button type="button" class="btn"
-                                                                onclick="toggleEditForm('${c.commentId}')"
-                                                                style="background: #fff; border: 1px solid #ddd; margin-left: 5px; cursor: pointer;">취소</button>
+                                                        <textarea name="content" class="comment-textarea"
+                                                            required>${c.content}</textarea>
+                                                        <div style="text-align: right;">
+                                                            <button type="button" class="btn-submit"
+                                                                style="background: #fff; border: 1px solid #ddd; color: #333;"
+                                                                onclick="toggleEditForm('${c.commentId}')">취소</button>
+                                                            <button type="submit" class="btn-submit">수정 완료</button>
                                                         </div>
                                                     </form>
                                                 </div>
-                                            </c:if>
 
-                                            <!-- 대댓글 작성 폼 (숨김) -->
-                                            <div id="comment-reply-${c.commentId}"
-                                                style="display: none; margin-top: 10px; padding: 10px; background: #eee;">
-                                                <form action="insertComment" method="post">
-                                                    <input type="hidden" name="boardId" value="${board.boardId}">
-                                                    <input type="hidden" name="parentId" value="${c.commentId}">
-                                                    <div style="font-size: 0.9em; margin-bottom: 5px;">${c.userId}님에게 답글
-                                                        작성</div>
-                                                    <div style="display: flex;">
-                                                        <textarea name="content"
-                                                            style="flex: 1; height: 60px; padding: 10px; border: 1px solid #ddd; resize: none; margin-right: 10px;"
-                                                            required></textarea>
-                                                        <button type="submit" class="btn"
-                                                            style="background: #555; color: white; border: none; cursor: pointer;">등록</button>
-                                                        <button type="button" class="btn"
-                                                            onclick="toggleReplyForm('${c.commentId}')"
-                                                            style="background: #fff; border: 1px solid #ddd; margin-left: 5px; cursor: pointer;">취소</button>
-                                                    </div>
-                                                </form>
-                                            </div>
-
+                                                <!-- 대댓글 작성 폼 (Hidden) -->
+                                                <div id="comment-reply-${c.commentId}"
+                                                    style="display: none; margin-top: 15px; background: #fafbfc; padding: 15px; border-radius: 8px;">
+                                                    <form action="insertComment" method="post">
+                                                        <input type="hidden" name="boardId" value="${board.boardId}">
+                                                        <input type="hidden" name="parentId" value="${c.commentId}">
+                                                        <div style="font-size: 0.9em; margin-bottom: 5px; color:#555;">
+                                                            To: ${c.userId}</div>
+                                                        <textarea name="content" class="comment-textarea"
+                                                            style="height: 60px;" required></textarea>
+                                                        <div style="text-align: right;">
+                                                            <button type="button" class="btn-submit"
+                                                                style="background: #fff; border: 1px solid #ddd; color: #333;"
+                                                                onclick="toggleReplyForm('${c.commentId}')">취소</button>
+                                                            <button type="submit" class="btn-submit">답글 등록</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </c:if> <!-- Deleted Check End -->
                                         </li>
                                     </c:forEach>
                                 </c:otherwise>
                             </c:choose>
                         </ul>
 
-                        <!-- 원글 댓글 작성 폼 (맨 아래) -->
-                        <div class="comment-form"
-                            style="margin-top: 20px; background: #f9f9f9; padding: 15px; border-radius: 5px;">
+                        <!-- 최하단 댓글 작성 폼 -->
+                        <div class="comment-form-container">
                             <c:choose>
-                                <c:when test="${not empty loginUser}">
+                                <c:when test="${not empty loginMember}">
                                     <form action="insertComment" method="post" enctype="multipart/form-data">
                                         <input type="hidden" name="boardId" value="${board.boardId}">
-                                        <div style="display: flex; flex-direction: column;">
-                                            <textarea name="content" placeholder="댓글을 남겨보세요"
-                                                style="width: 100%; height: 60px; padding: 10px; border: 1px solid #ddd; resize: none; margin-bottom: 5px;"
-                                                required></textarea>
-                                            <div
-                                                style="display: flex; justify-content: space-between; align-items: center;">
-                                                <input type="file" name="upfile" style="font-size: 0.8em;">
-                                                <button type="submit" class="btn"
-                                                    style="background: #333; color: white; border: none; cursor: pointer;">등록</button>
-                                            </div>
+                                        <div style="font-weight: 600; margin-bottom: 10px; color: #333;">
+                                            ${loginMember.userId}님</div>
+                                        <textarea name="content" class="comment-textarea" placeholder="따뜻한 댓글을 남겨주세요."
+                                            required></textarea>
+                                        <div
+                                            style="display: flex; justify-content: space-between; align-items: center;">
+                                            <input type="file" name="upfile" style="font-size: 0.85em;">
+                                            <button type="submit" class="btn-submit">댓글 등록</button>
                                         </div>
                                     </form>
                                 </c:when>
                                 <c:otherwise>
-                                    <div style="text-align: center; color: #666;">
-                                        <a href="${pageContext.request.contextPath}/member/login"
-                                            style="color: #ff9f43; font-weight: bold;">로그인</a> 후 이용 가능합니다.
+                                    <div class="login-plz">
+                                        <a href="${pageContext.request.contextPath}/user/login.me"
+                                            class="login-link">로그인</a>을 하시면 댓글을 작성할 수 있습니다.
                                     </div>
                                 </c:otherwise>
                             </c:choose>
                         </div>
-                    </div>
-
-                    <div class="btn-group">
-                        <!-- 목록으로 돌아가기: 원래 보던 카테고리로 돌아가면 더 좋겠죠? -->
-                        <a href="list?category=${board.category}" class="btn">목록으로</a>
-
-                        <!-- [Step 15: 수정/삭제 버튼] 
-                             작성자 본인 또는 관리자(ADMIN)만 수정하거나 삭제할 수 있습니다.
-                        -->
-                        <c:if test="${loginUser.userId == board.userId || loginUser.userRole == 'ADMIN'}">
-                            <a href="update?boardId=${board.boardId}" class="btn">수정</a>
-                            <a href="delete?boardId=${board.boardId}" class="btn"
-                                onclick="return confirm('정말 삭제하시겠습니까?');">삭제</a>
-                        </c:if>
-                    </div>
+                    </section>
 
                 </main>
 
+                <!-- Script는 그대로 유지하되, UI 로직과 연동 확인 -->
+                <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
                 <script>
                     function toggleEditForm(commentId) {
                         var contentDiv = document.getElementById('comment-content-' + commentId);
@@ -331,9 +547,8 @@
                     }
 
                     $(document).ready(function () {
-                        // 24. 게시글 좋아요 버튼 클릭 (이벤트 위임 사용)
+                        // 좋아요 기능 (기존 로직 유지, UI 클래스 매핑만 주의)
                         $(document).on("click", "#like-btn", function () {
-                            console.log("Board Like Button Clicked");
                             var boardId = "${board.boardId}";
                             $.ajax({
                                 url: "${pageContext.request.contextPath}/community/heart",
@@ -342,33 +557,27 @@
                                 dataType: "json",
                                 cache: false,
                                 success: function (data) {
-                                    console.log("Board Heart Success", data);
                                     if (data.result === "login_required") {
                                         alert("로그인이 필요합니다.");
-                                        location.href = "${pageContext.request.contextPath}/member/login";
+                                        location.href = "${pageContext.request.contextPath}/user/login.me";
                                         return;
                                     }
 
                                     if (data.isLiked) {
                                         $("#heart-icon").removeClass("far").addClass("fas");
+                                        $("#like-btn").addClass("active"); // 스타일 효과
                                     } else {
                                         $("#heart-icon").removeClass("fas").addClass("far");
+                                        $("#like-btn").removeClass("active");
                                     }
                                     $("#like-count").text(data.count);
                                 },
-                                error: function (xhr, status, error) {
-                                    console.log("통신 실패", status, error);
-
-                                    if (status === "parsererror") {
-                                        alert("서버 오류 내용: " + xhr.responseText);
-                                    }
-                                }
+                                error: function (xhr, status, error) { console.log("Error", error); }
                             });
                         });
 
-                        // 25. 댓글 좋아요 버튼 클릭 (이벤트 위임 사용)
+                        // 댓글 좋아요
                         $(document).on("click", ".comment-like-btn", function () {
-                            console.log("Comment Like Button Clicked");
                             var btn = $(this);
                             var commentId = btn.data("comment-id");
                             $.ajax({
@@ -378,13 +587,11 @@
                                 dataType: "json",
                                 cache: false,
                                 success: function (data) {
-                                    console.log("Comment Heart Success", data);
                                     if (data.result === "login_required") {
                                         alert("로그인이 필요합니다.");
-                                        location.href = "${pageContext.request.contextPath}/member/login";
+                                        location.href = "${pageContext.request.contextPath}/user/login.me";
                                         return;
                                     }
-
                                     var icon = btn.find("i");
                                     var countSpan = btn.find(".like-count");
 
@@ -395,31 +602,23 @@
                                     }
                                     countSpan.text(data.count);
                                 },
-                                error: function (xhr, status, error) {
-                                    console.log("통신 실패", status, error);
-                                    if (status === "parsererror") {
-                                        alert("서버 오류 내용: " + xhr.responseText);
-                                    }
-                                }
+                                error: function (xhr, status, error) { console.log("Error", error); }
                             });
                         });
 
-                        // 초기 UI 세팅
-                        // 따옴표로 감싸서 속성이 없어도 문법 오류 방지 (var isLiked = "";)
+                        // 초기 좋아요 상태
                         var isLiked = "${isLiked}";
                         var likeCount = "${likeCount}";
 
                         if (isLiked === "true") {
                             $("#heart-icon").removeClass("far").addClass("fas");
+                            $("#like-btn").addClass("active");
                         } else {
                             $("#heart-icon").removeClass("fas").addClass("far");
                         }
 
-                        // likeCount가 비어있으면 0으로 처리
                         if (!likeCount) likeCount = 0;
                         $("#like-count").text(likeCount);
-                        //뭐지
-                        console.log("Board Detail Script Loaded. isLiked=" + isLiked);
                     });
                 </script>
             </body>

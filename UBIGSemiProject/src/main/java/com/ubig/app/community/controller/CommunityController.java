@@ -79,8 +79,9 @@ public class CommunityController {
     public String delete(int boardId, javax.servlet.http.HttpSession session, Model model) {
 
         // 1. 로그인 유저 확인
-        com.ubig.app.vo.member.MemberVO loginUser = (com.ubig.app.vo.member.MemberVO) session.getAttribute("loginUser");
-        if (loginUser == null) {
+        com.ubig.app.vo.member.MemberVO loginMember = (com.ubig.app.vo.member.MemberVO) session
+                .getAttribute("loginMember");
+        if (loginMember == null) {
             model.addAttribute("msg", "로그인 후 이용해주세요.");
             return "redirect:login"; // 로그인 페이지가 없으면 적절히 처리
         }
@@ -94,7 +95,7 @@ public class CommunityController {
 
         // 3. 권한 체크 (작성자 본인 or 관리자)
         // String.equals() 사용 시 NullPointerException 방지
-        if (loginUser.getUserId().equals(board.getUserId()) || "ADMIN".equals(loginUser.getUserRole())) {
+        if (loginMember.getUserId().equals(board.getUserId()) || "ADMIN".equals(loginMember.getUserRole())) {
 
             // 4. 삭제 실행
             int result = communityService.deleteBoard(boardId);
@@ -139,12 +140,13 @@ public class CommunityController {
         int likeCount = communityService.getLikeCount(boardId);
         boolean isLiked = false;
 
-        com.ubig.app.vo.member.MemberVO loginUser = (com.ubig.app.vo.member.MemberVO) session.getAttribute("loginUser");
-        if (loginUser != null) {
+        com.ubig.app.vo.member.MemberVO loginMember = (com.ubig.app.vo.member.MemberVO) session
+                .getAttribute("loginMember");
+        if (loginMember != null) {
             // 게시글 좋아요 여부 체크
             com.ubig.app.vo.community.BoardLikeVO like = new com.ubig.app.vo.community.BoardLikeVO();
             like.setBoardId(boardId);
-            like.setUserId(loginUser.getUserId());
+            like.setUserId(loginMember.getUserId());
             int check = communityService.checkLike(like);
             if (check > 0)
                 isLiked = true;
@@ -153,7 +155,7 @@ public class CommunityController {
             for (com.ubig.app.vo.community.CommentVO c : commentList) {
                 com.ubig.app.vo.community.CommentLikeVO clike = new com.ubig.app.vo.community.CommentLikeVO();
                 clike.setCommentId(c.getCommentId());
-                clike.setUserId(loginUser.getUserId());
+                clike.setUserId(loginMember.getUserId());
                 if (communityService.checkCommentLike(clike) > 0) {
                     c.setLiked(true); // VO에 setter 존재 (Lombok Data)
                 }
@@ -189,9 +191,10 @@ public class CommunityController {
             javax.servlet.http.HttpSession session) {
 
         // 로그인한 사용자 정보 가져오기
-        com.ubig.app.vo.member.MemberVO loginUser = (com.ubig.app.vo.member.MemberVO) session.getAttribute("loginUser");
-        if (loginUser != null) {
-            comment.setUserId(loginUser.getUserId()); // 작성자 ID 설정
+        com.ubig.app.vo.member.MemberVO loginMember = (com.ubig.app.vo.member.MemberVO) session
+                .getAttribute("loginMember");
+        if (loginMember != null) {
+            comment.setUserId(loginMember.getUserId()); // 작성자 ID 설정
         } else {
             // 로그인 안되어있으면 에러처리하거나 로그인페이지로 (여기선 간단히 리스트로)
             return "redirect:list";
@@ -256,14 +259,18 @@ public class CommunityController {
     public String writeForm(String category, Model model, javax.servlet.http.HttpSession session) {
 
         // 1. 로그인 유저 정보를 꺼냅니다.
-        com.ubig.app.vo.member.MemberVO loginUser = (com.ubig.app.vo.member.MemberVO) session.getAttribute("loginUser");
+        com.ubig.app.vo.member.MemberVO loginMember = (com.ubig.app.vo.member.MemberVO) session
+                .getAttribute("loginMember");
 
-        // 2. 관리자가 아니면 돌려보냅니다. (보안 강화)
-        if (loginUser == null || !"ADMIN".equals(loginUser.getUserRole())) {
-            model.addAttribute("msg", "관리자만 작성할 수 있습니다.");
-            model.addAttribute("url", "list?category=" + category);
-            // 알림창 띄우고 이동하는 공통 페이지가 없으면 바로 리스트로 보냅니다.
-            // return "common/alert";
+        // 2. 로그인 체크 및 권한 검사
+        if (loginMember == null) {
+            model.addAttribute("msg", "로그인 후 이용할 수 있습니다.");
+            return "redirect:/user/login.me";
+        }
+
+        // 공지사항(NOTICE)은 관리자만 작성 가능
+        if ("NOTICE".equals(category) && !"ADMIN".equals(loginMember.getUserRole())) {
+            model.addAttribute("msg", "공지사항은 관리자만 작성할 수 있습니다.");
             return "redirect:list?category=" + category;
         }
 
@@ -281,7 +288,20 @@ public class CommunityController {
             @org.springframework.web.bind.annotation.RequestParam(value = "upfile", required = false) org.springframework.web.multipart.MultipartFile upfile,
             javax.servlet.http.HttpSession session) {
 
+        // [수정] 작성자 ID 세팅 (세션에서 가져옴)
+        com.ubig.app.vo.member.MemberVO loginMember = (com.ubig.app.vo.member.MemberVO) session
+                .getAttribute("loginMember");
+        if (loginMember != null) {
+            board.setUserId(loginMember.getUserId());
+        } else {
+            return "redirect:/user/login.me";
+        }
+
         // 1. Service에게 "이거 DB에 넣어줘"라고 시킵니다.
+        // 체크박스 미체크 시 null이 들어오므로 방어 코드 추가
+        if (board.getIsPinned() == null) {
+            board.setIsPinned("N");
+        }
         int result = communityService.insertBoard(board);
 
         // 2. 파일 업로드 처리
@@ -353,15 +373,15 @@ public class CommunityController {
     public String commentHeart(int commentId, javax.servlet.http.HttpSession session) {
 
         try {
-            com.ubig.app.vo.member.MemberVO loginUser = (com.ubig.app.vo.member.MemberVO) session
-                    .getAttribute("loginUser");
-            if (loginUser == null) {
+            com.ubig.app.vo.member.MemberVO loginMember = (com.ubig.app.vo.member.MemberVO) session
+                    .getAttribute("loginMember");
+            if (loginMember == null) {
                 return "{\"result\": \"login_required\"}";
             }
 
             com.ubig.app.vo.community.CommentLikeVO like = new com.ubig.app.vo.community.CommentLikeVO();
             like.setCommentId(commentId);
-            like.setUserId(loginUser.getUserId());
+            like.setUserId(loginMember.getUserId());
 
             int status = communityService.toggleCommentLike(like); // 1: Like, 0: Unlike
             int count = communityService.getCommentLikeCount(commentId);
@@ -390,16 +410,16 @@ public class CommunityController {
     public String heart(int boardId, javax.servlet.http.HttpSession session) {
 
         try {
-            com.ubig.app.vo.member.MemberVO loginUser = (com.ubig.app.vo.member.MemberVO) session
-                    .getAttribute("loginUser");
-            if (loginUser == null) {
+            com.ubig.app.vo.member.MemberVO loginMember = (com.ubig.app.vo.member.MemberVO) session
+                    .getAttribute("loginMember");
+            if (loginMember == null) {
                 return "{\"result\": \"login_required\"}";
             }
 
             // Vo 객체에 담아서 서비스로 전달
             com.ubig.app.vo.community.BoardLikeVO like = new com.ubig.app.vo.community.BoardLikeVO();
             like.setBoardId(boardId);
-            like.setUserId(loginUser.getUserId());
+            like.setUserId(loginMember.getUserId());
 
             int status = communityService.toggleLike(like); // 1: Like, 0: Unlike
             int count = communityService.getLikeCount(boardId);
