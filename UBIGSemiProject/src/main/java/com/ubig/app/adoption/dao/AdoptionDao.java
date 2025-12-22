@@ -59,4 +59,16 @@ public class AdoptionDao {
 		return sqlSession.update("adoptionMapper.updateViewCount", animalNo);
 	}
 
+	public int deleteAnimal(SqlSessionTemplate sqlSession, int anino) {
+		return sqlSession.delete("adoptionMapper.deleteanimal", anino);
+	}
+
+	public int checkpost(SqlSessionTemplate sqlSession, int anino) {
+		return sqlSession.selectOne("adoptionMapper.checkpost", anino);
+	}
+
+	public ArrayList<AnimalDetailVO> managepost(SqlSessionTemplate sqlSession) {
+		return (ArrayList) sqlSession.selectList("adoptionMapper.allList");
+	}
+
 }

@@ -22,5 +22,10 @@ public class MemberDao {
 	public int checkId(SqlSessionTemplate sqlSession, String userId) {
 		return sqlSession.selectOne("memberMapper.checkId", userId);
 	}
+	
+	// 쪽지 전송 시 가입되어있는 아이디인지 확인
+	public int messageCheckId(SqlSessionTemplate sqlSession, String userId) {
+		return sqlSession.selectOne("memberMapper.messageCheckId", userId);
+	}
 
 }

@@ -165,6 +165,7 @@
 			</div>
 
 			<button id="enroll">입양 글 등록하기</button>
+			<button id="postManage">입양 글 관리하기</button>
 		</body>
 
 		<script>
@@ -183,10 +184,16 @@
 					}
 				});
 
-				// 입양 등록 페이지로 이동
+				// 입양동물 등록 페이지로 이동
 				adInsert.addEventListener('click', function () {
-					location.href = 'adoption.enrollpage';
+					location.href = 'adoption.enrollpageanimal';
 				});
+
+				//입양 관리 페이지로 이동
+				postManage.addEventListener('click', function () {
+					location.href = 'adoption.postmanage';
+				});
+
 
 				// 페이징 처리
 				paging.addEventListener('click', function (e) {
@@ -202,8 +209,6 @@
 							page = currentPage + 1;
 						}
 
-						// 현재 페이지가 숫자가 아닌 경우 (화살표 등) 방지 로직 필요하나
-						// 위에서 prev/next 클래스로 처리했으므로 숫자 버튼만 남음
 						if (!isNaN(page)) {
 							location.href = 'adoption.mainpage?page=' + page;
 						}

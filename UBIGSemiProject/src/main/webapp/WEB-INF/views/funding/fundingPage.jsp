@@ -9,7 +9,7 @@
 <style>
     body {
         font-family: Arial, sans-serif;
-        background-color: #f8f9fa;
+        background-color: #f5f6f7;
         margin: 0;
         padding: 0;
     }
@@ -32,33 +32,53 @@
         box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
 
-    .section h2 {
+    /* 탭 버튼 */
+    .tabs {
+        display: flex;
         margin-bottom: 20px;
     }
 
-    /* 후원 버튼 */
+    .tabs button {
+        flex: 1;
+        padding: 15px;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        background-color: #ddd;
+    }
+
+    .tabs button.active {
+        background-color: #ff9800;
+        color: white;
+    }
+
+    .donation-content {
+        display: none;
+    }
+
+    .donation-content.active {
+        display: block;
+    }
+
     .donation-buttons button {
         padding: 10px 20px;
         margin-right: 10px;
+        margin-top: 10px;
         border: none;
         border-radius: 5px;
         background-color: #ff9800;
         color: white;
-        font-size: 16px;
+        font-size: 15px;
         cursor: pointer;
     }
 
-    .donation-buttons button:hover {
-        background-color: #e68900;
-    }
-
     input[type="number"] {
+        margin-top: 10px;
         padding: 10px;
         width: 200px;
-        margin-top: 10px;
     }
 
-    /* 펀딩 카드 */
+    /* 펀딩 */
     .funding-list {
         display: flex;
         gap: 20px;
@@ -71,15 +91,6 @@
         padding: 20px;
     }
 
-    .funding-card h3 {
-        margin-top: 0;
-    }
-
-    .funding-card progress {
-        width: 100%;
-        height: 20px;
-    }
-
     .funding-card button {
         margin-top: 15px;
         width: 100%;
@@ -88,25 +99,21 @@
         border: none;
         border-radius: 5px;
         color: white;
-        font-size: 15px;
         cursor: pointer;
-    }
-
-    .funding-card button:hover {
-        background-color: #43a047;
     }
 </style>
 
 <script>
-    function donate(amount) {
-        alert(amount + "원 후원이 선택되었습니다.");
-        // 실제로는 서버로 전송
-        // location.href="donate.do?amount=" + amount;
-    }
+    function showTab(tabId, btn) {
+        document.querySelectorAll('.donation-content').forEach(div => {
+            div.classList.remove('active');
+        });
+        document.getElementById(tabId).classList.add('active');
 
-    function funding(projectId) {
-        alert("펀딩 참여 프로젝트 ID: " + projectId);
-        // location.href="funding.do?projectId=" + projectId;
+        document.querySelectorAll('.tabs button').forEach(b => {
+            b.classList.remove('active');
+        });
+        btn.classList.add('active');
     }
 </script>
 </head>
@@ -118,48 +125,74 @@
 
     <!-- 후원 섹션 -->
     <div class="section">
-        <h2>💖 정기/일시 후원</h2>
-        <p>여러분의 작은 후원이 유기견의 큰 희망이 됩니다.</p>
+        <h2>💖 후원하기</h2>
 
-        <div class="donation-buttons">
-            <button onclick="${pageContext.request.contextPath}/funding/donation">10,000원</button>
-            <button onclick="${pageContext.request.contextPath}/funding/donation">30,000원</button>
-            <button onclick="${pageContext.request.contextPath}/funding/donation">50,000원</button>
+        <div class="tabs">
+            <button class="active" onclick="showTab('regular', this)">정기 후원</button>
+            <button onclick="showTab('oneTime', this)">일시 후원</button>
         </div>
 
-        <br>
-        <label>직접 입력</label><br>
-        <input type="number" placeholder="금액 입력(원)">
+        <!-- 정기 후원 -->
+        <div id="regular" class="donation-content active">
+            <p>매달 일정 금액을 후원하여 유기견을 지속적으로 도와주세요.</p>
+
+            <form action="regularDonate.do" method="post">
+                <div class="donation-buttons">
+                    <button type="submit" name="amount" value="10000">월 10,000원</button>
+                    <button type="submit" name="amount" value="30000">월 30,000원</button>
+                    <button type="submit" name="amount" value="50000">월 50,000원</button>
+                </div>
+
+                <br>
+                <label>직접 입력</label><br>
+                <input type="number" name="amount" placeholder="월 후원 금액(원)" required>
+                <br><br>
+                <button type="submit">정기 후원 신청</button>
+            </form>
+        </div>
+
+        <!-- 일시 후원 -->
+        <div id="oneTime" class="donation-content">
+            <p>원하는 금액으로 한 번만 후원할 수 있습니다.</p>
+
+            <form action="${pageContext.request.contextPath}/funding/donation" method="post">
+                <div class="donation-buttons">
+                    <button type="submit" name="amount" value="5000">5,000원</button>
+                    <button type="submit" name="amount" value="10000">10,000원</button>
+                    <button type="submit" name="amount" value="30000">30,000원</button>
+                </div>
+
+                <br>
+                <label>직접 입력</label><br>
+                <input type="text" name="donationNo" placeholder="입금번호" required>
+                <input type="text" name="userId" value="" required>
+                <input type="number" name="amount" placeholder="후원 금액(원)" required>
+                <input type="number" name="amount" placeholder="후원 금액(원)" required>
+                <input type="text" name="donationDate" value="$" required>
+                <br><br>
+                <button type="submit">일시 후원하기</button>
+            </form>
+        </div>
     </div>
 
     <!-- 펀딩 섹션 -->
     <div class="section">
-        <h2>🎯 유기견 펀딩 프로젝트</h2>
+        <h2>🎯 펀딩 프로젝트</h2>
 
         <div class="funding-list">
 
             <div class="funding-card">
                 <h3>겨울 담요 지원</h3>
-                <p>추운 겨울을 버틸 수 있도록 담요를 지원합니다.</p>
+                <p>달성률 60%</p>
                 <progress value="60" max="100"></progress>
-                <p>60% 달성</p>
-                <button onclick="funding(1)">펀딩 참여</button>
+                <button onclick="location.href='fundingDetail.do?id=1'">참여하기</button>
             </div>
 
             <div class="funding-card">
                 <h3>예방접종 비용 마련</h3>
-                <p>유기견들의 건강을 위한 예방접종 펀딩</p>
+                <p>달성률 40%</p>
                 <progress value="40" max="100"></progress>
-                <p>40% 달성</p>
-                <button onclick="funding(2)">펀딩 참여</button>
-            </div>
-
-            <div class="funding-card">
-                <h3>사료 후원 프로젝트</h3>
-                <p>보호소 사료 부족 문제 해결</p>
-                <progress value="80" max="100"></progress>
-                <p>80% 달성</p>
-                <button onclick="funding(3)">펀딩 참여</button>
+                <button onclick="location.href='fundingDetail.do?id=2'">참여하기</button>
             </div>
 
         </div>

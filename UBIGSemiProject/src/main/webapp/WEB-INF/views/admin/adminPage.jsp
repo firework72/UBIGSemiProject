@@ -40,7 +40,7 @@
                 <a href="${pageContext.request.contextPath}/admin/activityPage"><i class="fas fa-hand-holding-heart me-2"></i> 봉사활동 관리</a>
                 <a href="${pageContext.request.contextPath}/admin/fundingPage"><i class="fas fa-donate me-2"></i> 후원/펀딩 관리</a>
                 <a href="/admin/boards"><i class="fas fa-comments me-2"></i> 게시판/신고 관리</a>
-                <a href="/admin/chat"><i class="fas fa-headset me-2"></i> 1:1 문의</a>
+                <a href="${pageContext.request.contextPath}/admin/chatList.ch"><i class="fas fa-headset me-2"></i> 1:1 문의</a>
             </div>
         </nav>
 

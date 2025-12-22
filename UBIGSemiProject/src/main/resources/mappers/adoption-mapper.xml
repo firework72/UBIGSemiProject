@@ -136,6 +136,28 @@
 		SET VIEWS = VIEWS+1
 		WHERE ANIMAL_NO = #{animalNo}
 	</update>
+	
+	<!-- 동물 삭제 -->
+	<delete id= "deleteanimal" parameterType="int">
+		DELETE
+		FROM ANIMAL_DETAILS
+		WHERE ANIMAL_NO = #{anino}
+	</delete>
+	
+	<!-- 동물 번호로 post유무 조회 -->
+	<select id="checkpost" parameterType="int" resultType="int">
+		SELECT COUNT(*)
+		FROM ADOPTION_POSTS
+		WHERE ANIMAL_NO = #{anino}
+	</select>
+	
+	<!-- 모든 동물 리스트 가져오기 -->
+	<select id="allList" resultType="AnimalDetail">
+        SELECT *
+        FROM ANIMAL_DETAILS
+        ORDER BY ANIMAL_NO DESC
+	</select>
+	
 	    
 
 </mapper>

@@ -45,4 +45,14 @@
 		FROM MEMBERS
 		WHERE USER_ID = #{userId}
 	</select>
+	
+	<!-- 메시지 보낼 때 수신인 확인용 checkId 하나 더 만들기 -->
+	<!-- 이때는 USER_STATUS까지 확인해야한다. -->
+	
+	<select id="messageCheckId" parameterType="string" resultType="_int">
+		SELECT COUNT(*)
+		FROM MEMBERS
+		WHERE USER_ID = #{userId}	
+		AND USER_STATUS = 'Y'
+	</select>
 </mapper>

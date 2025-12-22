@@ -436,6 +436,8 @@
                     <p>서울특별시 강남구 테헤란로 123 | Tel: 02-1234-5678</p>
                 </div>
             </footer>
+            
+        <jsp:include page="/WEB-INF/views/common/chat.jsp"/>
 
         </body>
 

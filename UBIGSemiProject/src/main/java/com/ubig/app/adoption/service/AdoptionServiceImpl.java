@@ -71,4 +71,22 @@ public class AdoptionServiceImpl implements AdoptionService {
 		return dao.updateViewCount(sqlSession, animalNo);
 	}
 
+	// 동물 정보 삭제
+	@Override
+	public int deleteAnimal(int anino) {
+		return dao.deleteAnimal(sqlSession, anino);
+	}
+
+	// anino로 post 유무 조회
+	@Override
+	public int checkpost(int anino) {
+		return dao.checkpost(sqlSession, anino);
+	}
+
+	// 모든 게시물 정보 받아오기(관리자 관리용)
+	@Override
+	public ArrayList<AnimalDetailVO> managepost() {
+		return dao.managepost(sqlSession);
+	}
+
 }

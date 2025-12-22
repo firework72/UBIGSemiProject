@@ -41,9 +41,9 @@ public class AdoptionController {
 	}
 
 	// 입양 등록 페이지 이동
-	@RequestMapping("/adoption.enrollpage")
+	@RequestMapping("/adoption.enrollpageanimal")
 	public String goAdoptionInsertPage() {
-		return "/adoption/adoptionenrollpage";
+		return "/adoption/adoptionenrollpageanimal";
 	}
 
 	// 입양 신청 페이지 이동
@@ -61,7 +61,7 @@ public class AdoptionController {
 		} else {
 			session.setAttribute("alertMsgAd", "등록 실패");
 		}
-		return "redirect:/adoption.enrollpage";
+		return "redirect:/adoption.mainpage";
 	}
 
 	// 입양 신청서 작성submit
@@ -80,7 +80,18 @@ public class AdoptionController {
 	// 동물 등록
 	@RequestMapping("/adoption.insert.animal")
 	public String insertAnimal(HttpSession session, MultipartFile uploadFile, AnimalDetailVO animal) {
-		// 첨부파일 있는지 확인 로직
+
+		// 기존 첨부파일 삭제
+		if (animal.getPhotoUrl() != null) {
+			// 파일 삭제
+			String savePath = session.getServletContext().getRealPath("resources/download/adoption/");
+			File file = new File(savePath + animal.getPhotoUrl());
+			if (file.exists()) {
+				file.delete();
+			}
+		}
+
+		// 이후 파일 추가
 		if (uploadFile != null && !uploadFile.isEmpty()) {
 			// 파일 저장 및 이름 변경
 			String changeName = uploadFile(session, uploadFile);
@@ -95,7 +106,7 @@ public class AdoptionController {
 				session.setAttribute("alertMsgAd", "동물 등록 실패!");
 			}
 		}
-		return "redirect:/adoption.list";
+		return "redirect:/adoption.mainpage";
 	}
 
 	// 동물파일 등록 전용 메서드
@@ -142,6 +153,45 @@ public class AdoptionController {
 		model.addAttribute("adoptionList", adoptionList);
 
 		return "/adoption/adoptionmainpage";
+	}
+
+	// 입양 관련 동물정보 수정(게시자가)
+	@RequestMapping("/adoption.updateanimal")
+	public String updateAnimal(int anino, Model model) {
+		// 해당 동물 정보를 가지고 수정 페이지로 넘어가기
+		AnimalDetailVO animal = service.goAdoptionDetail(anino);
+		model.addAttribute("animal", animal);
+		return "/adoption/adoptionenrollpageanimal";
+	}
+
+	// 입양 관련 동물정보 삭제(게시자가)
+	@RequestMapping("/adoption.deleteanimal")
+	public String deleteAnimal(int anino, HttpSession session) {
+		// 해당 동물 정보에 대한 데이터 삭제
+		// 해당 anino를 가지고있는 post 조회해보기
+		int result1 = service.checkpost(anino);
+		System.out.println(result1);
+		if (result1 == 0) {
+			int result = service.deleteAnimal(anino);
+			if (result > 0) {
+				session.setAttribute("alertMsgAd", "동물 삭제 성공");
+			} else {
+				session.setAttribute("alertMsgAd", "동물 삭제 실패");
+			}
+		} else {
+			session.setAttribute("alertMsgAd", "관리자에게 삭제 요청 필요!");
+		}
+		return "redirect:/adoption.mainpage";
+
+	}
+
+	// 입양 게시글 관리자 페이지로 + 필요한 게시글 정보 받아서 가기
+	@RequestMapping("/adoption.postmanage")
+	public String postManage(Model model) {
+
+		ArrayList<AnimalDetailVO> list = service.managepost();
+		model.addAttribute("list", list);
+		return "/adoption/adoptionpostmanage";
 	}
 
 }
