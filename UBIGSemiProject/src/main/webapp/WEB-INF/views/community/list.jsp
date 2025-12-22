@@ -107,8 +107,10 @@
                     <div class="tab-menu">
                         <a href="?category=NOTICE" class="tab-item ${category == 'NOTICE' ? 'active' : ''}">공지사항</a>
                         <a href="?category=FREE" class="tab-item ${category == 'FREE' ? 'active' : ''}">자유게시판</a>
-                        <a href="?category=REQUEST" class="tab-item ${category == 'REQUEST' ? 'active' : ''}">건의사항</a>
-                        <a href="?category=REVIEW" class="tab-item ${category == 'REVIEW' ? 'active' : ''}">봉사후기</a>
+                        <a href="list?category=REQUEST"
+                            class="tab-item ${category == 'REQUEST' ? 'active' : ''}">건의사항</a>
+                        <a href="list?category=REVIEW" class="tab-item ${category == 'REVIEW' ? 'active' : ''}">봉사후기</a>
+                        <a href="qna" class="tab-item ${category == 'QNA' ? 'active' : ''}">봉사활동 Q&A</a>
                     </div>
 
                     <!-- [Step 11: 글쓰기 버튼 추가] 
@@ -121,55 +123,107 @@
                             <a href="write?category=${category}" class="btn"
                                 style="background: #ff9f43; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">글쓰기</a>
                         </div>
-                        </c:if>
+                    </c:if>
 
-                            <table class="board-table">
-                                <colgroup>
-                                    <col width="10%">
-                                    <col width="50%">
-                                    <col width="15%">
-                                    <col width="15%">
-                                    <col width="10%">
-                                </colgroup>
-                                <thead>
-                                    <tr>
-                                        <th>번호</th>
-                                        <th>제목</th>
-                                        <th>작성자</th>
-                                        <th>작성일</th>
-                                        <th>조회수</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <!-- [Step 8: 목록 출력] 
-                     JSTL forEach를 사용하여 Controller가 보내준 'list' 보따리를 하나씩 꺼내서 출력합니다.
-                -->
-                                    <c:choose>
-                                        <c:when test="${empty list}">
+                    <!-- 페이징 처리 및 게시글 수 선택 -->
+                    <div class="paging-area" style="text-align: center; margin-top: 30px;">
+
+                        <!-- 1. 게시글 수 선택 (limit) -->
+                        <div style="float: right; margin-bottom: 10px;">
+                            <select id="boardLimit" onchange="changeLimit(this.value)">
+                                <option value="10" ${limit==10 ? 'selected' : '' }>10개씩 보기</option>
+                                <option value="20" ${limit==20 ? 'selected' : '' }>20개씩 보기</option>
+                                <option value="50" ${limit==50 ? 'selected' : '' }>50개씩 보기</option>
+                            </select>
+                        </div>
+
+                        <table class="board-table">
+                            <colgroup>
+                                <col width="10%">
+                                <col width="50%">
+                                <col width="15%">
+                                <col width="15%">
+                                <col width="10%">
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th>번호</th>
+                                    <th>제목</th>
+                                    <th>작성자</th>
+                                    <th>작성일</th>
+                                    <th>조회수</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- [Step 8: 목록 출력] -->
+                                <c:choose>
+                                    <c:when test="${empty list}">
+                                        <tr>
+                                            <td colspan="5">게시글이 없습니다.</td>
+                                        </tr>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <c:forEach var="b" items="${list}">
                                             <tr>
-                                                <td colspan="5">게시글이 없습니다.</td>
+                                                <td>${b.boardId}</td>
+                                                <td class="board-title">
+                                                    <a href="detail?boardId=${b.boardId}">
+                                                        ${b.title}
+                                                    </a>
+                                                </td>
+                                                <td>${b.userId}</td>
+                                                <td>
+                                                    <fmt:formatDate value="${b.createDate}" pattern="yyyy.MM.dd" />
+                                                </td>
+                                                <td>${b.viewCount}</td>
                                             </tr>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <c:forEach var="b" items="${list}">
-                                                <tr>
-                                                    <td>${b.boardId}</td>
-                                                    <td class="board-title">
-                                                        <a href="detail?boardId=${b.boardId}">
-                                                            ${b.title}
-                                                        </a>
-                                                    </td>
-                                                    <td>${b.userId}</td>
-                                                    <td>
-                                                        <fmt:formatDate value="${b.createDate}" pattern="yyyy.MM.dd" />
-                                                    </td>
-                                                    <td>${b.viewCount}</td>
-                                                </tr>
-                                            </c:forEach>
-                                        </c:otherwise>
-                                    </c:choose>
-                                </tbody>
-                            </table>
+                                        </c:forEach>
+                                    </c:otherwise>
+                                </c:choose>
+                            </tbody>
+                        </table>
+
+                        <!-- 2. 페이징 바 -->
+                        <div class="pagination" style="margin-top: 20px;">
+                            <!-- 이전 페이지 -->
+                            <c:if test="${pi.currentPage > 1}">
+                                <a href="list?category=${category}&cpage=${pi.currentPage - 1}&limit=${limit}"
+                                    class="btn">&lt;</a>
+                            </c:if>
+
+                            <!-- 페이지 번호 -->
+                            <!-- 
+                             [페이징 로직]
+                             startPage 부터 endPage 까지 반복문을 돌면서 버튼을 생성합니다.
+                             현재 페이지인 경우 강조 표시를 합니다.
+                        -->
+                            <c:forEach var="p" begin="${pi.startPage}" end="${pi.endPage}">
+                                <c:choose>
+                                    <c:when test="${p == pi.currentPage}">
+                                        <a href="#" class="btn"
+                                            style="background : #ff9f43; color : white; border : 1px solid #ff9f43">${p}</a>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <a href="list?category=${category}&cpage=${p}&limit=${limit}"
+                                            class="btn">${p}</a>
+                                    </c:otherwise>
+                                </c:choose>
+                            </c:forEach>
+
+                            <!-- 다음 페이지 -->
+                            <c:if test="${pi.currentPage < pi.maxPage}">
+                                <a href="list?category=${category}&cpage=${pi.currentPage + 1}&limit=${limit}"
+                                    class="btn">&gt;</a>
+                            </c:if>
+                        </div>
+
+                    </div>
+
+                    <script>
+                        function changeLimit(limit) {
+                            location.href = "list?category=${category}&cpage=1&limit=" + limit;
+                        }
+                    </script>
 
                 </main>
 

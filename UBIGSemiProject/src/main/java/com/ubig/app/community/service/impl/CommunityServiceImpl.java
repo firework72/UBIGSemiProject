@@ -19,9 +19,15 @@ public class CommunityServiceImpl implements CommunityService {
      * 실제로 동작하는 Service 코드입니다.
      * 매개변수로 받은 category를 DAO에게 그대로 토스(toss)해줍니다.
      */
+
     @Override
-    public List<BoardVO> getBoardList(String category) {
-        return communityDao.selectBoardList(category);
+    public int getBoardListCount(String category) {
+        return communityDao.selectListCount(category);
+    }
+
+    @Override
+    public List<BoardVO> getBoardList(com.ubig.app.common.model.vo.PageInfo pi, String category) {
+        return communityDao.selectBoardList(pi, category);
     }
 
     @Override

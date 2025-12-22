@@ -33,6 +33,7 @@
                             </li>
                             <li><a href="${pageContext.request.contextPath}/community/list?category=REVIEW">봉사후기</a>
                             </li>
+                            <li><a href="${pageContext.request.contextPath}/community/qna">봉사활동 Q&A</a></li>
                         </ul>
                     </li>
                     <li class="dropdown">

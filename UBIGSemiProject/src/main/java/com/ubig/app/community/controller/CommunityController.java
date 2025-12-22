@@ -27,21 +27,91 @@ public class CommunityController {
      * "?category=NOTICE" 처럼 주소창에 달린 값을 받아서
      * Service에게 "NOTICE 글 목록 내놔"라고 시킵니다.
      * 만약 카테고리가 없으면 기본값으로 'NOTICE(공지)'를 봅니다.
+     * [Step 26: 페이징 처리 추가]
+     * cpage(현재 페이지), limit(한 페이지당 게시글 수)를 받아서 처리합니다.
      */
     @GetMapping("/list")
     public String list(Model model,
-            @org.springframework.web.bind.annotation.RequestParam(value = "category", defaultValue = "NOTICE") String category) {
+            @org.springframework.web.bind.annotation.RequestParam(value = "category", defaultValue = "NOTICE") String category,
+            @org.springframework.web.bind.annotation.RequestParam(value = "cpage", defaultValue = "1") int currentPage,
+            @org.springframework.web.bind.annotation.RequestParam(value = "limit", defaultValue = "10") int boardLimit) {
 
-        // 1. Service를 통해 DB에서 글 목록을 가져옵니다.
-        List<BoardVO> list = communityService.getBoardList(category);
+        // 1. 총 게시글 수 조회
+        int listCount = communityService.getBoardListCount(category);
 
-        // 2. 화면(JSP)에 "list"라는 이름으로 보따리를 쌉니다.
+        // 2. 페이징 정보 생성 (PageInfo)
+        // pageLimit는 하단 페이징 바에 보여질 페이징 버튼 개수 (보통 10개)
+        int pageLimit = 10;
+        com.ubig.app.common.model.vo.PageInfo pi = com.ubig.app.common.util.Pagination.getPageInfo(listCount,
+                currentPage, pageLimit, boardLimit);
+
+        // 3. Service를 통해 DB에서 글 목록을 가져옵니다. (페이징 적용)
+        List<BoardVO> list = communityService.getBoardList(pi, category);
+
+        // 4. 화면(JSP)에 "list"라는 이름으로 보따리를 쌉니다.
         model.addAttribute("list", list);
+        // 페이징 정보도 넘겨줍니다.
+        model.addAttribute("pi", pi);
 
-        // 3. 현재 어떤 카테고리인지도 알려줍니다 (탭 활성화를 위해)
+        // 5. 현재 어떤 카테고리인지도 알려줍니다 (탭 활성화를 위해)
         model.addAttribute("category", category);
+        // 검색조건, 정렬조건 유지 등을 위해 limit도 넘겨줄 수 있음
+        model.addAttribute("limit", boardLimit);
 
         return "community/list";
+    }
+
+    /*
+     * [Step 27: 봉사활동 Q&A 페이지]
+     * 정적 페이지로 요청이 들어오면 qna.jsp를 보여줍니다.
+     */
+    @GetMapping("/qna")
+    public String qna(Model model) {
+        model.addAttribute("category", "QNA");
+        return "community/qna";
+    }
+
+    /*
+     * [Step 20: 게시글 글 삭제 Controller]
+     * 작성자 본인 또는 관리자만 삭제할 수 있습니다.
+     */
+    @GetMapping("/delete")
+    public String delete(int boardId, javax.servlet.http.HttpSession session, Model model) {
+
+        // 1. 로그인 유저 확인
+        com.ubig.app.vo.member.MemberVO loginUser = (com.ubig.app.vo.member.MemberVO) session.getAttribute("loginUser");
+        if (loginUser == null) {
+            model.addAttribute("msg", "로그인 후 이용해주세요.");
+            return "redirect:login"; // 로그인 페이지가 없으면 적절히 처리
+        }
+
+        // 2. 게시글 정보 조회 (작성자 확인용)
+        BoardVO board = communityService.getBoardDetail(boardId);
+        if (board == null) {
+            model.addAttribute("msg", "존재하지 않는 게시글입니다.");
+            return "redirect:list";
+        }
+
+        // 3. 권한 체크 (작성자 본인 or 관리자)
+        // String.equals() 사용 시 NullPointerException 방지
+        if (loginUser.getUserId().equals(board.getUserId()) || "ADMIN".equals(loginUser.getUserRole())) {
+
+            // 4. 삭제 실행
+            int result = communityService.deleteBoard(boardId);
+
+            if (result > 0) {
+                // 성공 시 목록으로 (카테고리 유지)
+                return "redirect:list?category=" + board.getCategory();
+            } else {
+                model.addAttribute("msg", "게시글 삭제에 실패했습니다.");
+                return "redirect:detail?boardId=" + boardId;
+            }
+
+        } else {
+            // 권한 없음
+            model.addAttribute("msg", "삭제 권한이 없습니다.");
+            return "redirect:detail?boardId=" + boardId;
+        }
     }
 
     /*

@@ -7,13 +7,16 @@ import com.ubig.app.vo.community.CommentVO;
 public interface CommunityService {
 
     // Board
-    // Board
     /*
      * [Step 3: Service Interface 수정]
      * Controller와 DAO 사이의 약속(Interface)도 수정합니다.
      * 목록 요청 시 반드시 카테고리를 받도록 강제합니다.
      */
-    List<BoardVO> getBoardList(String category);
+    // 게시글 총 갯수 조회
+    int getBoardListCount(String category);
+
+    // 게시글 목록 조회 (페이징)
+    List<BoardVO> getBoardList(com.ubig.app.common.model.vo.PageInfo pi, String category);
 
     BoardVO getBoardDetail(int boardId);
 
@@ -54,6 +57,6 @@ public interface CommunityService {
     void insertCommentAttachment(com.ubig.app.vo.community.CommentAttachmentVO attachment);
 
     com.ubig.app.vo.community.BoardAttachmentVO getBoardAttachment(int boardId);
-    
+
     com.ubig.app.vo.community.CommentAttachmentVO getCommentAttachment(int commentId);
 }
