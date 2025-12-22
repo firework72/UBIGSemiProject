@@ -9,7 +9,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.ubig.app.funding.common.Scheduler;
 import com.ubig.app.funding.service.FundingService;
 import com.ubig.app.vo.funding.DonationVO;
 
@@ -22,17 +21,24 @@ public class FundingController {
 	
 	//후원,펀딩 페이지 이동
 	@RequestMapping("")
-	public String fundingPage(Model model) {
+	public String fundingViewPage(Model model) {
 		
 		ArrayList<DonationVO> list = service.selectDonation();
 		
-		model.addAttribute(list);
+		model.addAttribute("list",list);
+		
+		return "funding/fundingView";
+	}
+	
+	//후원 페이지 이동
+	@RequestMapping("/fundingPage")
+	public String fundingPage(Model model) {
 		
 		return "funding/fundingPage2";
 	}
 	
 	//정기 후원 신청 
-	@RequestMapping("updateType")
+	@RequestMapping("/updateType")
 	public String updateType(HttpSession session,DonationVO donationVO) {
 		
 		int result = service.updateType(donationVO);
