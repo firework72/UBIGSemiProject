@@ -7,7 +7,7 @@
         <head>
             <meta charset="UTF-8">
             <title>유봉일공 - 글쓰기</title>
-            <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
+            <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css?v=3">
             <!-- jQuery (Summernote를 위해 필수) -->
             <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 
@@ -82,6 +82,36 @@
                 .btn-primary:hover {
                     background: #e58e3c;
                 }
+
+                /* [Step 14: 태그 버튼 스타일] */
+                .tag-group {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 10px;
+                    margin-top: 10px;
+                }
+
+                .tag-btn {
+                    padding: 8px 15px;
+                    border: 1px solid #ddd;
+                    border-radius: 20px;
+                    background: #f8f9fa;
+                    color: #555;
+                    cursor: pointer;
+                    font-size: 0.9em;
+                    transition: all 0.2s;
+                }
+
+                .tag-btn:hover {
+                    background: #e9ecef;
+                }
+
+                .tag-btn.active {
+                    background: #ff9f43;
+                    color: white;
+                    border-color: #ff9f43;
+                    font-weight: bold;
+                }
             </style>
         </head>
 
@@ -117,10 +147,29 @@
                         </div>
                     </c:if>
 
-                    <div class="form-group">
-                        <label class="form-label">제목</label>
-                        <input type="text" name="title" class="form-input" placeholder="제목을 입력하세요" required>
+                    <label class="form-label">제목</label>
+                    <input type="text" name="title" class="form-input" placeholder="제목을 입력하세요" required>
                     </div>
+
+                    <!-- [Step 14: 태그 선택 (봉사후기 전용)] -->
+                    <c:if test="${category == 'REVIEW'}">
+                        <div class="form-group">
+                            <label class="form-label">키워드 선택 (중복 가능)</label>
+                            <div class="tag-group">
+                                <button type="button" class="tag-btn" data-value="#아이와 봉사활동하기 좋아요">#아이와 봉사활동하기
+                                    좋아요</button>
+                                <button type="button" class="tag-btn" data-value="#주차가 힘들어요">#주차가 힘들어요</button>
+                                <button type="button" class="tag-btn" data-value="#산 높이 있어요. 건강에 좋아요">#산 높이 있어요. 건강에
+                                    좋아요</button>
+                                <button type="button" class="tag-btn" data-value="#주변에 맛집이 많아요. 봉사활동 후 회식!">#주변에 맛집이
+                                    많아요.
+                                    봉사활동 후 회식!</button>
+                                <button type="button" class="tag-btn" data-value="#분위기 좋은 카페가 근처에 있어요">#분위기 좋은 카페가 근처에
+                                    있어요</button>
+                            </div>
+                            <input type="hidden" name="hashtags" id="hashtagsInput">
+                        </div>
+                    </c:if>
 
                     <div class="form-group">
                         <label class="form-label">내용</label>
@@ -142,6 +191,20 @@
 
             <script>
                 $(document).ready(function () {
+                    // [Step 14: 태그 버튼 클릭 이벤트]
+                    $('.tag-btn').click(function () {
+                        $(this).toggleClass('active');
+                        updateHashtags();
+                    });
+
+                    function updateHashtags() {
+                        var tags = [];
+                        $('.tag-btn.active').each(function () {
+                            tags.push($(this).data('value'));
+                        });
+                        $('#hashtagsInput').val(tags.join(','));
+                    }
+
                     $('#summernote').summernote({
                         height: 500,                 // 에디터 높이
                         minHeight: null,             // 최소 높이

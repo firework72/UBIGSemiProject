@@ -21,13 +21,13 @@ public class CommunityServiceImpl implements CommunityService {
      */
 
     @Override
-    public int getBoardListCount(String category) {
-        return communityDao.selectListCount(category);
+    public int getBoardListCount(java.util.Map<String, Object> map) {
+        return communityDao.selectListCount(map);
     }
 
     @Override
-    public List<BoardVO> getBoardList(com.ubig.app.common.model.vo.PageInfo pi, String category) {
-        return communityDao.selectBoardList(pi, category);
+    public List<BoardVO> getBoardList(com.ubig.app.common.model.vo.PageInfo pi, java.util.Map<String, Object> map) {
+        return communityDao.selectBoardList(pi, map);
     }
 
     @Override

@@ -21,4 +21,5 @@ public class BoardVO {
     private int viewCount;
     private String isDeleted;
     private String isPinned; // 'Y' or 'N'
+    private String hashtags; // [Step 14] 태그 (콤마로 구분)
 }

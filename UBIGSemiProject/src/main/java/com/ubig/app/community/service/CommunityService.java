@@ -13,10 +13,10 @@ public interface CommunityService {
      * 목록 요청 시 반드시 카테고리를 받도록 강제합니다.
      */
     // 게시글 총 갯수 조회
-    int getBoardListCount(String category);
+    int getBoardListCount(java.util.Map<String, Object> map);
 
     // 게시글 목록 조회 (페이징)
-    List<BoardVO> getBoardList(com.ubig.app.common.model.vo.PageInfo pi, String category);
+    List<BoardVO> getBoardList(com.ubig.app.common.model.vo.PageInfo pi, java.util.Map<String, Object> map);
 
     BoardVO getBoardDetail(int boardId);
 

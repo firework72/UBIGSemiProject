@@ -8,7 +8,7 @@
             <head>
                 <meta charset="UTF-8">
                 <title>유봉일공 - 커뮤니티</title>
-                <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
+                <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css?v=2">
                 <!-- Google Fonts & Icons -->
                 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap"
                     rel="stylesheet">
@@ -196,6 +196,18 @@
                         margin-right: 8px;
                     }
 
+                    /* [Step 14: 태그 배지] */
+                    .badge-tag {
+                        display: inline-block;
+                        background-color: #f1f3f5;
+                        color: #adb5bd;
+                        font-size: 0.75em;
+                        padding: 2px 6px;
+                        border-radius: 4px;
+                        margin-right: 4px;
+                        margin-top: 5px;
+                    }
+
                     /* 페이징 바 */
                     .pagination {
                         display: flex;
@@ -275,6 +287,27 @@
                         </c:if>
                     </div>
 
+                    <!-- [Step 19: 검색 영역 추가] -->
+                    <div class="search-area">
+                        <form action="list" method="get" class="search-form">
+                            <input type="hidden" name="category" value="${category}">
+                            <input type="hidden" name="limit" value="${limit}">
+                            <select name="condition" class="search-select">
+                                <option value="writer" ${condition=='writer' ? 'selected' : '' }>작성자</option>
+                                <option value="content" ${condition=='content' ? 'selected' : '' }>내용</option>
+                                <option value="titleContent" ${condition=='titleContent' ? 'selected' : '' }>제목+내용
+                                </option>
+                                <!-- 봉사후기 카테고리일 때만 태그 검색 옵션 노출 -->
+                                <c:if test="${category == 'REVIEW'}">
+                                    <option value="hashtag" ${condition=='hashtag' ? 'selected' : '' }>태그</option>
+                                </c:if>
+                            </select>
+                            <input type="text" name="keyword" value="${keyword}" class="search-input"
+                                placeholder="검색어를 입력하세요">
+                            <button type="submit" class="btn-search">검색</button>
+                        </form>
+                    </div>
+
                     <!-- 게시판 테이블 -->
                     <div class="board-card">
                         <table class="board-table">
@@ -333,6 +366,14 @@
                                                         ${b.title}
                                                         <!-- 댓글 수 표시 (추후 구현) -->
                                                     </a>
+                                                    <!-- [Step 14: 태그 표시 (봉사후기 전용)] -->
+                                                    <c:if test="${b.category == 'REVIEW' && not empty b.hashtags}">
+                                                        <div class="board-tags">
+                                                            <c:forTokens var="tag" items="${b.hashtags}" delims=",">
+                                                                <span class="badge-tag">#${tag}</span>
+                                                            </c:forTokens>
+                                                        </div>
+                                                    </c:if>
                                                 </td>
                                                 <td>${b.userId}</td>
                                                 <td>
@@ -351,7 +392,8 @@
                     <div class="pagination">
                         <!-- 이전 페이지 -->
                         <c:if test="${pi.currentPage > 1}">
-                            <a href="list?category=${category}&cpage=${pi.currentPage - 1}&limit=${limit}">
+                            <a
+                                href="list?category=${category}&cpage=${pi.currentPage - 1}&limit=${limit}&condition=${condition}&keyword=${keyword}">
                                 <i class="fas fa-chevron-left"></i>
                             </a>
                         </c:if>
@@ -363,14 +405,16 @@
                                     <a href="#" class="active">${p}</a>
                                 </c:when>
                                 <c:otherwise>
-                                    <a href="list?category=${category}&cpage=${p}&limit=${limit}">${p}</a>
+                                    <a
+                                        href="list?category=${category}&cpage=${p}&limit=${limit}&condition=${condition}&keyword=${keyword}">${p}</a>
                                 </c:otherwise>
                             </c:choose>
                         </c:forEach>
 
                         <!-- 다음 페이지 -->
                         <c:if test="${pi.currentPage < pi.maxPage}">
-                            <a href="list?category=${category}&cpage=${pi.currentPage + 1}&limit=${limit}">
+                            <a
+                                href="list?category=${category}&cpage=${pi.currentPage + 1}&limit=${limit}&condition=${condition}&keyword=${keyword}">
                                 <i class="fas fa-chevron-right"></i>
                             </a>
                         </c:if>
@@ -380,7 +424,13 @@
 
                 <script>
                     function changeLimit(limit) {
-                        location.href = "list?category=${category}&cpage=1&limit=" + limit;
+                        var url = "list?category=${category}&cpage=1&limit=" + limit;
+                        var condition = "${condition}";
+                        var keyword = "${keyword}";
+                        if (condition && keyword) {
+                            url += "&condition=" + condition + "&keyword=" + keyword;
+                        }
+                        location.href = url;
                     }
                 </script>
             </body>
