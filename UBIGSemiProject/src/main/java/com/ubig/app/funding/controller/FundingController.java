@@ -58,7 +58,7 @@ public class FundingController {
 
 	}
 	
-	//후원 기능
+	//펀딩 입금 기능
 	@RequestMapping("/insertMoney")
 	public String insertMoney(HttpSession session,FundingHistoryVO fundingHistoryVO) {
 		
