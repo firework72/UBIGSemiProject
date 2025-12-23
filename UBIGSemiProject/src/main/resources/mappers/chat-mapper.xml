@@ -6,6 +6,8 @@
 	<select id="chatList" resultType="MemberVO">
 		SELECT USER_ID
 		FROM MEMBERS
+		WHERE USER_STATUS = 'Y'
+		AND USER_ROLE = 'MEMBER'
 		ORDER BY USER_ID
 	</select>
 	

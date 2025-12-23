@@ -10,6 +10,7 @@
     <title>관리자 대시보드 | 유기동물 플랫폼</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     
     <style>
         body { background-color: #f8f9fa; }
@@ -46,7 +47,7 @@
 
         <main class="col-md-10 ms-sm-auto col-lg-10 px-md-4 py-4">
             <div class="table-responsive">
-                <table class="table table-hover align-middle">
+                <table class="table table-hover align-middle" id="chatListTable">
                     <thead class="table-light">
                         <tr>
                             <th>회원ID</th>
@@ -62,7 +63,9 @@
                                 <c:forEach var="m" items="${list}">
                                     <tr>
                                         <td>${m.userId}</td>
-                                        <td>채팅하기</td>
+                                        <td>
+                                        	이 항목을 눌러 채팅을 진행하세요.
+                                        </td>
                                     </tr>
                                 </c:forEach>
                             </c:otherwise>
@@ -74,6 +77,16 @@
         </main>
     </div>
 </div>
+
+<script>
+
+	$(function() {
+		$("#chatListTable").on("click", "tbody tr", function() {
+			location.href = "chat.ch?userId=" + $(this).children().first().text();
+		});
+	});
+
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

@@ -9,6 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>관리자 대시보드 | 유기동물 플랫폼</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -22,7 +23,7 @@
         .table-card { background: white; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); padding: 20px; }
         .status-badge { font-size: 0.8em; padding: 5px 10px; border-radius: 15px; }
         
-            /* 1. 둥둥 떠있는 채팅 버튼 (Launcher) */
+		    /* 1. 둥둥 떠있는 채팅 버튼 (Launcher) */
 	    #chat-launcher-btn {
 	        position: fixed;
 	        bottom: 30px;
@@ -48,11 +49,16 @@
 	
 	    /* 2. 채팅창 본체 (초기 상태: 숨김) */
 	    #chat-widget-window {
-	        width: 100%;
-	        height: 100%;
+	        position: fixed;
+	        bottom: 100px; /* 버튼보다 조금 위에 위치 */
+	        right: 30px;
+	        width: 350px;
+	        height: 500px;
 	        background-color: white;
 	        border-radius: 15px;
 	        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+	        z-index: 9999;
+	        overflow: hidden;
 	        flex-direction: column;
 	    }
 	
@@ -144,9 +150,10 @@
         </nav>
 
         <main class="col-md-10 ms-sm-auto col-lg-10 px-md-4 py-4">
-            <div id="chat-widget-window">
+        	<div id="chat-widget-window">
 			    <div class="chat-header">
 			        <span>${chatReceiveUserId}</span>
+			        <i class="bi bi-x-lg chat-close-btn" onclick="location.href='chatList.ch'"></i>
 			    </div>
 			
 			    <div class="chat-body" id="chatMessageArea">
@@ -165,7 +172,6 @@
 			    		</c:choose>
 			    	</c:forEach>
 			    </div>
-			        
 			
 			    <div class="chat-footer">
 			        <input type="text" class="chat-input" id="chatInput" placeholder="메시지를 입력하세요..." onkeypress="handleEnter(event)">
@@ -284,6 +290,8 @@
     
     // 웹 페이지가 로딩되는 즉시 웹소켓 연결 처리. 단, 로그인 되어있는 상태여야 한다.
     if (${not empty loginMember}) connect();
+    
+    document.getElementById("chatMessageArea").scrollTop = document.getElementById("chatMessageArea").scrollHeight;
 </script>
 </body>
 </html>
