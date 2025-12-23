@@ -113,8 +113,8 @@
 
 				<!-- 입양 수정, 삭제는 관리자 또는 작성자만 가능 -->
 				<div class="btn-group">
-					<button id="updatepost" class="btn-secondary">(게시자 전용)수정</button>
-					<button id="deletepost" class="btn-secondary">(게시자 전용)삭제</button>
+					<button id="updatepost" class="btn-secondary" style="display: hidden;">(게시자 전용)수정</button>
+					<button id="deletepost" class="btn-secondary" style="display: hidden;">(게시자 전용)삭제</button>
 					<button id="application" class="btn-primary">입양 신청 페이지로 이동</button>
 				</div>
 			</div>
@@ -133,6 +133,14 @@
 						location.href = '${pageContext.request.contextPath}/adoption.applicationpage?anino=${animal.animalNo}';
 					});
 				}
+
+				// 구현중
+				// 	//로그인 멤버와 게시자가 동일할때만 버튼 보이기
+				// 	if (${ loginMember.userId } == ${ animal.userId }) {
+				// 	updatepost.style.display = 'block';
+				// 	deletepost.style.display = 'block';
+				// }
+
 
 				// (게시자가)수정
 				if (updatepost) {

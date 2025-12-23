@@ -168,6 +168,7 @@ public class AdoptionController {
 	// 입양 관련 동물정보 수정(게시자가)
 	@RequestMapping("/adoption.updateanimal")
 	public String updateAnimal(int anino, Model model) {
+
 		// 해당 동물 정보를 가지고 수정 페이지로 넘어가기
 		AnimalDetailVO animal = service.goAdoptionDetail(anino);
 		model.addAttribute("animal", animal);

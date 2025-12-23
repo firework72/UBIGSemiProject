@@ -86,7 +86,7 @@
 
 				<div class="btn-group">
 					<button id="enroll" class="btn-primary">입양 글 등록하기</button>
-					<button id="postManage" class="btn-secondary">입양 글 관리하기</button>
+					<button id="postManage" class="btn-secondary">입양 글 관리하기(관리자 전용)</button>
 				</div>
 			</div>
 

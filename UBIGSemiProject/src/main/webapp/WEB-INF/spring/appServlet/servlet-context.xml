@@ -32,6 +32,9 @@
 		<interceptor>
 			<!-- 적용할 매핑 주소 <mapping path=""/> -->
 			<mapping path="/adoption.enrollpageanimal"/>
+			<mapping path="/adoption.applicationpage"/>
+			<mapping path="/adoption.updateanimal"/>
+			<mapping path="/adoption.deleteanimal"/>
 			<!-- 제외하고싶은 매핑 주소 <exclude-mapping path=""/> -->
 			<beans:bean class="com.ubig.app.common.interceptor.LoginInterceptor"/>
 		</interceptor>
