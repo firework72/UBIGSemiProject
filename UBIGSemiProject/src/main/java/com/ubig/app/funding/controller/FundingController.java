@@ -1,6 +1,7 @@
 package com.ubig.app.funding.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.servlet.http.HttpSession;
 
@@ -10,7 +11,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.ubig.app.funding.service.FundingService;
-import com.ubig.app.vo.funding.DonationVO;
+import com.ubig.app.vo.funding.FundingHistoryVO;
+import com.ubig.app.vo.funding.FundingVO;
 
 @Controller
 @RequestMapping("/funding")
@@ -19,68 +21,54 @@ public class FundingController {
 	@Autowired
 	private FundingService service;
 	
-	//후원,펀딩 페이지 이동
+	//펀딩 페이지 이동
 	@RequestMapping("")
-	public String fundingViewPage(Model model) {
+	public String fundingPage(Model model) {
 		
-		ArrayList<DonationVO> list = service.selectDonation();
+		ArrayList<FundingVO> list = service.selectFunding();
 		
 		model.addAttribute("list",list);
 		
-		return "funding/fundingView";
-	}
-	
-	//후원 페이지 이동
-	@RequestMapping("/fundingPage")
-	public String fundingPage(Model model) {
-		
 		return "funding/fundingPage2";
 	}
 	
-	//정기 후원 신청 
-	@RequestMapping("/updateType")
-	public String updateType(HttpSession session,DonationVO donationVO) {
+	//펀딩 상세 페이지 이동
+	@RequestMapping("/fundingDetailView")
+	public String fundingDetailView() {
 		
-		int result = service.updateType(donationVO);
+		return "funding/fundingDetailView";
+	}
+	
+	//펀딩 등록
+	@RequestMapping("/insertFunding")
+	public String insertFunding(HttpSession session,FundingVO fundingVO) {
+		
+		int result = service.insertFunding(fundingVO);
 		
 		if(result>0) {
-			session.setAttribute("alertMsg", "타입 변경 완료");
+			session.setAttribute("alertMsg", "펀딩 참여 성공");
 		}else {
-			session.setAttribute("alertMsg", "타입 변경 실패");
+			session.setAttribute("alertMsg", "펀딩 참여 실패");
 		}
-				
-		return "funding/fundingPage2";
 		
+		return "funding/fundingDetailView";
 	}
 	
-	
-	  //정기 후원
-	  
-	  @RequestMapping("/donation") public String donation(HttpSession
-	  session,DonationVO donationVO) {
-	  
-	  int result = service.donation(donationVO);
-	  
-	  if(result>0) { session.setAttribute("alertMsg", "정기 후원 완료"); }else {
-	  session.setAttribute("alertMsg", "정기 후원 실패"); }
-	  
-	  return "funding/fundingPage2"; }
-	 
-	
-	//일시 후원
-	@RequestMapping("/donation2")
-	public String donation2(HttpSession session,DonationVO donationVO) {
+	@RequestMapping("/insertMoney")
+	public String insertMoney(HttpSession session,FundingHistoryVO fundingHistoryVO) {
 		
-		int result = service.donation2(donationVO);
+		int result = service.insertMoney(fundingHistoryVO);
 		
 		if(result>0) {
-			session.setAttribute("alertMsg", "일시 후원 완료");
+			session.setAttribute("alertMsg", "펀딩 참여 성공");
 		}else {
-			session.setAttribute("alertMsg", "일시 후원 실패");
+			session.setAttribute("alertMsg", "펀딩 참여 실패");
 		}
 		
-		return "funding/fundingPage2";
+		return "funding/fundingDetailView";
+		
 	}
+	
 	
 	
 	

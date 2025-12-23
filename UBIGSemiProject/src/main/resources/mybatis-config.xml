@@ -24,5 +24,7 @@
 	  	<typeAlias type="com.ubig.app.vo.member.MessageVO" alias="MessageVO"/>
 	  	<typeAlias type="com.ubig.app.vo.adoption.AdoptionApplicationVO" alias="AdoptionApplicationVO"/>
 	  	<typeAlias type="com.ubig.app.vo.funding.DonationVO" alias="DonationVO"/>
+	  	<typeAlias type="com.ubig.app.vo.funding.FundingVO" alias="FundingVO"/>
+	  	<typeAlias type="com.ubig.app.vo.funding.FundingHistoryVO" alias="FundingHistoryVO"/>
 	</typeAliases>
 </configuration>

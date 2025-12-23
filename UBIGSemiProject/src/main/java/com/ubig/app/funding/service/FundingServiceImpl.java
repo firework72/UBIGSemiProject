@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import com.ubig.app.funding.dao.FundingDao;
 import com.ubig.app.vo.funding.DonationVO;
+import com.ubig.app.vo.funding.FundingHistoryVO;
+import com.ubig.app.vo.funding.FundingVO;
 
 @Service
 public class FundingServiceImpl implements FundingService{
@@ -19,29 +21,21 @@ public class FundingServiceImpl implements FundingService{
 	private SqlSessionTemplate sqlSession;
 	
 	@Override
-	public ArrayList<DonationVO> selectDonation() {
+	public ArrayList<FundingVO> selectFunding() {
 		
-		return dao.selectDonation(sqlSession);
+		return dao.selectFunding(sqlSession);
 	}
 	
 	@Override
-	public int updateType(DonationVO donationVO) {
-		
-		return dao.updateType(sqlSession,donationVO);
+	public int insertFunding(FundingVO fundingVO) {
+	
+		return dao.insertFunding(sqlSession,fundingVO);
 	}
 	
 	@Override
-	public int donation(DonationVO donationVO) {
+	public int insertMoney(FundingHistoryVO fundingHistoryVO) {
 		
-		return dao.donation(sqlSession,donationVO);
+		return dao.insertMoney(sqlSession,fundingHistoryVO);
 	}
-	
-	@Override
-	public int donation2(DonationVO donationVO) {
-		
-		return dao.donation2(sqlSession,donationVO);
-	}
-	
-	
 	
 }

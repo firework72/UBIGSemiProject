@@ -6,33 +6,27 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.ubig.app.vo.funding.DonationVO;
+import com.ubig.app.vo.funding.FundingHistoryVO;
+import com.ubig.app.vo.funding.FundingVO;
 
 @Repository
 public class FundingDao {
-	
-	public ArrayList<DonationVO> selectDonation(SqlSessionTemplate sqlSession) {
+
+	public ArrayList<FundingVO> selectFunding(SqlSessionTemplate sqlSession) {
 		
-		return (ArrayList)sqlSession.selectList("fundingMapper.selectDonation");
+		return (ArrayList)sqlSession.selectOne("fundingMapper.selectFunding");
 	}
 	
-	public int updateType(SqlSessionTemplate sqlSession, DonationVO donationVO) {
+	public int insertFunding(SqlSessionTemplate sqlSession, FundingVO fundingVO) {
 		
-		return sqlSession.update("fundingMapper.updateType",donationVO);
-	}
-	
-	public int donation(SqlSessionTemplate sqlSession, DonationVO donationVO) {
-		
-		return sqlSession.insert("fundingMapper.donation",donationVO);
+		return sqlSession.insert("fundingMapper.insertFunding",fundingVO);
 	}
 
-	public int donation2(SqlSessionTemplate sqlSession, DonationVO donationVO) {
+	public int insertMoney(SqlSessionTemplate sqlSession, FundingHistoryVO fundingHistoryVO) {
 		
-		return sqlSession.insert("fundingMapper.donation2",donationVO);
+		return sqlSession.insert("fundingMapper.insertMoney",fundingHistoryVO);
 	}
 
-	
-
-	
 	
 	
 	
