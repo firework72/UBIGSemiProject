@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
 <style>
@@ -108,6 +109,8 @@
     .other-msg .msg-bubble { background-color: #e9ecef; color: black; border-bottom-left-radius: 0; }
 </style>
 
+<!-- 로그인이 되어있는 경우에만 표시되도록 설정 -->
+<c:if test="${not empty loginMember }">
 <div id="chat-launcher-btn" onclick="toggleChatWindow()">
     <i class="bi bi-chat-dots-fill"></i>
 </div>
@@ -131,8 +134,57 @@
         </button>
     </div>
 </div>
+</c:if>
+
 
 <script>
+	
+	// chat.jsp가 로딩되면 소켓에 연결되도록 처리
+	let socket;
+	
+	function connect() {
+		// 연결 주소
+		let url = "ws://localhost:8080/app/chat";
+		
+		if (!socket) { // 소켓없을때만 처리
+			socket = new WebSocket(url);
+		}
+		
+		
+		// 연결이 되었을때
+		socket.onopen = function() {
+			console.log("접속 성공!");
+		}
+		
+		// 에러 발생 시
+		socket.onerror = function(e) {
+			console.log("오류 발생");
+			console.log(e);
+		}
+		
+		// 연결 종료 되었을때
+		socket.onclose = function() {
+			console.log("접속 종료");
+		}
+		
+		// 메시지 받았을때
+		socket.onmessage = function(message) {
+			// 전달받은 message.data는 문자열형태로 되어있는 json 문자열이다.
+			// json 문자열을 json 객체로 변환하는 작업이 필요하다.
+			// JSON.stringify(객체); - json 객체를 문자열로 변환해주는 함수
+			// JSON.parse(문자열); - json객체 문자열을 json객체로 변환해주는 함수
+
+			
+			receiveMessage(JSON.parse(message.data).message);
+		}
+		
+		
+	}
+	
+	function disconnect() {
+		socket.close();
+	}
+	
     // 1. 채팅창 열고 닫기 (Toggle)
     function toggleChatWindow() {
         var chatWindow = document.getElementById("chat-widget-window");
@@ -163,6 +215,12 @@
         var chatArea = document.getElementById("chatMessageArea");
 
         if (msg === "") return;
+        
+        // 관리자는 해당 채팅으로 못 치도록 설정
+        if ("${loginMember.userRole}" == "ADMIN") {
+        	alert("관리자는 이 채팅창을 이용할 수 없습니다.");
+        	return;
+        }
 
         // 내 메시지 HTML 생성
         var myMsgHtml = '<div class="msg-row my-msg">' +
@@ -179,5 +237,29 @@
         input.focus();
         
         // (선택사항) 여기에 실제 서버로 전송하는 AJAX 코드 작성
+        let obj = {
+        	message : msg,
+        	userId : '${loginMember.userId}',
+        	otherId : 'admin',
+        }
+        
+        socket.send(JSON.stringify(obj));
     }
+    
+    // 4. 메시지 수신 (화면에 표시하기)
+    function receiveMessage(msg) {
+        var chatArea = document.getElementById("chatMessageArea");
+        
+        var otherMsgHtml = '<div class="msg-row other-msg">' +
+					        '<div class="msg-bubble">' + msg + '</div>' +
+					    '</div>';
+					    
+		chatArea.insertAdjacentHTML('beforeend', myMsgHtml);
+        
+        // 스크롤 최하단으로 이동
+        chatArea.scrollTop = chatArea.scrollHeight;
+    }
+    
+    // 웹 페이지가 로딩되는 즉시 웹소켓 연결 처리
+    if (${not empty loginMember}) connect();
 </script>
