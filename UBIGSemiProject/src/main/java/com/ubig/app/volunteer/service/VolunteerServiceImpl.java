@@ -95,8 +95,14 @@ public class VolunteerServiceImpl implements VolunteerService {
 
     @Override
     public int insertReview(VolunteerReviewVO r) {
-        return volunteerDao.insertReview(r);
+        int result = volunteerDao.insertReview(r);
+        // [추가] 후기 등록 성공 시, 해당 활동의 평균 평점 업데이트
+        if (result > 0) {
+            volunteerDao.updateActivityRate(r.getActId());
+        }
+        return result;
     }
+
     @Override
     public List<VolunteerReviewVO> selectReviewList(int actId) {
         return volunteerDao.selectReviewList(actId);
@@ -111,14 +117,40 @@ public class VolunteerServiceImpl implements VolunteerService {
     public VolunteerReviewVO selectReviewOne(int reviewNo) {
         return volunteerDao.selectReviewOne(reviewNo);
     }
-        @Override
+    
+    @Override
     public int updateReview(VolunteerReviewVO r) {
-        return volunteerDao.updateReview(r);
+        // [추가] 후기 내용/평점 수정 시에도 평균 평점 업데이트가 필요할 수 있음
+        int result = volunteerDao.updateReview(r);
+        if (result > 0) {
+        	// r에는 actId가 없을 수도 있으므로(화면에서 안넘겨줬다면), 
+        	// 안전하게 하려면 DB에서 먼저 조회해야 하지만, 
+        	// 보통 수정화면에서 hidden으로 actId를 넘겨주거나, 
+        	// 여기서 다시 조회해서 업데이트를 하는게 좋습니다.
+        	// 일단 사용자 요청은 "insert"와 "delete"에 집중되어 있으나, 
+        	// update 시에도 점수가 바뀌면 반영되어야 하므로 추가하는게 맞습니다.
+        	// 원활한 처리를 위해 actId를 조회 로직 추가
+        	VolunteerReviewVO temp = volunteerDao.selectReviewOne(r.getReviewNo());
+        	if(temp != null) {
+        		volunteerDao.updateActivityRate(temp.getActId());
+        	}
+        }
+        return result;
     }
 
     @Override
     public int deleteReview(int reviewNo) {
-        return volunteerDao.deleteReview(reviewNo);
+        // [추가] 삭제 전 actId를 조회해야 함 (삭제 후엔 조회 안될 수도 있거나, FK 문제 등)
+        // 하지만 Soft Delete(R_REMOVE=1)이므로 조회는 가능.
+        VolunteerReviewVO r = volunteerDao.selectReviewOne(reviewNo);
+        
+        int result = volunteerDao.deleteReview(reviewNo);
+        
+        if (result > 0 && r != null) {
+            // [추가] 후기 삭제(숨김) 성공 시, 해당 활동의 평균 평점 업데이트
+            volunteerDao.updateActivityRate(r.getActId());
+        }
+        return result;
     }
 
 }

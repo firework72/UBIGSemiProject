@@ -6,13 +6,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.List;
-
+import com.ubig.app.vo.member.MemberVO;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
@@ -24,7 +25,6 @@ import com.ubig.app.vo.volunteer.SignVO;
 import com.ubig.app.vo.volunteer.VolunteerCommentVO;
 import com.ubig.app.vo.volunteer.VolunteerReviewVO;
 import com.ubig.app.volunteer.service.VolunteerService;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class VolunteerController {
@@ -285,96 +285,117 @@ public class VolunteerController {
 	}
 
 	// ==========================================================
-	// ▼▼▼ 후기 (Review) 관련 기능 ▼▼▼
-	// ==========================================================
+		// ▼▼▼ 후기 (Review) 관련 기능 (권한 체크 및 경로 수정 완료) ▼▼▼
+		// ==========================================================
 
-	// [수정] 후기 작성 완료 후 -> 알림창 띄우고 -> 후기 게시판 목록으로 이동
+		// 1. 전체 후기 목록 조회 (누구나 가능)
+		@RequestMapping("reviewList.vo")
+		public String reviewList(@RequestParam(value="condition", required=false) String condition, 
+								 @RequestParam(value="keyword", required=false) String keyword, 
+								 Model model) {
+			java.util.HashMap<String, String> map = new java.util.HashMap<>();
+			map.put("condition", condition);
+			map.put("keyword", keyword);
+			List<VolunteerReviewVO> list = volunteerService.selectReviewListAll(map);
+			model.addAttribute("list", list);
+			model.addAttribute("condition", condition); 
+			model.addAttribute("keyword", keyword); 
+			return "volunteer/reviewList";
+		}
+
+		// 2. 후기 작성 페이지 이동 (관리자 전용)
+		@RequestMapping("reviewWriteForm.vo")
+		public String reviewWriteForm(HttpSession session, Model model) {
+			// [수정] 정확한 패키지 경로와 userRole 체크 적용
+			MemberVO loginUser = (MemberVO)session.getAttribute("loginMember");
+			
+			// 로그인 안했거나, ROLE이 ADMIN이 아니면 차단
+			if(loginUser == null || !"ADMIN".equals(loginUser.getUserRole())) {
+				session.setAttribute("alertMsg", "관리자만 이용 가능한 메뉴입니다. ⛔");
+				return "redirect:reviewList.vo";
+			}
+
+			List<ActivityVO> actList = volunteerService.selectActivityList(new java.util.HashMap<>());
+			model.addAttribute("actList", actList);
+			return "volunteer/reviewWriteForm";
+		}
+
+		// 3. 후기 등록 처리 (관리자 전용)
 		@RequestMapping("insertReview.vo")
 		public String insertReview(VolunteerReviewVO r, HttpSession session) {
+			MemberVO loginUser = (MemberVO)session.getAttribute("loginMember");
+			if(loginUser == null || !"ADMIN".equals(loginUser.getUserRole())) {
+				session.setAttribute("alertMsg", "권한이 없습니다.");
+				return "redirect:reviewList.vo";
+			}
+
 			int result = volunteerService.insertReview(r);
-			
 			if (result > 0) {
-				// 성공 시 알림 메시지 저장 (menubar.jsp에서 받아서 alert 띄워줌)
 				session.setAttribute("alertMsg", "✅ 소중한 후기 등록이 완료되었습니다!");
 			} else {
 				session.setAttribute("alertMsg", "❌ 후기 등록에 실패했습니다.");
 			}
-			
-			// 상세 페이지(volunteerDetail)가 아니라 '후기 게시판(reviewList)'으로 이동
 			return "redirect:reviewList.vo";
 		}
-	
-	// [추가 사유] 전체 후기 목록 게시판 이동
-		// [수정] 전체 후기 목록 게시판 이동 (검색 기능 포함)
-		@RequestMapping("reviewList.vo")
-		public String reviewList(@RequestParam(value="condition", required=false) String condition, 
-	                             @RequestParam(value="keyword", required=false) String keyword, 
-	                             Model model) {
-	        
-	        // 1. 검색 조건 설정
-	        java.util.HashMap<String, String> map = new java.util.HashMap<>();
-	        map.put("condition", condition);
-	        map.put("keyword", keyword);
-	        
-	        // 2. 서비스 호출 (이제 map을 줘서 에러가 안 날 겁니다!)
-			List<VolunteerReviewVO> list = volunteerService.selectReviewListAll(map);
-			
-			model.addAttribute("list", list);
-	        model.addAttribute("condition", condition); // 검색 조건 유지
-	        model.addAttribute("keyword", keyword);     // 검색어 유지
-	        
-			return "volunteer/reviewList";
+		
+		// 4. 후기 상세 페이지 이동 (누구나 가능)
+		@RequestMapping("reviewDetail.vo")
+		public String reviewDetail(int reviewNo, Model model) {
+			VolunteerReviewVO r = volunteerService.selectReviewOne(reviewNo);
+			model.addAttribute("r", r);
+			return "volunteer/reviewDetail";
 		}
-	
-	
-	// [추가] 활동후 리뷰후기 작성 페이지로 이동 (활동 목록을 가져와야 함)
-    @RequestMapping("reviewWriteForm.vo")
-    public String reviewWriteForm(Model model) {
-        // 사용자가 "어떤 활동"의 후기인지 선택해야 하므로, 활동 목록을 DB에서 가져갑니다.
-        List<ActivityVO> actList = volunteerService.selectActivityList(new java.util.HashMap<>());
-        model.addAttribute("actList", actList);
-        
-        return "volunteer/reviewWriteForm"; // 방금 만든 새 파일로 이동!
-    }
-    
-    // [추가] 후기 상세 페이지 이동
-    @RequestMapping("reviewDetail.vo")
-    public String reviewDetail(int reviewNo, Model model) {
-        VolunteerReviewVO r = volunteerService.selectReviewOne(reviewNo);
-        model.addAttribute("r", r);
-        return "volunteer/reviewDetail";
-    }
 
-    // [추가] 1. 수정 페이지로 이동
-    @RequestMapping("reviewUpdateForm.vo")
-    public String reviewUpdateForm(int reviewNo, Model model) {
-        VolunteerReviewVO r = volunteerService.selectReviewOne(reviewNo);
-        model.addAttribute("r", r); // 기존 정보 담아가기
-        return "volunteer/reviewUpdateForm";
-    }
+		// 5. 후기 수정 페이지 이동 (관리자 전용)
+		@RequestMapping("reviewUpdateForm.vo")
+		public String reviewUpdateForm(int reviewNo, HttpSession session, Model model) {
+			MemberVO loginUser = (MemberVO)session.getAttribute("loginMember");
+			if(loginUser == null || !"ADMIN".equals(loginUser.getUserRole())) {
+				session.setAttribute("alertMsg", "관리자만 수정 가능합니다.");
+				return "redirect:reviewList.vo";
+			}
 
-    // [추가] 2. 실제 수정 기능
-    @RequestMapping("updateReview.vo")
-    public String updateReview(VolunteerReviewVO r, HttpSession session) {
-        int result = volunteerService.updateReview(r);
-        if(result > 0) {
-            session.setAttribute("alertMsg", "✅ 후기가 성공적으로 수정되었습니다.");
-        } else {
-            session.setAttribute("alertMsg", "❌ 수정 실패");
-        }
-        return "redirect:reviewDetail.vo?reviewNo=" + r.getReviewNo();
-    }
+			VolunteerReviewVO r = volunteerService.selectReviewOne(reviewNo);
+			model.addAttribute("r", r);
+			return "volunteer/reviewUpdateForm";
+		}
 
-    // [추가] 3. 실제 삭제 기능
-    @RequestMapping("deleteReview.vo")
-    public String deleteReview(int reviewNo, HttpSession session) {
-        int result = volunteerService.deleteReview(reviewNo);
-        if(result > 0) {
-            session.setAttribute("alertMsg", "🗑️ 후기가 삭제되었습니다.");
-        } else {
-            session.setAttribute("alertMsg", "❌ 삭제 실패");
-        }
-        return "redirect:reviewList.vo";
-    }
+		// 6. 후기 실제 수정 처리 (관리자 전용)
+		@RequestMapping("updateReview.vo")
+		public String updateReview(VolunteerReviewVO r, HttpSession session) {
+			MemberVO loginUser = (MemberVO)session.getAttribute("loginMember");
+			if(loginUser == null || !"ADMIN".equals(loginUser.getUserRole())) {
+				return "redirect:reviewList.vo";
+			}
 
+			int result = volunteerService.updateReview(r);
+			if(result > 0) {
+				session.setAttribute("alertMsg", "✅ 후기가 성공적으로 수정되었습니다.");
+			} else {
+				session.setAttribute("alertMsg", "❌ 수정 실패");
+			}
+			return "redirect:reviewDetail.vo?reviewNo=" + r.getReviewNo();
+		}
+
+		// 7. 후기 삭제 처리 (관리자 전용)
+		@RequestMapping("deleteReview.vo")
+		public String deleteReview(int reviewNo, HttpSession session) {
+		    // 세션에서 로그인 정보 가져오기
+		    MemberVO loginUser = (MemberVO)session.getAttribute("loginMember");
+
+		    // [보안] 로그인이 안 되어 있거나, 권한이 ADMIN이 아니면 차단
+		    if(loginUser == null || !"ADMIN".equals(loginUser.getUserRole())) {
+		        session.setAttribute("alertMsg", "삭제 권한이 없습니다. ⛔");
+		        return "redirect:reviewList.vo";
+		    }
+
+		    // 관리자라면 무조건 삭제 진행
+		    int result = volunteerService.deleteReview(reviewNo);
+		    if(result > 0) {
+		        session.setAttribute("alertMsg", "🗑️ 관리자 권한으로 후기가 삭제되었습니다.");
+		    } else {
+		        session.setAttribute("alertMsg", "❌ 삭제 실패");
+		    }
+		    return "redirect:reviewList.vo";
+		}
 }

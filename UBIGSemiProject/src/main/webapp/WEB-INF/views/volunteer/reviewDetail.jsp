@@ -99,6 +99,12 @@
                 <div class="container">
                     <h2>📑 후기 상세 보기</h2>
 
+                    <!-- [추가] 후기 제목을 크게 표시 -->
+                    <div
+                        style="font-size: 24px; font-weight: bold; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid #333;">
+                        ${r.rTitle}
+                    </div>
+
                     <table class="detail-table">
                         <tr>
                             <th>활동명</th>
@@ -126,15 +132,14 @@
                     <div class="btn-area">
                         <a href="reviewList.vo" class="btn-list">목록으로</a>
 
-                        <c:if test="${loginMember.userId eq r.rId}">
-                            <a href="reviewUpdateForm.vo?reviewNo=${r.reviewNo}" class="btn-list"
-                                style="background-color: #ffc107;">수정</a>
-                        </c:if>
-
-                        <c:if test="${loginMember.userId eq r.rId or loginMember.userId eq 'admin1'}">
-                            <a href="deleteReview.vo?reviewNo=${r.reviewNo}" onclick="return confirm('정말로 삭제하시겠습니까?');"
-                                class="btn-list" style="background-color: #dc3545;">삭제</a>
-                        </c:if>
+                        <%-- 아이디가 admin1이거나, 계정 권한(userRole)이 ADMIN인 경우 버튼 노출 --%>
+					<c:if test="${loginMember.userRole eq 'ADMIN'}">
+					    <a href="reviewUpdateForm.vo?reviewNo=${r.reviewNo}" class="btn-list"
+					        style="background-color: #ffc107;">수정</a>
+					
+					    <a href="deleteReview.vo?reviewNo=${r.reviewNo}" onclick="return confirm('관리자 권한으로 삭제하시겠습니까?');"
+					        class="btn-list" style="background-color: #dc3545;">삭제</a>
+					</c:if>
                     </div>
                 </div>
 

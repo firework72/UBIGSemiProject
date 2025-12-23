@@ -19,6 +19,8 @@ public class VolunteerReviewVO {
 	private String rReview;     // R_REVIEW (봉사활동후기) -> 문제의 변수 2
 	private int rRate;          // R_RATE (봉사평점) -> 문제의 변수 3
 	
+	private String rTitle;      // R_TITLE (후기제목) [추가된 컬럼]
+	
 	private Date rCreate;       // R_CREATE (작성일시)
 	private Date rUpdate;       // R_UPDATE (수정일시)
 	private int rRemove;        // R_REMOVE (후기삭제)
@@ -41,6 +43,11 @@ public class VolunteerReviewVO {
         return rRate;
     }
     
+    // [추가] rTitle Getter
+    public String getrTitle() {
+        return rTitle;
+    }
+    
     public Date getrCreate() {
         return rCreate;
     }
@@ -52,6 +59,5 @@ public class VolunteerReviewVO {
     public int getrRemove() {
         return rRemove;
     }
-    
     
 }

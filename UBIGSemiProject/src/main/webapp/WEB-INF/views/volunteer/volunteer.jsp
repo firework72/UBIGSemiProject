@@ -95,6 +95,10 @@
                <a href="volunteerList.vo" style="text-decoration: none; color: inherit;">
 				    <h2>봉사활동 모집 리스트</h2>
 				</a>
+				<%-- 메인페이지 이동 --%>
+				<a href="${pageContext.request.contextPath}/" style="text-decoration: none; color: inherit;">
+				    <h2>유봉일공</h2>
+				</a>
 
                 <!-- [추가] 검색 폼 -->
                 <div style="margin-bottom: 20px; text-align: right;">

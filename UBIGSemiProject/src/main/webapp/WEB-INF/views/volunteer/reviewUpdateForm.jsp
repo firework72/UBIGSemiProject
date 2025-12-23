@@ -91,6 +91,13 @@
                         <input type="text" value="${r.actTitle}" readonly style="background-color: #eee;">
                     </div>
 
+                    <!-- [추가] 후기 제목 수정란 -->
+                    <%-- [추가] 후기 제목 수정 입력란 --%>
+						<div class="form-group">
+						    <label>후기 제목</label>
+						    <input type="text" name="rTitle" value="${r.rTitle}" placeholder="제목을 입력해주세요" required>
+						</div>
+
                     <div class="form-group">
                         <label>평점</label>
                         <select name="rRate">

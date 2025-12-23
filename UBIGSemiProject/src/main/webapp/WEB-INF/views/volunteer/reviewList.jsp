@@ -180,15 +180,14 @@
                                         <tr>
                                             <td>${r.reviewNo}</td>
                                             <td>
-                                                <a href="reviewDetail.vo?reviewNo=${r.reviewNo}" class="title-link">
-                                                    ${r.actTitle}
-                                                </a>
+                                                <!-- 활동 제목 (단순 표시) -->
+                                                ${r.actTitle}
                                             </td>
-                                            <td style="text-align: left; color: #666; padding-left: 20px;">
-                                                <div
-                                                    style="width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                                    ${r.rReview}
-                                                </div>
+                                            <td style="text-align: left; padding-left: 20px;">
+                                                <!-- [수정] 후기 제목 (클릭 시 상세 이동) -->
+                                                <a href="reviewDetail.vo?reviewNo=${r.reviewNo}" class="title-link">
+                                                    ${r.rTitle}
+                                                </a>
                                             </td>
                                             <td class="star-points">
                                                 <c:forEach begin="1" end="${r.rRate}">⭐</c:forEach>
@@ -209,12 +208,13 @@
                     </div>
                 </div>
                 <div class="btn-area">
-                    <a href="reviewWriteForm.vo" class="btn-main"
-                        style="background-color: #ffc107; color: #333; margin-right: 10px;">
-                        ✏️ 후기 작성하기
-                    </a>
-
-
+                    <%-- 아이디 체크 대신 userRole이 ADMIN인지 확인하도록 변경 --%>
+					<c:if test="${loginMember.userRole eq 'ADMIN'}">
+					    <a href="reviewWriteForm.vo" class="btn-main"
+					        style="background-color: #ffc107; color: #333; margin-right: 10px;">
+					        ✏️ 후기 작성하기 (관리자)
+					    </a>
+					</c:if>
                 </div>
 
             </body>
