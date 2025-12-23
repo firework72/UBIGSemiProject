@@ -50,7 +50,7 @@
     </c:forEach>
 </table>
 
-<a href="${pageContext.request.contextPath}/funding/fundingPage" class="btn-back">후원하기</a>
+<a href="${pageContext.request.contextPath}/donation/donationPage" class="btn-back">후원하기</a>
 
 </body>
 </html>

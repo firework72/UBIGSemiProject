@@ -5,53 +5,39 @@
 
 <mapper namespace="fundingMapper">
 	
-	<select id="selectDonation" resultType="DonationVO">
-		SELECT *
-		FROM DONATIONS
+	<select id="selectFunding" resultType="FundingVO">
+		SELECT * 
+		FROM FUNDINGS
+		WHERE USER_ID = #{userId}
 	</select>
 	
-	
-	<!-- 정기 후원 신청 -->
-	<update id="updateType" parameterType="DonationVO">
-		UPDATE DONATION
-		SET DONATION_YN = 1
-	</update>
-	
-	<!-- 정기 후원 -->
-	<insert id="donation" parameterType="DonationVO">
-		INSERT INTO DONATIONS (  DONATION_NO,
-							    USER_ID,
-							    DONATION_TYPE,
-							    DONATION_MONEY,
-							    DONATION_YN,
-							    DONATION_DATE
-							)
-							VALUES (
-							    SEQ_DONATIONS.NEXTVAL,
-							    #{userId},
-							    #{donationType},          
-							    #{donationMoney},
-							    1,          
-							    SYSDATE)
-	</insert>
-	
-	<!-- 일시 후원 -->
-	<insert id="donation2" parameterType="DonationVO">
-		INSERT INTO DONATIONS(DONATION_NO
+	<insert id="insertFunding" parameterType="FundingVO">
+		INSERT INTO FUNDINGS (F_NO
 							 ,USER_ID
-							 ,DONATION_TYPE
-							 ,DONATION_MONEY
-							 ,DONATION_YN	
-							 ,DONATION_DATE)
-		VALUES(SEQ_DONATIONS.NEXTVAL
-			  ,#{userId}
-			  ,#{donationType}
-			  ,#{donationMoney}
-			  ,1
-			  ,SYSDATE)
+							 ,F_TITLE
+							 ,F_CONTENT
+							 ,F_MAX_MONEY
+							 ,F_CURRENT_MONEY)
+		VALUES (SEQ_FUNDINGS.NEXTVAL
+			   ,#{userId}
+			   ,#{fTitle}
+			   ,#{fContent}
+			   ,#{fMaxMoney}
+			   ,0)
 	</insert>
 	
-	
+	<insert id="insertMoney" parameterType="FundingHistoryVO">
+		INSERT INTO FUNDING_HISTORIES (FH_NO
+									 ,USER_ID
+									 ,F_NO
+									 ,F_MONEY
+									 ,INPUT_DATE)
+		VALUES (SEQ_FUNDING_HIS.NEXTVAL
+			   ,#{userId}
+			   ,#{fNo}
+			   ,#{fMoney}
+			   ,SYSDATE)
+	</insert>
 
 
 </mapper>

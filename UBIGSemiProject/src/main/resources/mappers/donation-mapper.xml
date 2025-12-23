@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="donationMapper">
+	
+	<select id="selectDonation" resultType="DonationVO">
+		SELECT *
+		FROM DONATIONS
+	</select>
+	
+	
+	<!-- 정기 후원 신청 -->
+	<update id="updateType" parameterType="DonationVO">
+		UPDATE DONATION
+		SET DONATION_YN = 1
+	</update>
+	
+	<!-- 정기 후원 -->
+	<insert id="donation" parameterType="DonationVO">
+		INSERT INTO DONATIONS (  DONATION_NO,
+							    USER_ID,
+							    DONATION_TYPE,
+							    DONATION_MONEY,
+							    DONATION_YN,
+							    DONATION_DATE
+							)
+							VALUES (
+							    SEQ_DONATIONS.NEXTVAL,
+							    #{userId},
+							    #{donationType},          
+							    #{donationMoney},
+							    1,          
+							    SYSDATE)
+	</insert>
+	
+	<!-- 일시 후원 -->
+	<insert id="donation2" parameterType="DonationVO">
+		INSERT INTO DONATIONS(DONATION_NO
+							 ,USER_ID
+							 ,DONATION_TYPE
+							 ,DONATION_MONEY
+							 ,DONATION_YN	
+							 ,DONATION_DATE)
+		VALUES(SEQ_DONATIONS.NEXTVAL
+			  ,#{userId}
+			  ,#{donationType}
+			  ,#{donationMoney}
+			  ,1
+			  ,SYSDATE)
+	</insert>
+	
+	
+
+
+</mapper>

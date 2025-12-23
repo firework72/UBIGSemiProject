@@ -3,16 +3,18 @@ package com.ubig.app.funding.service;
 import java.util.ArrayList;
 
 import com.ubig.app.vo.funding.DonationVO;
+import com.ubig.app.vo.funding.FundingHistoryVO;
+import com.ubig.app.vo.funding.FundingVO;
 
 public interface FundingService {
 
-	ArrayList<DonationVO> selectDonation();
+	ArrayList<FundingVO> selectFunding();
+
+	int insertFunding(FundingVO fundingVO);
+
+	int insertMoney(FundingHistoryVO fundingHistoryVO);
+
 	
-	int donation(DonationVO donationVO);
-
-	int donation2(DonationVO donationVO);
-
-	int updateType(DonationVO donationVO);
 	
 	
 }
