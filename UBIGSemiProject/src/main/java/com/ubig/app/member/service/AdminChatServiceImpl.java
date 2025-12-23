@@ -31,4 +31,10 @@ public class AdminChatServiceImpl implements AdminChatService{
 		return dao.insertChat(sqlSession, chat);
 	}
 	
+	// 채팅 이력 가져오기 (어드민 페이지)
+	@Override
+	public ArrayList<AdminChatHistoryVO> selectChat(String userId) {
+		return dao.selectChat(sqlSession, userId);
+	}
+	
 }

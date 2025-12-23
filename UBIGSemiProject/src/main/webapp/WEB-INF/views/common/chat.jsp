@@ -173,7 +173,8 @@
 			// json 문자열을 json 객체로 변환하는 작업이 필요하다.
 			// JSON.stringify(객체); - json 객체를 문자열로 변환해주는 함수
 			// JSON.parse(문자열); - json객체 문자열을 json객체로 변환해주는 함수
-
+			
+			console.log(JSON.parse(message.data));
 			
 			receiveMessage(JSON.parse(message.data).chatContent);
 		}
@@ -254,7 +255,7 @@
 					        '<div class="msg-bubble">' + msg + '</div>' +
 					    '</div>';
 					    
-		chatArea.insertAdjacentHTML('beforeend', myMsgHtml);
+		chatArea.insertAdjacentHTML('beforeend', otherMsgHtml);
         
         // 스크롤 최하단으로 이동
         chatArea.scrollTop = chatArea.scrollHeight;

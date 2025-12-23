@@ -11,4 +11,6 @@ public interface AdminChatService {
 
 	int insertChat(AdminChatHistoryVO chat);
 
+	ArrayList<AdminChatHistoryVO> selectChat(String userId);
+
 }

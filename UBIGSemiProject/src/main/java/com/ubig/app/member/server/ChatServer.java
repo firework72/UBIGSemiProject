@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -28,6 +29,7 @@ public class ChatServer extends TextWebSocketHandler{
 	 * 
 	 */
 	
+	@Autowired
 	private AdminChatService service;
 	
 	// 각각의 어드민이 누구와 채팅중인지를 저장해두는 Map
@@ -56,7 +58,7 @@ public class ChatServer extends TextWebSocketHandler{
 		}
 		else {
 			admins.put(loginMember.getUserId(), session);
-			adminTargetUser.put(loginMember.getUserId(), (String) session.getAttributes().get("adminTargetUser"));
+			adminTargetUser.put(loginMember.getUserId(), (String) session.getAttributes().get("chatReceiveUserId"));
 		}
 	}
 	
@@ -75,6 +77,9 @@ public class ChatServer extends TextWebSocketHandler{
 													.chatReceiveUserId((String)msgJson.get("receiveUserId"))
 													.chatContent((String)msgJson.get("message"))
 													.build();
+		
+		
+		System.out.println("chat : " + chat);
 		// 만들어진 객체를 데이터베이스에 저장한다.
 		
 		int result = service.insertChat(chat);
@@ -90,12 +95,14 @@ public class ChatServer extends TextWebSocketHandler{
 			if ("MEMBER".equals(loginMember.getUserRole())) {
 				for (Entry<String, WebSocketSession> entry : admins.entrySet()) {
 					entry.getValue().sendMessage(tm);
+					System.out.println(entry.getKey() + "에게 메시지를 전송합니다...");
 				}
 			}
 			// 보낸 이가 어드민이라면 현재 자신이 채팅을 치고 있는 일반 회원에게만 메시지를 전송해야 한다.
 			else {
 				String receiveUserId = adminTargetUser.get(loginMember.getUserId());
 				users.get(receiveUserId).sendMessage(tm);
+				System.out.println(receiveUserId + "에게 메시지를 전송합니다...");
 			}
 		}
 		// 데이터베이스 저장에 실패한 경우 채팅을 전송하지 않는다.

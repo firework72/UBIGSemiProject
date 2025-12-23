@@ -1,6 +1,9 @@
 package com.ubig.app.member.controller;
 
 import java.util.ArrayList;
+import java.util.Collections;
+
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -8,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.ubig.app.member.service.AdminChatService;
+import com.ubig.app.vo.member.AdminChatHistoryVO;
 import com.ubig.app.vo.member.MemberVO;
 
 @Controller
@@ -40,5 +44,24 @@ public class AdminChatController {
 		model.addAttribute("list", list);
 		
 		return "admin/chatlist";
+	}
+	
+	@RequestMapping("/chat.ch")
+	public String chat(HttpSession session, String userId, Model model) {
+		
+		// 최근 100개의 메시지 가져오기
+		ArrayList<AdminChatHistoryVO> list = service.selectChat(userId);
+		
+		// 표시될 때는 먼저 보내진 메시지부터 가져와야하므로 reverse
+		Collections.reverse(list);
+		
+		session.setAttribute("chatReceiveUserId", userId);
+		session.setAttribute("list", list);
+		
+		System.out.println(userId);
+		
+		System.out.println(list);
+		
+		return "admin/chat";
 	}
 }

@@ -23,4 +23,12 @@
 			  ,'N'
 			  ,SYSDATE)
 	</insert>
+	
+	<select id="selectChat" parameterType="string" resultType="AdminChatHistoryVO">
+		SELECT *
+		FROM ADMIN_CHAT_HISTORIES
+		WHERE CHAT_SEND_USER_ID = #{userId}
+		OR CHAT_RECEIVE_USER_ID = #{userId}
+		ORDER BY CHAT_CREATE_DATE DESC
+	</select>
 </mapper>
