@@ -5,10 +5,15 @@
 
 <mapper namespace="fundingMapper">
 	
-	<select id="selectFunding" resultType="FundingVO">
+	<select id="selectFunding" resultMap="FundingVOResultMap">
 		SELECT * 
 		FROM FUNDINGS
-		WHERE USER_ID = #{userId}
+	</select>
+	
+	<select id="selectFunding2" resultMap="FundingVOResultMap">
+		SELECT * 
+		FROM FUNDINGS
+		WHERE F_NO = #{fundingNo}
 	</select>
 	
 	<insert id="insertFunding" parameterType="FundingVO">
@@ -34,10 +39,27 @@
 									 ,INPUT_DATE)
 		VALUES (SEQ_FUNDING_HIS.NEXTVAL
 			   ,#{userId}
-			   ,#{fNo}
-			   ,#{fMoney}
+			   ,#{fundingNo}
+			   ,#{fundingMoney}
 			   ,SYSDATE)
 	</insert>
+	
+	     <!-- resultMap 정의하기 -->
+     <resultMap type="FundingVO" id="FundingVOResultMap">
+        <result column="F_NO" property="fundingNo"/>
+        <result column="USER_ID" property="userId"/>
+        <result column="F_TITLE" property="fundingTitle"/>
+        <result column="F_CONTENT" property="fundingContent"/>
+        <result column="F_MAX_MONEY" property="fundingMaxMoney"/>
+        <result column="F_CURRENT_MONEY" property="fundingCurrentMoney"/>
+     </resultMap>
+     
+     <resultMap type="FundingHistoryVO" id="FundingHistoryVOResultMap">
+        <result column="FH_NO" property="fhNo"/>
+        <result column="USER_ID" property="userId"/>
+        <result column="F_TITLE" property="fundingNo"/>
+        <result column="INPUT_DATE" property="inputDate"/>
+     </resultMap>
 
 
 </mapper>

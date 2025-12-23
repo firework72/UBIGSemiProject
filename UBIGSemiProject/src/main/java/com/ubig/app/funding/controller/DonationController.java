@@ -49,7 +49,7 @@ public class DonationController {
 			session.setAttribute("alertMsg", "타입 변경 실패");
 		}
 				
-		return "funding/donationPage2";
+		return "funding/donationPage";
 		
 	}
 	
@@ -66,7 +66,7 @@ public class DonationController {
 		}else {
 			session.setAttribute("alertMsg", "정기 후원 실패"); }
 		  
-		 return "funding/donationPage2"; 
+		 return "funding/donationPage"; 
 	}
 	 
 	
@@ -82,7 +82,7 @@ public class DonationController {
 			session.setAttribute("alertMsg", "일시 후원 실패");
 		}
 		
-		return "funding/donationPage2";
+		return "funding/donationPage";
 	}
 	
 	

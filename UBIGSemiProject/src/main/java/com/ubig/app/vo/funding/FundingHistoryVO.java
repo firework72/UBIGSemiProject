@@ -15,8 +15,8 @@ public class FundingHistoryVO {
 	
 	private int fhNo;
 	private String userId;
-	private int fNo;
-	private int fMoney;
+	private int fundingNo;
+	private int fundingMoney;
 	private Date inputDate;
 	
 }

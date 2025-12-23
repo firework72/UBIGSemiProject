@@ -38,4 +38,10 @@ public class FundingServiceImpl implements FundingService{
 		return dao.insertMoney(sqlSession,fundingHistoryVO);
 	}
 	
+	@Override
+	public FundingVO selectFunding2(int fundingNo) {
+		
+		return dao.selectFunding2(sqlSession,fundingNo);
+	}
+	
 }
