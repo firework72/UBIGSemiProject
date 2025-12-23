@@ -10,7 +10,6 @@
 				<title>봉사활동 상세</title>
 				<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 				<style>
-					/* 간단한 스타일 정리 */
 					body {
 						font-family: 'Malgun Gothic', sans-serif;
 						padding: 20px;
@@ -82,6 +81,13 @@
 						<th>모집인원</th>
 						<td>${vo.actMax} 명</td>
 					</tr>
+					<tr>
+						<th>평점</th>
+						<td style="color: #ffc107; font-weight: bold;">
+							★
+							<fmt:formatNumber value="${vo.actRate}" pattern="#,##0.0" /> / 5.0
+						</td>
+					</tr>
 				</table>
 
 				<div style="padding: 15px; border: 1px solid #ddd; background-color: #f9f9f9; width: 500px;">
@@ -89,7 +95,7 @@
 
 					<form action="volunteerSign.vo" method="post" style="display: inline-block;">
 						<input type="hidden" name="actId" value="${vo.actId}">
-						<input type="hidden" name="signsId" value="admin1">
+						<input type="hidden" name="signsId" value="${loginMember.userId}">
 
 						<button type="submit"
 							style="padding: 10px 20px; background-color: #007bff; color: white; border: none; font-weight: bold;">
@@ -114,45 +120,57 @@
 				<div style="width: 800px;">
 					<h3>💬 봉사활동 댓글</h3>
 
-					<div style="background: #eee; padding: 15px; border-radius: 5px;">
-						<strong>작성자: admin1</strong>
-						<textarea id="replyContent" style="width: 100%; height: 50px; margin-top: 5px;"
-							placeholder="내용을 입력하세요"></textarea>
-						<button onclick="addReply()" style="float: right; margin-top: 5px;">등록</button>
-						<div style="clear: both;"></div>
-					</div>
+					<c:choose>
+						<%-- 1. 로그인 상태일 때: 댓글 작성창을 보여줌 --%>
+							<c:when test="${not empty loginMember}">
+								<div style="background: #eee; padding: 15px; border-radius: 5px;">
+									<strong>작성자: ${loginMember.userId}</strong>
+									<textarea id="replyContent" style="width: 100%; height: 50px; margin-top: 5px;"
+										placeholder="내용을 입력하세요"></textarea>
+									<button onclick="addReply()" style="float: right; margin-top: 5px;">등록</button>
+									<div style="clear: both;"></div>
+								</div>
+							</c:when>
+
+							<%-- 2. 로그아웃 상태일 때: 로그인 안내 문구를 보여줌 --%>
+								<c:otherwise>
+									<div
+										style="background: #eee; padding: 25px; border-radius: 5px; text-align: center;">
+										<p style="margin: 0; color: #666;">
+											댓글을 작성하려면 <a href="${pageContext.request.contextPath}/user/login.me"
+												style="color: #007bff; font-weight: bold; text-decoration: none;">로그인</a>이
+											필요합니다. 🔒
+										</p>
+									</div>
+								</c:otherwise>
+					</c:choose>
 
 					<div id="replyArea" style="margin-top: 20px;">
+						<%-- AJAX로 댓글 리스트가 들어오는 곳 --%>
 					</div>
 				</div>
 
 				<hr style="margin: 30px 0;">
 
-
-
 				<br><br><br>
 
 				<script>
-					// 페이지 로딩 시 댓글 목록 가져오기 & 알림창 체크
 					$(function () {
-						selectReplyList(); // 댓글 불러오기
+						selectReplyList();
 
-						// 알림 메시지 체크
 						var msg = "${sessionScope.alertMsg}";
 						if (msg != null && msg !== "") {
 							alert(msg);
-							session.removeAttribute("alertMsg");
-						}
+                <% session.removeAttribute("alertMsg"); %>
+            }
 					});
 
-					// 삭제 확인
 					function deleteAction() {
 						if (confirm("정말로 이 글을 삭제하시겠습니까?")) {
 							location.href = "volunteerDelete.vo?actId=${vo.actId}";
 						}
 					}
 
-					// --- AJAX 댓글 기능 ---
 					function selectReplyList() {
 						var actId = "${vo.actId}";
 						$.ajax({
@@ -167,7 +185,12 @@
 										value += "<div style='border-bottom: 1px solid #ddd; padding: 10px;'>";
 										value += "   <b>" + list[i].userId + "</b> ";
 										value += "   <span style='font-size: 12px; color: gray;'>" + list[i].cmtDate + "</span>";
-										value += "   <button onclick='deleteReply(" + list[i].cmtNo + ")' style='float:right; font-size:11px; color:red;'>삭제</button>";
+
+										// 작성자 본인일 때만 삭제 버튼 표시 (선택 사항)
+										if ("${loginMember.userId}" == list[i].userId || "${loginMember.userId}" == "admin1") {
+											value += "   <button onclick='deleteReply(" + list[i].cmtNo + ")' style='float:right; font-size:11px; color:red;'>삭제</button>";
+										}
+
 										value += "   <p style='margin-top: 5px;'>" + list[i].cmtAnswer + "</p>";
 										value += "</div>";
 									}
@@ -179,24 +202,25 @@
 					}
 
 					function addReply() {
-					    var content = $("#replyContent").val();
-					    if (content.trim() == "") { alert("내용을 입력해주세요!"); return; }
+						var content = $("#replyContent").val();
+						if (content.trim() == "") { alert("내용을 입력해주세요!"); return; }
 
-					    $.ajax({
-					        url: "insertReply.vo",
-					        data: { actId: "${vo.actId}", userId: "admin1", cmtAnswer: content },
-					        success: function (result) {
-					            if (result == "success") {
-					                alert("댓글 등록 성공!");
-					                $("#replyContent").val("");
-					                selectReplyList();
-					            } else { alert("댓글 등록 실패"); }
-					        },
-					        error: function(xhr, status, error) { // 👈 이 부분을 꼭 추가하세요!
-					            console.log("에러 발생:", error);
-					            alert("서버 통신 중 오류가 발생했습니다. 콘솔을 확인하세요.");
-					        }
-					    });
+						$.ajax({
+							url: "insertReply.vo",
+							data: {
+								actId: "${vo.actId}",
+								userId: "${loginMember.userId}",
+								cmtAnswer: content
+							},
+							success: function (result) {
+								if (result == "success") {
+									alert("댓글 등록 성공!");
+									$("#replyContent").val("");
+									selectReplyList();
+								} else { alert("댓글 등록 실패"); }
+							},
+							error: function () { alert("통신 에러가 발생했습니다."); }
+						});
 					}
 
 					function deleteReply(cmtNo) {
@@ -212,7 +236,6 @@
 						}
 					}
 				</script>
-
 			</body>
 
 			</html>

@@ -109,5 +109,9 @@ public class VolunteerDao {
     public int checkDuplicateSign(SignVO s) {
         return sqlSession.selectOne("volunteerMapper.checkDuplicateSign", s);
     }
-
+    
+    // [추가] 활동 평균 별점 업데이트
+	public int updateActivityRate(int actId) {
+		return sqlSession.update("volunteerMapper.updateActivityRate", actId);
+	}
 }
