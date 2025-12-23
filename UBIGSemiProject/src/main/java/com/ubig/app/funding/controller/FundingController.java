@@ -1,7 +1,6 @@
 package com.ubig.app.funding.controller;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import javax.servlet.http.HttpSession;
 
@@ -29,12 +28,16 @@ public class FundingController {
 		
 		model.addAttribute("list",list);
 		
-		return "funding/fundingPage2";
+		return "funding/fundingPage";
 	}
 	
 	//펀딩 상세 페이지 이동
 	@RequestMapping("/fundingDetailView")
-	public String fundingDetailView() {
+	public String fundingDetailView(Model model,int fundingNo) {
+		
+		FundingVO list = service.selectFunding2(fundingNo);
+		
+		model.addAttribute("list",list);
 		
 		return "funding/fundingDetailView";
 	}
@@ -51,11 +54,15 @@ public class FundingController {
 			session.setAttribute("alertMsg", "펀딩 참여 실패");
 		}
 		
-		return "funding/fundingDetailView";
+		return "redirect:/funding";
+
 	}
 	
+	//후원 기능
 	@RequestMapping("/insertMoney")
 	public String insertMoney(HttpSession session,FundingHistoryVO fundingHistoryVO) {
+		
+		System.out.println(fundingHistoryVO);
 		
 		int result = service.insertMoney(fundingHistoryVO);
 		
@@ -65,7 +72,8 @@ public class FundingController {
 			session.setAttribute("alertMsg", "펀딩 참여 실패");
 		}
 		
-		return "funding/fundingDetailView";
+		return "redirect:/funding/fundingDetailView?fundingNo=" + fundingHistoryVO.getFundingNo();
+
 		
 	}
 	

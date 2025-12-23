@@ -14,6 +14,8 @@ public interface FundingService {
 
 	int insertMoney(FundingHistoryVO fundingHistoryVO);
 
+	FundingVO selectFunding2(int fundingNo);
+
 	
 	
 	

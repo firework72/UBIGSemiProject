@@ -11,10 +11,11 @@ import lombok.NoArgsConstructor;
 @Builder
 public class FundingVO {
 	
-	private int fNo;
+	private int fundingNo;
 	private String userId;
-	private String fTitle;
-	private String fContent;
-	private int fMaxMoney;
-	private int fCurrentMoney;
+	private String fundingTitle;
+	private String fundingContent;
+	private int fundingMaxMoney;
+	private int fundingCurrentMoney;
+	
 }

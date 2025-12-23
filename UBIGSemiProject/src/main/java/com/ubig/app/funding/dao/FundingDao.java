@@ -14,7 +14,7 @@ public class FundingDao {
 
 	public ArrayList<FundingVO> selectFunding(SqlSessionTemplate sqlSession) {
 		
-		return (ArrayList)sqlSession.selectOne("fundingMapper.selectFunding");
+		return (ArrayList)sqlSession.selectList("fundingMapper.selectFunding");
 	}
 	
 	public int insertFunding(SqlSessionTemplate sqlSession, FundingVO fundingVO) {
@@ -25,6 +25,11 @@ public class FundingDao {
 	public int insertMoney(SqlSessionTemplate sqlSession, FundingHistoryVO fundingHistoryVO) {
 		
 		return sqlSession.insert("fundingMapper.insertMoney",fundingHistoryVO);
+	}
+
+	public FundingVO selectFunding2(SqlSessionTemplate sqlSession,int fundingNo) {
+		
+		return sqlSession.selectOne("fundingMapper.selectFunding2",fundingNo);
 	}
 
 	
