@@ -175,7 +175,7 @@
 			// JSON.parse(문자열); - json객체 문자열을 json객체로 변환해주는 함수
 
 			
-			receiveMessage(JSON.parse(message.data).message);
+			receiveMessage(JSON.parse(message.data).chatContent);
 		}
 		
 		
@@ -239,9 +239,9 @@
         // (선택사항) 여기에 실제 서버로 전송하는 AJAX 코드 작성
         let obj = {
         	message : msg,
-        	userId : '${loginMember.userId}',
-        	otherId : 'admin',
-        }
+        	sendUserId : '${loginMember.userId}',
+        	receiveUserId : 'admin'
+        };
         
         socket.send(JSON.stringify(obj));
     }
@@ -260,6 +260,6 @@
         chatArea.scrollTop = chatArea.scrollHeight;
     }
     
-    // 웹 페이지가 로딩되는 즉시 웹소켓 연결 처리
+    // 웹 페이지가 로딩되는 즉시 웹소켓 연결 처리. 단, 로그인 되어있는 상태여야 한다.
     if (${not empty loginMember}) connect();
 </script>

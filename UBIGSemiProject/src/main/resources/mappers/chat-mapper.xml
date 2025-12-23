@@ -8,4 +8,19 @@
 		FROM MEMBERS
 		ORDER BY USER_ID
 	</select>
+	
+	<insert id="insertChat" parameterType="AdminChatHistoryVO">
+		INSERT INTO ADMIN_CHAT_HISTORIES(    CHAT_NO
+											,CHAT_SEND_USER_ID
+											,CHAT_RECEIVE_USER_ID
+											,CHAT_CONTENT
+											,CHAT_IS_CHECK
+											,CHAT_CREATE_DATE)
+		VALUES(SEQ_ADMIN_CHAT.NEXTVAL
+			  ,#{chatSendUserId}
+			  ,#{chatReceiveUserId}
+			  ,#{chatContent}
+			  ,'N'
+			  ,SYSDATE)
+	</insert>
 </mapper>
