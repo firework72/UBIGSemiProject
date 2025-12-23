@@ -47,6 +47,16 @@
 			로그인이 필요한 기능들을 생각하여 매핑 연결하기
 		 -->
 	
+	<!-- 웹소켓 서버 등록 -->
+	<beans:bean class="com.ubig.app.member.server.ChatServer" id="chatServer"></beans:bean>
+	<websocket:handlers>
+		<websocket:mapping handler="chatServer" path="/chat"/>
+		
+		<websocket:handshake-interceptors>
+			<beans:bean class="org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor"/>
+		</websocket:handshake-interceptors>
+	</websocket:handlers>
+	
 	
 	<!-- 파일 업로드 처리용 MultipartResolver 등록하기 -->
 	<beans:bean class="org.springframework.web.multipart.commons.CommonsMultipartResolver" id="multipartResolver">
