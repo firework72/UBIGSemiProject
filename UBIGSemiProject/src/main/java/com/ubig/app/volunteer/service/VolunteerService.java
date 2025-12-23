@@ -10,8 +10,8 @@ import com.ubig.app.vo.volunteer.VolunteerReviewVO;
 public interface VolunteerService {
 
 	
-	//1.활동 조회
-	List<ActivityVO> selectActivityList();
+	//1.활동 조회 (검색 기능 추가)
+	List<ActivityVO> selectActivityList(java.util.HashMap<String, String> map);
 	
 	
 	//2.활동 등록
@@ -47,5 +47,17 @@ public interface VolunteerService {
     int insertReview(VolunteerReviewVO r);
     // [추가 사유] 봉사 후기 목록 조회 로직 수행
     List<VolunteerReviewVO> selectReviewList(int actId);
+    
+    // [추가 사유] 전체 후기 목록 조회 로직 수행 (검색 기능 추가)
+    List<VolunteerReviewVO> selectReviewListAll(java.util.HashMap<String, String> map);
+    
+    // [추가 사유] 후기 상세 조회 로직 수행
+    VolunteerReviewVO selectReviewOne(int reviewNo);
+
+    // [추가 사유] 후기 수정 기능
+    int updateReview(VolunteerReviewVO r);
+
+    // [추가 사유] 후기 삭제 기능
+    int deleteReview(int reviewNo);
 
 }
