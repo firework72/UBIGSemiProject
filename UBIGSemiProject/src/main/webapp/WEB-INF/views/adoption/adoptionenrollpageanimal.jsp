@@ -23,9 +23,20 @@
             </c:if>
 
             <div class="adoption-container">
-                <h1 class="adoption-header">[동물 상세 정보 등록]</h1>
+                <h1 class="adoption-header">
+                    <c:choose>
+                        <c:when test="${not empty animal}">[동물 정보 수정]</c:when>
+                        <c:otherwise>[동물 정보 등록]</c:otherwise>
+                    </c:choose>
+                </h1>
 
-                <form action="adoption.insert.animal" method="POST" enctype="multipart/form-data" class="adoption-form">
+                <form action="${not empty animal ? 'adoption.update.animal.action' : 'adoption.insert.animal'}"
+                    method="POST" enctype="multipart/form-data" class="adoption-form">
+
+                    <c:if test="${not empty animal}">
+                        <input type="hidden" name="animalNo" value="${animal.animalNo}">
+                        <input type="hidden" name="originalPhotoUrl" value="${animal.photoUrl}">
+                    </c:if>
 
                     <label>1. 축종 (Species)</label>
                     <select name="species" id="species">
@@ -98,10 +109,14 @@
                     <input type="date" name="deadlineDate" id="deadlineDate">
 
                     <label>15. 사진 첨부 (Photo)</label>
+                    <c:if test="${not empty animal.photoUrl}">
+                        <div style="margin-bottom: 5px;">현재 파일: ${animal.photoUrl}</div>
+                    </c:if>
                     <input type="file" name="uploadFile" accept="image/*" style="border: none; padding-left: 0;">
 
                     <div class="text-center mt-20">
-                        <input type="submit" value="동물 정보 등록하기" class="btn-primary">
+                        <input type="submit" value="${not empty animal ? '동물 정보 수정하기' : '동물 정보 등록하기'}"
+                            class="btn-primary">
                     </div>
                 </form>
             </div>

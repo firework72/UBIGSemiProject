@@ -27,6 +27,12 @@ public class AdoptionServiceImpl implements AdoptionService {
 		return dao.insertAnimal(sqlSession, animal);
 	}
 
+	// 유저가 동물 수정하기
+	@Override
+	public int updateAnimal(AnimalDetailVO animal) {
+		return dao.updateAnimal(sqlSession, animal);
+	}
+
 	// 페이징용 게시글 갯수 알아오기
 	@Override
 	public int listCount() {
@@ -87,6 +93,18 @@ public class AdoptionServiceImpl implements AdoptionService {
 	@Override
 	public ArrayList<AnimalDetailVO> managepost() {
 		return dao.managepost(sqlSession);
+	}
+
+	// user가 올린 입양 등록 정보 가지고 오기
+	@Override
+	public ArrayList<AdoptionMainListVO> selectAnimalList1(String userId) {
+		return dao.selectAnimalList1(sqlSession, userId);
+	}
+
+	// user가 신청한 입양 등록정보 가지고 오기
+	@Override
+	public ArrayList<AdoptionApplicationVO> selectAnimalList2(String userId) {
+		return dao.selectAnimalList2(sqlSession, userId);
 	}
 
 }

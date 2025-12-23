@@ -13,10 +13,11 @@ import lombok.NoArgsConstructor;
 @Builder
 
 public class AdoptionApplicationVO {
-	private int adoptionAppId;    // 신청번호
-    private int animalNo;         // 동물 상세 고유 번호
-    private String userId;         // 회원 아이디
-    private int adoptStatus;   // 신청 상태
-    private Date applyDt;          // 신청 날짜
+    private int adoptionAppId; // 신청번호
+    private int animalNo; // 동물 상세 고유 번호
+    private String userId; // 회원 아이디
+    private int adoptStatus; // 신청 상태
+    private Date applyDt; // 신청 날짜
+    private String photoUrl; // 동물 사진 URL (JOIN)
 
 }
