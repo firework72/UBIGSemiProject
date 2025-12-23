@@ -14,7 +14,7 @@
                 href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Outfit:wght@300;500;700&display=swap"
                 rel="stylesheet">
             <!-- Common Style -->
-            <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
+            <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css?v=3">
             <!-- Animate.css for scroll animations -->
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 
@@ -436,8 +436,8 @@
                     <p>서울특별시 강남구 테헤란로 123 | Tel: 02-1234-5678</p>
                 </div>
             </footer>
-            
-        <jsp:include page="/WEB-INF/views/common/chat.jsp"/>
+
+            <jsp:include page="/WEB-INF/views/common/chat.jsp" />
 
         </body>
 

@@ -2,6 +2,50 @@
     <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
         <header>
+            <style>
+                /* [Emergency Fix] 드롭다운 정렬 강제 적용 (CSS 캐시 문제 방지용) */
+                .dropdown-content {
+                    left: 50% !important;
+                    transform: translateX(-50%) !important;
+                    text-align: center !important;
+                    margin-top: 10px !important;
+                    margin: 0;
+                    padding: 10px 0 !important;
+                    overflow: visible !important;
+                    /* [Critical Fix] 브릿지가 잘리지 않도록 오버플로우 해제 */
+                }
+
+                @keyframes fadeIn {
+                    from {
+                        opacity: 0;
+                        margin-top: 20px;
+                        transform: translateX(-50%);
+                    }
+
+                    to {
+                        opacity: 1;
+                        margin-top: 10px;
+                        transform: translateX(-50%);
+                    }
+                }
+
+                .dropdown:hover .dropdown-content {
+                    animation: fadeIn 0.3s ease-in-out !important;
+                }
+
+                /* [Bridge Fix] 드롭다운과 메뉴 사이의 간격을 메워주는 투명한 다리 */
+                .dropdown-content::before {
+                    content: '';
+                    position: absolute;
+                    top: -30px;
+                    /* 더 넓게 잡음 */
+                    left: 0;
+                    width: 100%;
+                    height: 30px;
+                    /* 높이도 키움 */
+                    background: transparent;
+                }
+            </style>
             <c:if test="${not empty alertMsg}">
                 <script>
                     alert('${alertMsg}');

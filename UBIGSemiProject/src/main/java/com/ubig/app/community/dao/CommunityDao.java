@@ -25,11 +25,11 @@ public class CommunityDao {
      * sqlSession을 이용해서 쿼리를 실행합니다.
      */
 
-    public int selectListCount(String category) {
-        return sqlSession.selectOne("communityMapper.selectListCount", category);
+    public int selectListCount(java.util.Map<String, Object> map) {
+        return sqlSession.selectOne("communityMapper.selectListCount", map);
     }
 
-    public List<BoardVO> selectBoardList(com.ubig.app.common.model.vo.PageInfo pi, String category) {
+    public List<BoardVO> selectBoardList(com.ubig.app.common.model.vo.PageInfo pi, java.util.Map<String, Object> map) {
 
         // RowBounds 객체 생성 (건너뛸 갯수 offset, 가져올 갯수 limit)
         // offset : (currentPage - 1) * boardLimit
@@ -37,7 +37,7 @@ public class CommunityDao {
         org.apache.ibatis.session.RowBounds rowBounds = new org.apache.ibatis.session.RowBounds(offset,
                 pi.getBoardLimit());
 
-        return sqlSession.selectList("communityMapper.selectBoardList", category, rowBounds);
+        return sqlSession.selectList("communityMapper.selectBoardList", map, rowBounds);
     }
 
     public BoardVO selectBoardDetail(int boardId) {

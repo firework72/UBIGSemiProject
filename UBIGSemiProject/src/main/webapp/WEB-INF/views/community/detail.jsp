@@ -8,7 +8,7 @@
             <head>
                 <meta charset="UTF-8">
                 <title>유봉일공 - 게시글 상세</title>
-                <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
+                <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css?v=3">
                 <!-- Google Fonts & Icons -->
                 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap"
                     rel="stylesheet">

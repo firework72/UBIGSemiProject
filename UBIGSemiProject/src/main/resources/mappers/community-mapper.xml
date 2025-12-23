@@ -13,6 +13,7 @@
         <result property="viewCount" column="VIEW_COUNT"/>
         <result property="isDeleted" column="IS_DELETED"/>
         <result property="isPinned" column="IS_PINNED"/>
+        <result property="hashtags" column="HASHTAGS"/>
     </resultMap>
 
     <resultMap type="com.ubig.app.vo.community.CommentVO" id="commentResultMap">
@@ -28,22 +29,54 @@
     
     <!-- Boards -->
     
-    <select id="selectListCount" parameterType="string" resultType="_int">
+    <select id="selectListCount" parameterType="hashmap" resultType="_int">
         SELECT COUNT(*) 
         FROM BOARDS 
         WHERE IS_DELETED = 'N' 
         AND CATEGORY = #{category}
+        <if test="condition != null and keyword != null and keyword != ''">
+            <choose>
+                <when test="condition == 'writer'">
+                    AND USER_ID LIKE '%' || #{keyword} || '%'
+                </when>
+                <when test="condition == 'content'">
+                    AND CONTENT LIKE '%' || #{keyword} || '%'
+                </when>
+                <when test="condition == 'titleContent'">
+                    AND (TITLE LIKE '%' || #{keyword} || '%' OR CONTENT LIKE '%' || #{keyword} || '%')
+                </when>
+                <when test="condition == 'hashtag'">
+                    AND HASHTAGS LIKE '%' || #{keyword} || '%'
+                </when>
+            </choose>
+        </if>
         <!-- 고정 글은 카테고리 목록에서 중복 조회되면 안 되지만, 일단 목록 카운트에는 포함 -->
     </select>
     
-    <select id="selectBoardList" parameterType="string" resultMap="boardResultMap">
+    <select id="selectBoardList" parameterType="hashmap" resultMap="boardResultMap">
         SELECT 
             BOARD_ID, USER_ID, CATEGORY, TITLE, CONTENT, 
-            CREATE_DATE, UPDATE_DATE, VIEW_COUNT, IS_DELETED, IS_PINNED
+            CREATE_DATE, UPDATE_DATE, VIEW_COUNT, IS_DELETED, IS_PINNED, HASHTAGS
         FROM BOARDS
         WHERE IS_DELETED = 'N'
         <!-- [Step 31: 수정] 공지사항은 해당 카테고리 내에서만 상단 고정 -->
         AND CATEGORY = #{category}
+        <if test="condition != null and keyword != null and keyword != ''">
+            <choose>
+                <when test="condition == 'writer'">
+                    AND USER_ID LIKE '%' || #{keyword} || '%'
+                </when>
+                <when test="condition == 'content'">
+                    AND CONTENT LIKE '%' || #{keyword} || '%'
+                </when>
+                <when test="condition == 'titleContent'">
+                    AND (TITLE LIKE '%' || #{keyword} || '%' OR CONTENT LIKE '%' || #{keyword} || '%')
+                </when>
+                <when test="condition == 'hashtag'">
+                    AND HASHTAGS LIKE '%' || #{keyword} || '%'
+                </when>
+            </choose>
+        </if>
         ORDER BY IS_PINNED DESC, BOARD_ID DESC
     </select>
     
@@ -56,9 +89,9 @@
             SELECT SEQ_BOARDS.NEXTVAL FROM DUAL
         </selectKey>
         INSERT INTO BOARDS (
-            BOARD_ID, USER_ID, CATEGORY, TITLE, CONTENT, CREATE_DATE, UPDATE_DATE, VIEW_COUNT, IS_DELETED, IS_PINNED
+            BOARD_ID, USER_ID, CATEGORY, TITLE, CONTENT, CREATE_DATE, UPDATE_DATE, VIEW_COUNT, IS_DELETED, IS_PINNED, HASHTAGS
         ) VALUES (
-            #{boardId}, #{userId}, #{category}, #{title}, #{content}, SYSDATE, SYSDATE, 0, 'N', #{isPinned}
+            #{boardId}, #{userId}, #{category}, #{title}, #{content}, SYSDATE, SYSDATE, 0, 'N', #{isPinned}, #{hashtags}
         )
     </insert>
     

@@ -34,29 +34,37 @@ public class CommunityController {
     public String list(Model model,
             @org.springframework.web.bind.annotation.RequestParam(value = "category", defaultValue = "NOTICE") String category,
             @org.springframework.web.bind.annotation.RequestParam(value = "cpage", defaultValue = "1") int currentPage,
-            @org.springframework.web.bind.annotation.RequestParam(value = "limit", defaultValue = "10") int boardLimit) {
+            @org.springframework.web.bind.annotation.RequestParam(value = "limit", defaultValue = "10") int boardLimit,
+            @org.springframework.web.bind.annotation.RequestParam(value = "condition", required = false) String condition,
+            @org.springframework.web.bind.annotation.RequestParam(value = "keyword", required = false) String keyword) {
 
-        // 1. 총 게시글 수 조회
-        int listCount = communityService.getBoardListCount(category);
+        // 검색 조건을 담을 Map 생성
+        java.util.Map<String, Object> map = new java.util.HashMap<>();
+        map.put("category", category);
+        map.put("condition", condition);
+        map.put("keyword", keyword);
+
+        // 1. 총 게시글 수 조회 (검색 조건 포함)
+        int listCount = communityService.getBoardListCount(map);
 
         // 2. 페이징 정보 생성 (PageInfo)
-        // pageLimit는 하단 페이징 바에 보여질 페이징 버튼 개수 (보통 10개)
         int pageLimit = 10;
         com.ubig.app.common.model.vo.PageInfo pi = com.ubig.app.common.util.Pagination.getPageInfo(listCount,
                 currentPage, pageLimit, boardLimit);
 
-        // 3. Service를 통해 DB에서 글 목록을 가져옵니다. (페이징 적용)
-        List<BoardVO> list = communityService.getBoardList(pi, category);
+        // 3. Service를 통해 DB에서 글 목록을 가져옵니다. (페이징 + 검색)
+        List<BoardVO> list = communityService.getBoardList(pi, map);
 
         // 4. 화면(JSP)에 "list"라는 이름으로 보따리를 쌉니다.
         model.addAttribute("list", list);
         // 페이징 정보도 넘겨줍니다.
         model.addAttribute("pi", pi);
 
-        // 5. 현재 어떤 카테고리인지도 알려줍니다 (탭 활성화를 위해)
+        // 5. 현재 어떤 카테고리/검색조건인지 알려줍니다
         model.addAttribute("category", category);
-        // 검색조건, 정렬조건 유지 등을 위해 limit도 넘겨줄 수 있음
         model.addAttribute("limit", boardLimit);
+        model.addAttribute("condition", condition);
+        model.addAttribute("keyword", keyword);
 
         return "community/list";
     }
@@ -322,8 +330,8 @@ public class CommunityController {
 
         // 2. 성공 여부에 따라 다르게 반응합니다.
         if (result > 0) {
-            // 성공하면 목록으로 돌아갑니다. (작성했던 카테고리 그대로)
-            return "redirect:list?category=" + board.getCategory();
+            // 성공하면 방금 작성한 글의 상세 페이지로 이동합니다.
+            return "redirect:detail?boardId=" + board.getBoardId();
         } else {
             // 실패하면 에러 페이지로 가거나 다시 목록으로...
             return "redirect:list?category=" + board.getCategory(); // 임시 에러 처리
