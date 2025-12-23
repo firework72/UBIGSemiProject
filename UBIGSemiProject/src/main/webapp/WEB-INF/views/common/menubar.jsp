@@ -2,12 +2,12 @@
     <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
         <header>
-        	<c:if test="${not empty alertMsg}">
-	            <script>
-	                alert('${alertMsg}');
-	            </script>
-	            <c:remove var="alertMsg"/>
-	        </c:if>
+            <c:if test="${not empty alertMsg}">
+                <script>
+                    alert('${alertMsg}');
+                </script>
+                <c:remove var="alertMsg" />
+            </c:if>
             <nav>
                 <div class="logo">
                     <a href="${pageContext.request.contextPath}/">유봉일공</a>
@@ -17,7 +17,7 @@
                         <a href="#">봉사활동</a>
                         <ul class="dropdown-content">
                             <li><a href="${pageContext.request.contextPath}/volunteerList.vo">봉사 프로그램</a></li>
-                            <li><a href="#">봉사 후기</a></li>
+                            <li><a href="${pageContext.request.contextPath}/reviewList.vo">봉사 후기</a></li>
                         </ul>
                     </li>
                     <li class="dropdown">
@@ -61,9 +61,11 @@
                                     <li><a href="#">${loginMember.userNickname}님</a></li>
                                     <li><a href="${pageContext.request.contextPath}/user/mypage.me">마이페이지</a></li>
                                     <li>
-	                                    <form id="logoutForm" action="${pageContext.request.contextPath}/user/logout.me" method="post">
-	                                    	<a href="javascript:void(0);" onclick="document.getElementById('logoutForm').submit();">로그아웃</a>
-	                                    </form>
+                                        <form id="logoutForm" action="${pageContext.request.contextPath}/user/logout.me"
+                                            method="post">
+                                            <a href="javascript:void(0);"
+                                                onclick="document.getElementById('logoutForm').submit();">로그아웃</a>
+                                        </form>
                                     </li>
                                 </c:otherwise>
                             </c:choose>
@@ -71,5 +73,5 @@
                     </li>
                 </ul>
             </nav>
-			<!-- logout이 post 방식이기 때문에 a href로 보내면 로그아웃 처리가 안 된다. 이 부분을 추후에 수정해야 한다. -->
+            <!-- logout이 post 방식이기 때문에 a href로 보내면 로그아웃 처리가 안 된다. 이 부분을 추후에 수정해야 한다. -->
         </header>

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.util.HashMap;
 
 import com.ubig.app.vo.volunteer.ActivityVO;
 import com.ubig.app.vo.volunteer.SignVO;
@@ -20,9 +21,9 @@ public class VolunteerServiceImpl implements VolunteerService {
 	
 	
 	@Override
-    public List<ActivityVO> selectActivityList() {
-        // ▼▼▼ 여기도 return null; 이면 안됩니다! ▼▼▼
-        return volunteerDao.selectActivityList();
+    public List<ActivityVO> selectActivityList(HashMap<String, String> map) {
+        // [수정] 검색 조건(map)을 DAO로 전달
+        return volunteerDao.selectActivityList(map);
     }
   
 	
@@ -101,7 +102,28 @@ public class VolunteerServiceImpl implements VolunteerService {
         return volunteerDao.selectReviewList(actId);
     }
     
-	
-	
-	
+    @Override
+    public List<VolunteerReviewVO> selectReviewListAll(HashMap<String, String> map) {
+        return volunteerDao.selectReviewListAll(map);
+    }
+    
+    @Override
+    public VolunteerReviewVO selectReviewOne(int reviewNo) {
+        return volunteerDao.selectReviewOne(reviewNo);
+    }
+        @Override
+    public int updateReview(VolunteerReviewVO r) {
+        return volunteerDao.updateReview(r);
+    }
+
+    @Override
+    public int deleteReview(int reviewNo) {
+        return volunteerDao.deleteReview(reviewNo);
+    }
+
 }
+    
+	
+	
+	
+

@@ -1,5 +1,6 @@
 package com.ubig.app.volunteer.dao;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.mybatis.spring.SqlSessionTemplate;
@@ -17,11 +18,18 @@ public class VolunteerDao {
 	@Autowired
 	private SqlSessionTemplate sqlSession;
 
-	public List<ActivityVO> selectActivityList() {
+    // [추가 사유] 검색 기능을 위해 매개변수 추가 (HashMap)
+	public List<ActivityVO> selectActivityList(HashMap<String, String> map) {
 		// 매퍼의 namespace(volunteerMapper)와 id(selectActivityList)를 연결
-		return sqlSession.selectList("volunteerMapper.selectActivityList");
-
+		return sqlSession.selectList("volunteerMapper.selectActivityList", map);
 	}
+
+    // ... (중략) ...
+
+    // [추가 사유] 전체 후기 목록 조회 (검색 기능 추가)
+    public List<VolunteerReviewVO> selectReviewListAll(HashMap<String, String> map) {
+        return sqlSession.selectList("volunteerMapper.selectReviewListAll", map);
+    }
 
 	public int insertActivity(ActivityVO a) {
 		return sqlSession.insert("volunteerMapper.insertActivity", a);
@@ -77,6 +85,26 @@ public class VolunteerDao {
         return sqlSession.selectList("volunteerMapper.selectReviewList", actId);
     }
     
+    // [추가 사유] 전체 후기 목록 조회
+    public List<VolunteerReviewVO> selectReviewListAll() {
+        return sqlSession.selectList("volunteerMapper.selectReviewListAll");
+    }
+    
+    // [추가 사유] 후기 상세 조회
+    public VolunteerReviewVO selectReviewOne(int reviewNo) {
+        return sqlSession.selectOne("volunteerMapper.selectReviewOne", reviewNo);
+    }
+    
+    // [추가 사유] 후기 수정
+    public int updateReview(VolunteerReviewVO r) {
+        return sqlSession.update("volunteerMapper.updateReview", r);
+    }
+
+    // [추가 사유] 후기 삭제 (Soft Delete)
+    public int deleteReview(int reviewNo) {
+        return sqlSession.update("volunteerMapper.deleteReview", reviewNo);
+    }
+
     //봉사 신청 중복 체크 메소드
     public int checkDuplicateSign(SignVO s) {
         return sqlSession.selectOne("volunteerMapper.checkDuplicateSign", s);
