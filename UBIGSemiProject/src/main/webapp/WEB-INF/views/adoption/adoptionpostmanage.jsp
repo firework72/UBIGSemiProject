@@ -13,10 +13,10 @@
         </head>
 
         <body>
+            <jsp:include page="/WEB-INF/views/common/menubar.jsp" />
             <div class="adoption-container">
                 <h1 class="adoption-header">동물 관리</h1>
 
-                <!-- Use 'overflow-x' for responsiveness if table is too wide -->
                 <div style="overflow-x: auto;">
                     <table class="adoption-table">
                         <thead>

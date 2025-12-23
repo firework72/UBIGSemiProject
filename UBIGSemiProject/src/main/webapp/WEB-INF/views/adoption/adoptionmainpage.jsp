@@ -13,7 +13,7 @@
 		</head>
 
 		<body>
-
+			<jsp:include page="/WEB-INF/views/common/menubar.jsp" />
 
 			<c:if test="${not empty alertMsgAd}">
 				<script>

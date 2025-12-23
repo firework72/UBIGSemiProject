@@ -5,15 +5,12 @@
 
 		<head>
 			<meta charset="UTF-8">
-			<title>UBIG - 입양 상세</title>
-			<!-- Global Style -->
 			<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
-			<!-- Adoption Specific Style -->
 			<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/adoption-style.css">
 		</head>
 
 		<body>
-
+			<jsp:include page="/WEB-INF/views/common/menubar.jsp" />
 			<c:if test="${not empty alertMsgAd}">
 				<script>
 					alert('${alertMsgAd}');
