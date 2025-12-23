@@ -24,6 +24,7 @@ import com.ubig.app.vo.volunteer.SignVO;
 import com.ubig.app.vo.volunteer.VolunteerCommentVO;
 import com.ubig.app.vo.volunteer.VolunteerReviewVO;
 import com.ubig.app.volunteer.service.VolunteerService;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class VolunteerController {
@@ -32,15 +33,22 @@ public class VolunteerController {
 	private VolunteerService volunteerService;
 
 	@RequestMapping("volunteerList.vo")
-	public String volunteerList(Model model) {
+	public String volunteerList(@RequestParam(required=false) String condition, 
+                                @RequestParam(required=false) String keyword, 
+                                Model model) {
 		// [진단 1] 서비스 객체 확인
 		if (volunteerService == null) {
 			System.out.println("🚨 비상! volunteerService가 null입니다.");
 			return "redirect:/";
 		}
 
-		// 2. 서비스 호출
-		List<ActivityVO> list = volunteerService.selectActivityList();
+        // 1. 검색 조건 설정
+        java.util.HashMap<String, String> map = new java.util.HashMap<>();
+        map.put("condition", condition);
+        map.put("keyword", keyword);
+
+		// 2. 서비스 호출 (검색 조건 전달)
+		List<ActivityVO> list = volunteerService.selectActivityList(map);
 
 		// [진단 2] 리스트 확인
 		if (list == null) {
@@ -50,8 +58,13 @@ public class VolunteerController {
 		}
 
 		model.addAttribute("list", list);
+        model.addAttribute("condition", condition); // 검색 조건 유지
+        model.addAttribute("keyword", keyword);     // 검색어 유지
 		return "volunteer/volunteer";
 	}
+
+   
+	
 
 	// 3. 글쓰기 화면 이동
 	@RequestMapping("volunteerWriteForm.vo")
@@ -107,13 +120,11 @@ public class VolunteerController {
 	        // 1. 게시글 정보 가져오기
 			ActivityVO vo = volunteerService.selectActivityOne(actId);
 			
-	        // 2. [추가] 이 글에 달린 '후기(Review) 목록'도 가져오기!
-	        // (안티그래비티가 만들어둔 selectReviewList 메소드를 여기서 씁니다)
-	        List<VolunteerReviewVO> reviewList = volunteerService.selectReviewList(actId);
+
 	        
 	        // 3. 화면(JSP)으로 데이터 보내기
 			model.addAttribute("vo", vo);
-	        model.addAttribute("reviewList", reviewList); // <-- 이거 추가!
+
 	        
 			return "volunteer/volunteerDetail";
 		}
@@ -277,14 +288,93 @@ public class VolunteerController {
 	// ▼▼▼ 후기 (Review) 관련 기능 ▼▼▼
 	// ==========================================================
 
-	// 후기 작성
-	// [추가 사유] 봉사활동이 끝난 후, 참여자들이 활동에 대한 평가와 후기를 남겨 다른 사용자들에게 정보를 제공하기 위함
-	@RequestMapping("insertReview.vo")
-	public String insertReview(VolunteerReviewVO r) {
-		int result = volunteerService.insertReview(r);
-		return "redirect:volunteerDetail.vo?actId=" + r.getActId();
-	}
+	// [수정] 후기 작성 완료 후 -> 알림창 띄우고 -> 후기 게시판 목록으로 이동
+		@RequestMapping("insertReview.vo")
+		public String insertReview(VolunteerReviewVO r, HttpSession session) {
+			int result = volunteerService.insertReview(r);
+			
+			if (result > 0) {
+				// 성공 시 알림 메시지 저장 (menubar.jsp에서 받아서 alert 띄워줌)
+				session.setAttribute("alertMsg", "✅ 소중한 후기 등록이 완료되었습니다!");
+			} else {
+				session.setAttribute("alertMsg", "❌ 후기 등록에 실패했습니다.");
+			}
+			
+			// 상세 페이지(volunteerDetail)가 아니라 '후기 게시판(reviewList)'으로 이동
+			return "redirect:reviewList.vo";
+		}
+	
+	// [추가 사유] 전체 후기 목록 게시판 이동
+		// [수정] 전체 후기 목록 게시판 이동 (검색 기능 포함)
+		@RequestMapping("reviewList.vo")
+		public String reviewList(@RequestParam(value="condition", required=false) String condition, 
+	                             @RequestParam(value="keyword", required=false) String keyword, 
+	                             Model model) {
+	        
+	        // 1. 검색 조건 설정
+	        java.util.HashMap<String, String> map = new java.util.HashMap<>();
+	        map.put("condition", condition);
+	        map.put("keyword", keyword);
+	        
+	        // 2. 서비스 호출 (이제 map을 줘서 에러가 안 날 겁니다!)
+			List<VolunteerReviewVO> list = volunteerService.selectReviewListAll(map);
+			
+			model.addAttribute("list", list);
+	        model.addAttribute("condition", condition); // 검색 조건 유지
+	        model.addAttribute("keyword", keyword);     // 검색어 유지
+	        
+			return "volunteer/reviewList";
+		}
 	
 	
+	// [추가] 활동후 리뷰후기 작성 페이지로 이동 (활동 목록을 가져와야 함)
+    @RequestMapping("reviewWriteForm.vo")
+    public String reviewWriteForm(Model model) {
+        // 사용자가 "어떤 활동"의 후기인지 선택해야 하므로, 활동 목록을 DB에서 가져갑니다.
+        List<ActivityVO> actList = volunteerService.selectActivityList(new java.util.HashMap<>());
+        model.addAttribute("actList", actList);
+        
+        return "volunteer/reviewWriteForm"; // 방금 만든 새 파일로 이동!
+    }
+    
+    // [추가] 후기 상세 페이지 이동
+    @RequestMapping("reviewDetail.vo")
+    public String reviewDetail(int reviewNo, Model model) {
+        VolunteerReviewVO r = volunteerService.selectReviewOne(reviewNo);
+        model.addAttribute("r", r);
+        return "volunteer/reviewDetail";
+    }
+
+    // [추가] 1. 수정 페이지로 이동
+    @RequestMapping("reviewUpdateForm.vo")
+    public String reviewUpdateForm(int reviewNo, Model model) {
+        VolunteerReviewVO r = volunteerService.selectReviewOne(reviewNo);
+        model.addAttribute("r", r); // 기존 정보 담아가기
+        return "volunteer/reviewUpdateForm";
+    }
+
+    // [추가] 2. 실제 수정 기능
+    @RequestMapping("updateReview.vo")
+    public String updateReview(VolunteerReviewVO r, HttpSession session) {
+        int result = volunteerService.updateReview(r);
+        if(result > 0) {
+            session.setAttribute("alertMsg", "✅ 후기가 성공적으로 수정되었습니다.");
+        } else {
+            session.setAttribute("alertMsg", "❌ 수정 실패");
+        }
+        return "redirect:reviewDetail.vo?reviewNo=" + r.getReviewNo();
+    }
+
+    // [추가] 3. 실제 삭제 기능
+    @RequestMapping("deleteReview.vo")
+    public String deleteReview(int reviewNo, HttpSession session) {
+        int result = volunteerService.deleteReview(reviewNo);
+        if(result > 0) {
+            session.setAttribute("alertMsg", "🗑️ 후기가 삭제되었습니다.");
+        } else {
+            session.setAttribute("alertMsg", "❌ 삭제 실패");
+        }
+        return "redirect:reviewList.vo";
+    }
 
 }

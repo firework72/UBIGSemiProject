@@ -17,7 +17,7 @@
                         <a href="#">봉사활동</a>
                         <ul class="dropdown-content">
                             <li><a href="${pageContext.request.contextPath}/volunteerList.vo">봉사 프로그램</a></li>
-                            <li><a href="#">봉사 후기</a></li>
+                            <li><a href="${pageContext.request.contextPath}/reviewList.vo">봉사 후기</a></li>
                         </ul>
                     </li>
                     <li class="dropdown">

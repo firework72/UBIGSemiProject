@@ -128,60 +128,7 @@
 
 				<hr style="margin: 30px 0;">
 
-				<div style="width: 800px;">
-					<h3>⭐ 참여 후기 (${reviewList.size()}개)</h3>
 
-					<div style="background: #f9f9f9; padding: 20px; border: 1px solid #eee; border-radius: 5px;">
-						<form action="insertReview.vo" method="post">
-							<input type="hidden" name="actId" value="${vo.actId}">
-							<input type="hidden" name="rId" value="admin1">
-
-							<div style="margin-bottom: 10px;">
-								<strong>별점:</strong>
-								<select name="rRate" style="padding: 5px;">
-									<option value="5">⭐⭐⭐⭐⭐ (5점)</option>
-									<option value="4">⭐⭐⭐⭐ (4점)</option>
-									<option value="3">⭐⭐⭐ (3점)</option>
-									<option value="2">⭐⭐ (2점)</option>
-									<option value="1">⭐ (1점)</option>
-								</select>
-							</div>
-							<textarea name="rReview" style="width: 100%; height: 60px;"
-								placeholder="후기를 남겨주세요!"></textarea>
-							<div style="text-align: right; margin-top: 10px;">
-								<button type="submit"
-									style="background-color: #ffc107; border: none; padding: 8px 20px; font-weight: bold;">후기
-									등록</button>
-							</div>
-						</form>
-					</div>
-
-					<div style="margin-top: 30px;">
-						<c:choose>
-							<c:when test="${empty reviewList}">
-								<p style="text-align: center; color: #999;">아직 등록된 후기가 없습니다.</p>
-							</c:when>
-							<c:otherwise>
-								<c:forEach var="r" items="${reviewList}">
-									<div style="border-bottom: 1px solid #eee; padding: 15px 0;">
-										<div style="display: flex; justify-content: space-between;">
-											<div>
-												<span style="color: #ffc107;">
-													<c:forEach begin="1" end="${r.rRate}">⭐</c:forEach>
-												</span>
-												<strong>${r.rId}</strong>
-											</div>
-											<span style="font-size: 12px; color: #888;">
-												<fmt:formatDate value="${r.rCreate}" pattern="yyyy-MM-dd" />
-											</span>
-										</div>
-										<p style="margin-top: 10px; color: #555;">${r.rReview}</p>
-									</div>
-								</c:forEach>
-							</c:otherwise>
-						</c:choose>
-					</div>
-				</div>
 
 				<br><br><br>
 
@@ -232,20 +179,24 @@
 					}
 
 					function addReply() {
-						var content = $("#replyContent").val();
-						if (content.trim() == "") { alert("내용을 입력해주세요!"); return; }
+					    var content = $("#replyContent").val();
+					    if (content.trim() == "") { alert("내용을 입력해주세요!"); return; }
 
-						$.ajax({
-							url: "insertReply.vo",
-							data: { actId: "${vo.actId}", userId: "admin1", cmtAnswer: content },
-							success: function (result) {
-								if (result == "success") {
-									alert("댓글 등록 성공!");
-									$("#replyContent").val("");
-									selectReplyList();
-								} else { alert("댓글 등록 실패"); }
-							}
-						});
+					    $.ajax({
+					        url: "insertReply.vo",
+					        data: { actId: "${vo.actId}", userId: "admin1", cmtAnswer: content },
+					        success: function (result) {
+					            if (result == "success") {
+					                alert("댓글 등록 성공!");
+					                $("#replyContent").val("");
+					                selectReplyList();
+					            } else { alert("댓글 등록 실패"); }
+					        },
+					        error: function(xhr, status, error) { // 👈 이 부분을 꼭 추가하세요!
+					            console.log("에러 발생:", error);
+					            alert("서버 통신 중 오류가 발생했습니다. 콘솔을 확인하세요.");
+					        }
+					    });
 					}
 
 					function deleteReply(cmtNo) {
