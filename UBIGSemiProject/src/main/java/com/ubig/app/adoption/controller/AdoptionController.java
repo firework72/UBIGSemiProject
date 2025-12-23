@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -13,8 +15,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.google.gson.Gson;
 import com.ubig.app.adoption.common.AdoptionPagination;
 import com.ubig.app.adoption.service.AdoptionService;
 import com.ubig.app.vo.adoption.AdoptionApplicationVO;
@@ -22,6 +26,7 @@ import com.ubig.app.vo.adoption.AdoptionMainListVO;
 import com.ubig.app.vo.adoption.AdoptionPageInfoVO;
 import com.ubig.app.vo.adoption.AdoptionPostVO;
 import com.ubig.app.vo.adoption.AnimalDetailVO;
+import com.ubig.app.vo.member.MemberVO;
 
 @Controller
 public class AdoptionController {
@@ -90,6 +95,9 @@ public class AdoptionController {
 	// 동물 등록
 	@RequestMapping("/adoption.insert.animal")
 	public String insertAnimal(HttpSession session, MultipartFile uploadFile, AnimalDetailVO animal) {
+
+		MemberVO user = (MemberVO) session.getAttribute("loginMember");
+		animal.setUserId(user.getUserId());
 
 		// 기존 첨부파일 삭제
 		if (animal.getPhotoUrl() != null) {
@@ -177,9 +185,10 @@ public class AdoptionController {
 
 	// 입양 관련 동물정보 삭제(게시자가)
 	@RequestMapping("/adoption.deleteanimal")
-	public String deleteAnimal(int anino, HttpSession session) {
+	public String deleteAnimal(int anino, HttpSession session, javax.servlet.http.HttpServletRequest request) {
 		// 해당 동물 정보에 대한 데이터 삭제
 		// 해당 anino를 가지고있는 post 조회해보기
+		// 관리자라면 항상 지울 수 있게 수정해야함
 		int result1 = service.checkpost(anino);
 		System.out.println(result1);
 		if (result1 == 0) {
@@ -192,7 +201,9 @@ public class AdoptionController {
 		} else {
 			session.setAttribute("alertMsgAd", "관리자에게 삭제 요청 필요!");
 		}
-		return "redirect:/adoption.mainpage";
+
+		String referer = request.getHeader("Referer");
+		return "redirect:" + (referer != null ? referer : "/adoption.mainpage");
 
 	}
 
@@ -203,6 +214,24 @@ public class AdoptionController {
 		ArrayList<AnimalDetailVO> list = service.managepost();
 		model.addAttribute("list", list);
 		return "/adoption/adoptionpostmanage";
+	}
+
+	// 회원 아이디를 통해 동물정보 받아서 메인페이지로 가기(AJAX) 메인페이지에서 사용
+	@ResponseBody
+	@RequestMapping(value = "/adoption.mypage", produces = "application/json; charset=UTF-8")
+	public String mypage(Model model, HttpSession session) {
+		MemberVO user = (MemberVO) session.getAttribute("loginMember");
+
+		// user가 올린 입양 등록 정보 가지고 오기
+		ArrayList<AdoptionMainListVO> list1 = service.selectAnimalList1(user.getUserId());
+		// user가 신청한 입양 정보 가지고 오기
+		ArrayList<AdoptionApplicationVO> list2 = service.selectAnimalList2(user.getUserId());
+
+		Map<String, Object> listAll = new HashMap<>();
+		listAll.put("myAdoptions", list1);
+		listAll.put("myApplications", list2);
+
+		return new Gson().toJson(listAll);
 	}
 
 }

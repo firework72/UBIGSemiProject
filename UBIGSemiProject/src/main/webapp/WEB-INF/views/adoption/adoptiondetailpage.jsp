@@ -134,7 +134,7 @@
 					});
 				}
 
-				// 구현중
+				// 구현중- 다른거로 대체할수도?
 				// 	//로그인 멤버와 게시자가 동일할때만 버튼 보이기
 				// 	if (${ loginMember.userId } == ${ animal.userId }) {
 				// 	updatepost.style.display = 'block';

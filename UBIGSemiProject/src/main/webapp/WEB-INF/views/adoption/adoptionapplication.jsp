@@ -31,7 +31,8 @@
                     <input type="number" name="animalNo" value="${param.anino}" readonly>
 
                     <label>신청자 ID</label>
-                    <input type="text" name="userId" placeholder="ID를 입력하세요" required value="session.userId값">
+                    <input type="text" name="userId" placeholder="ID를 입력하세요" required value="${loginMember.userId}"
+                        readonly>
                     <!-- Note: Value seems to be placeholder literal in original -->
                     <input type="hidden" name="adoptStatus" value="1" />
 

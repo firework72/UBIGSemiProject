@@ -8,6 +8,13 @@
                 </script>
                 <c:remove var="alertMsg" />
             </c:if>
+            <!-- adoption 알람 메시지 처리-->
+            <c:if test="${not empty sessionScope.alertMsgAd}">
+                <script>
+                    alert("${sessionScope.alertMsgAd}");
+                </script>
+                <c:remove var="alertMsgAd" scope="session" />
+            </c:if>
             <nav>
                 <div class="logo">
                     <a href="${pageContext.request.contextPath}/">유봉일공</a>

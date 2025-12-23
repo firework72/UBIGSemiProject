@@ -21,6 +21,10 @@ public class AdoptionDao {
 		return sqlSession.insert("adoptionMapper.insertAnimal", animal);
 	}
 
+	public int updateAnimal(SqlSessionTemplate sqlSession, AnimalDetailVO animal) {
+		return sqlSession.update("adoptionMapper.updateAnimal", animal);
+	}
+
 	public int listCount(SqlSessionTemplate sqlSession) {
 		return sqlSession.selectOne("adoptionMapper.listCount");
 	}
@@ -69,6 +73,14 @@ public class AdoptionDao {
 
 	public ArrayList<AnimalDetailVO> managepost(SqlSessionTemplate sqlSession) {
 		return (ArrayList) sqlSession.selectList("adoptionMapper.allList");
+	}
+
+	public ArrayList<AdoptionMainListVO> selectAnimalList1(SqlSessionTemplate sqlSession, String userId) {
+		return (ArrayList) sqlSession.selectList("adoptionMapper.selectAnimalList1", userId);
+	}
+
+	public ArrayList<AdoptionApplicationVO> selectAnimalList2(SqlSessionTemplate sqlSession, String userId) {
+		return (ArrayList) sqlSession.selectList("adoptionMapper.selectAnimalList2", userId);
 	}
 
 }

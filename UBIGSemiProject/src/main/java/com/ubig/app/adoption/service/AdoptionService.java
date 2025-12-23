@@ -12,6 +12,9 @@ public interface AdoptionService {
 	// 유저가 동물 등록하기
 	int insertAnimal(AnimalDetailVO animal);
 
+	// 유저가 동물 수정하기
+	int updateAnimal(AnimalDetailVO animal);
+
 	// 페이징용 게시글 갯수 알아오기
 	int listCount();
 
@@ -38,4 +41,11 @@ public interface AdoptionService {
 
 	// 모든 게시글들의 정보를 받아오는 메서드
 	ArrayList<AnimalDetailVO> managepost();
+
+	// user가 올린 입양 등록 정보 가지고 오기
+	ArrayList<AdoptionMainListVO> selectAnimalList1(String userId);
+
+	// user가 신청한 입양 등록정보 가지고 오기
+	ArrayList<AdoptionApplicationVO> selectAnimalList2(String userId);
+
 }

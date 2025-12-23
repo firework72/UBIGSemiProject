@@ -23,7 +23,8 @@
             ADOPTION_CONDITIONS,
             HOPE_REGION,
             DEADLINE_DATE,
-            PHOTO_URL
+            PHOTO_URL,
+            USER_ID
         ) VALUES (
             SEQ_ANIMAL_DETAILS.NEXTVAL,
             #{species},
@@ -40,7 +41,8 @@
             #{adoptionConditions},
             #{hopeRegion},
             #{deadlineDate},
-            #{photoUrl}
+            #{photoUrl},
+            #{userId}
 		)
     </insert>
 
@@ -157,6 +159,37 @@
         FROM ANIMAL_DETAILS
         ORDER BY ANIMAL_NO DESC
 	</select>
+	
+	<!-- 유저가 등록한 입양 정보 가지고오기 -->
+	<select id="selectAnimalList1" resultType="com.ubig.app.vo.adoption.AdoptionMainListVO">
+        SELECT 
+            P.POST_NO,
+            P.POST_TITLE,
+            P.POST_UPDATE_DATE,
+            P.VIEWS,
+            P.ANIMAL_NO,
+            A.PHOTO_URL,
+            A.ANIMAL_NAME,
+            A.ADOPTION_STATUS
+        FROM ADOPTION_POSTS P
+        JOIN ANIMAL_DETAILS A ON P.ANIMAL_NO = A.ANIMAL_NO
+		WHERE A.USER_ID = #{userId}
+	</select>
+	
+	<!-- 유저가 신청한 입양 정보 가지고 오기 -->
+	<select id="selectAnimalList2" resultType="AdoptionApplicationVO">
+		SELECT 
+            AP.ADOPTION_APP_ID,
+            AP.ANIMAL_NO,
+            AP.USER_ID,
+            AP.ADOPT_STATUS,
+            AP.APPLY_DT,
+            A.PHOTO_URL
+		FROM ADOPTION_APPLICATIONS AP
+        JOIN ANIMAL_DETAILS A ON AP.ANIMAL_NO = A.ANIMAL_NO
+		WHERE AP.USER_ID = #{userId}
+	</select>
+	
 	
 	    
 
