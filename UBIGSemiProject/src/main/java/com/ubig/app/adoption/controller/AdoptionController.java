@@ -52,6 +52,16 @@ public class AdoptionController {
 		return "/adoption/adoptionapplication";
 	}
 
+	// 입양 게시글 등록 페이지 이동 (관리자용)
+	@RequestMapping("/adoption.enrollpagepost")
+	public String goAdoptionEnrollPostPage(@RequestParam(value = "anino", required = false) Integer anino,
+			Model model) {
+		if (anino != null) {
+			model.addAttribute("anino", anino);
+		}
+		return "/adoption/adoptionenrollpagepost";
+	}
+
 	// 게시글 등록
 	@RequestMapping("/adoption.insert.board")
 	public String insertBoard(AdoptionPostVO post, HttpSession session) {
@@ -158,6 +168,7 @@ public class AdoptionController {
 	// 입양 관련 동물정보 수정(게시자가)
 	@RequestMapping("/adoption.updateanimal")
 	public String updateAnimal(int anino, Model model) {
+
 		// 해당 동물 정보를 가지고 수정 페이지로 넘어가기
 		AnimalDetailVO animal = service.goAdoptionDetail(anino);
 		model.addAttribute("animal", animal);

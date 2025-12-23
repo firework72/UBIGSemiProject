@@ -21,12 +21,7 @@
                         </ul>
                     </li>
                     <li class="dropdown">
-                        <a href="#">입양</a>
-                        <ul class="dropdown-content">
-                            <li><a href="#">입양 공고</a></li>
-                            <li><a href="#">동물 소개</a></li>
-                            <li><a href="#">입양 신청</a></li>
-                        </ul>
+                        <a href="${pageContext.request.contextPath}/adoption.mainpage">입양</a>
                     </li>
                     <li class="dropdown">
                         <a href="#">커뮤니티</a>
