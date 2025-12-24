@@ -48,5 +48,11 @@ public class MessageServiceImpl implements MessageService{
 	public int isKicked(MessageVO message) {
 		return dao.isKicked(sqlSession, message);
 	}
+	
+	// 메시지 읽음 처리
+	@Override
+	public int readMessage(int messageNo) {
+		return dao.readMessage(sqlSession, messageNo);
+	}
 
 }

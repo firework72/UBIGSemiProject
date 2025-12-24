@@ -55,4 +55,11 @@
 		WHERE KICKER = #{messageReceiveUserId}
 		AND KICKED_USER = #{messageSendUserId}
 	</select>
+	
+	<update id="readMessage" parameterType="_int">
+		UPDATE MESSAGES
+		SET MESSAGE_IS_CHECK = 'Y'
+		WHERE MESSAGE_NO = #{messageNo}
+		AND MESSAGE_IS_CHECK = 'N'
+	</update>
 </mapper>

@@ -34,6 +34,11 @@ public class MessageDao {
 		return sqlSession.selectOne("messageMapper.isKicked", message);
 	}
 	
+	// 메시지 읽음 처리
+	public int readMessage(SqlSessionTemplate sqlSession, int messageNo) {
+		return sqlSession.update("messageMapper.readMessage", messageNo);
+	}
+	
 	
 
 }

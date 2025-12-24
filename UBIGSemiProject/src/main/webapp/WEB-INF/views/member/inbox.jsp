@@ -133,7 +133,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btnKick"></button>
                 <button type="button" class="btn btn-primary" id="btnReply">답장하기</button>
             </div>
         </div>
@@ -178,17 +178,40 @@
         $("#modalSender").text(sender);
         $("#modalContent").text(content); // text()로 넣어야 XSS 방지
         $("#modalDate").text(date); // 포맷팅된 문자열이 들어온다고 가정
+        $("#btnKick").text(sender + " 차단하기");
         
         // 답장하기 버튼 클릭 시 -> 쓰기 모달의 받는 사람에 세팅하고 쓰기 모달 띄우기
         $("#btnReply").off("click").on("click", function() {
              // 상세 모달 닫고
              $("#detailModal").modal("hide");
-             // 쓰기 모달 열기 + ID 세팅 (여기선 닉네임이 아니라 ID가 필요하므로, 실제론 ID도 파라미터로 넘겨야 함. 예시에선 닉네임으로 가정)
-             // 주의: 실제 답장을 보내려면 senderId(USER_ID)가 필요합니다. 
-             // JSP 루프에서 senderId도 같이 넘겨주는 것을 권장합니다.
+             // 쓰기 모달 열기 + ID 세팅
              $("#receiveIdInput").val(sender); // 일단 초기화 (ID를 넘겨받았다면 .val(senderId))
              $("#writeModal").modal("show");
         });
+        
+        // 차단하기 버튼 클릭 시 -> 차단할 건지 한번 더 물어본 후 yes를 누르면 차단 테이블에 등록
+        boolean isKicked = true;
+        
+        // 차단 버튼은 차단 테이블에 등록이 되어 있지 않은 경우에만 뜨도록 설정
+        $.ajax({
+        	url :  "${pageContext.request.contextPath}/message/isKicked.me",
+        	type: "POST",
+        	async : false,
+        	data : {
+        		messageSendUserId : sender,
+        		messageReceiveUserId : '${loginMember.userId}'
+        	},
+        	success : function(data) {
+        		if (data == "notkicked") {
+        			isKicked = false;
+        		}
+        	},
+        	error : function() {
+        		alert("알 수 없는 오류가 발생했습니다.");
+        	}
+        });
+        
+        $("#btnKick").prop("disabled", isKicked);
 
         // 모달 띄우기
         $("#detailModal").modal("show");

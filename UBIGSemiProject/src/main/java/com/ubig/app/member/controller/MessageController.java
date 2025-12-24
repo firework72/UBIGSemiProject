@@ -7,9 +7,9 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ubig.app.member.service.MessageService;
 import com.ubig.app.vo.member.MemberVO;
@@ -103,4 +103,36 @@ public class MessageController {
 			return "redirect:/message/inbox.ms";
 		}
 	}
+	
+	// 차단 여부 확인
+	@ResponseBody
+	@PostMapping("/isKicked.ms")
+	public String isKicked(HttpSession session, String messageSendUserId, String messageReceiveUserId) {
+		MessageVO message = MessageVO.builder()
+								     .messageSendUserId(messageSendUserId)
+								     .messageReceiveUserId(messageReceiveUserId)
+								     .build();
+		
+		int result = service.isKicked(message);
+		
+		// 이미 차단 상태라면 차단 테이블에 등록되어 있으므로 result > 0이다.
+		if (result > 0) {
+			return "kicked";
+		}
+		else {
+			return "notkicked";
+		}
+	}
+	
+	// 메시지 읽음 처리
+	@ResponseBody
+	@PostMapping("/read.ms")
+	public String readMessage(int messageNo) {
+		
+		int result = service.readMessage(messageNo);
+		
+		return "success";
+	}
 }
+
+

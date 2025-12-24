@@ -16,4 +16,6 @@ public interface MessageService {
 
 	int isKicked(MessageVO message);
 
+	int readMessage(int messageNo);
+
 }
