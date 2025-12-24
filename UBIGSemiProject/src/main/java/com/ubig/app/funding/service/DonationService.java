@@ -3,6 +3,7 @@ package com.ubig.app.funding.service;
 import java.util.ArrayList;
 
 import com.ubig.app.vo.funding.DonationVO;
+import com.ubig.app.vo.funding.FundingVO;
 
 public interface DonationService {
 
@@ -13,6 +14,8 @@ public interface DonationService {
 	int donation2(DonationVO donationVO);
 
 	int updateType(DonationVO donationVO);
+
+	ArrayList<DonationVO> searchKeyword(String searchKeyword);
 	
 	
 }

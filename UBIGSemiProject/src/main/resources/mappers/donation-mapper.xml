@@ -10,6 +10,12 @@
 		FROM DONATIONS
 	</select>
 	
+	<select id="searchKeyword" resultType="DonationVO" parameterType="string">
+	    SELECT * 
+	    FROM DONATIONS
+	    WHERE USER_ID LIKE '%' || #{searchKeyword} || '%'
+	    OR DONATION_TYPE LIKE '%' || #{searchKeyword} || '%'
+	</select>
 	
 	<!-- 정기 후원 신청 -->
 	<update id="updateType" parameterType="DonationVO">
