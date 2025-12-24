@@ -175,7 +175,7 @@ public class MemberController {
 	// TODO 회원수정 처리
 
 	// TODO 회원탈퇴 처리
-	@RequestMapping("/delete.me")
+	@PostMapping("/delete.me")
 	public String deleteMember(HttpSession session, Model model) {
 		
 		// 현재 로그인되어 있는 상태일 경우 로그인 되어있는 ID에 해당하는 유저의 가입 상태를 N으로 변경한다.
@@ -183,8 +183,7 @@ public class MemberController {
 		
 		if (loginMember != null) {
 			// TODO 회원탈퇴 처리
-			int result = 0;
-			// int result = service.deleteMember(loginMember);
+			int result = service.deleteMember(loginMember.getUserId());
 			if (result > 0) {
 				session.removeAttribute("loginMember");
 				session.setAttribute("alertMsg", "회원 탈퇴가 정상적으로 처리되었습니다.");
