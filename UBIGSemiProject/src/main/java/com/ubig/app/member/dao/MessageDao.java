@@ -30,6 +30,11 @@ public class MessageDao {
 		return (ArrayList) sqlSession.selectList("messageMapper.selectSent", userId);
 	}
 	
+	// 메시지 읽음 처리
+	public int readMessage(SqlSessionTemplate sqlSession, int messageNo) {
+		return sqlSession.update("messageMapper.readMessage", messageNo);
+	}
+	
 	
 
 }

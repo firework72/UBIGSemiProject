@@ -12,6 +12,7 @@
 	           ,MESSAGE_CREATE_DATE
 	    FROM MESSAGES
 	    WHERE MESSAGE_RECEIVE_USER_ID = #{userId}
+	    AND NOT MESSAGE_IS_CHECK = 'K'
 	    ORDER BY MESSAGE_CREATE_DATE DESC
 	</select>
 	
@@ -33,7 +34,7 @@
 			  ,#{messageSendUserId}
 			  ,#{messageReceiveUserId}
 			  ,#{messageContent}
-			  ,'N'
+			  ,#{messageIsCheck}
 			  ,SYSDATE)
 	</insert>
 	
@@ -48,4 +49,12 @@
 		WHERE MESSAGE_SEND_USER_ID = #{userId}
 		ORDER BY MESSAGE_CREATE_DATE DESC
 	</select>
+	
+	
+	<update id="readMessage" parameterType="_int">
+		UPDATE MESSAGES
+		SET MESSAGE_IS_CHECK = 'Y'
+		WHERE MESSAGE_NO = #{messageNo}
+		AND MESSAGE_IS_CHECK = 'N'
+	</update>
 </mapper>

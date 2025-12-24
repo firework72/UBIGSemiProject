@@ -42,5 +42,11 @@ public class MessageServiceImpl implements MessageService{
 	public ArrayList<MessageVO> selectSent(String userId) {
 		return dao.selectSent(sqlSession, userId);
 	}
+	
+	// 메시지 읽음 처리
+	@Override
+	public int readMessage(int messageNo) {
+		return dao.readMessage(sqlSession, messageNo);
+	}
 
 }

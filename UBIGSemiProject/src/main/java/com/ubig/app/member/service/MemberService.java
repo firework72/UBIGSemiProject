@@ -12,4 +12,6 @@ public interface MemberService {
 
 	int messageCheckId(String userId);
 
+	int deleteMember(String userId);
+
 }
