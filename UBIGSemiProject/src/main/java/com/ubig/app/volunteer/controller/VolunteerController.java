@@ -222,49 +222,33 @@ public class VolunteerController {
 	
 	
 	// ==========================================================
-	// ▼▼▼ 봉사 프로그램 댓글 (Volunteer Activity Comments) ▼▼▼
-	// ==========================================================
+    // ▼▼▼ [후기(Review) 전용] 댓글 조회 & 등록 기능 ▼▼▼
+    // ==========================================================
 
-	// 댓글 목록 조회 (봉사 프로그램)
-	@ResponseBody
-	@RequestMapping(value = "volunteerReplyList.vo", produces = "application/json; charset=UTF-8")
-	public String volunteerReplyList(int actId) {
-		List<VolunteerCommentVO> list = volunteerService.selectActivityReplyList(actId);
-		return new Gson().toJson(list);
-	}
+    // 1. 후기 댓글 목록 조회 (reviewReplyList.vo)
+    @ResponseBody
+    @RequestMapping(value = "reviewReplyList.vo", produces = "application/json; charset=UTF-8")
+    public String reviewReplyList(int actId, int reviewNo) {
+        // VO에 actId와 reviewNo를 담아서 서비스로 전달
+        VolunteerCommentVO vo = new VolunteerCommentVO();
+        vo.setActId(actId);
+        vo.setReviewNo(reviewNo); // ★ 중요: 후기 번호 필수
 
-	// 댓글 작성 (봉사 프로그램)
-	@ResponseBody
-	@RequestMapping("volunteerInsertReply.vo")
-	public String volunteerInsertReply(VolunteerCommentVO r) {
-		int result = volunteerService.insertActivityReply(r);
-		return result > 0 ? "success" : "fail";
-	}
+        // 서비스 이름은 Cursor가 만든 것과 맞춰야 합니다. 
+        // 만약 빨간줄이 뜨면 volunteerService 인터페이스도 확인해야 합니다.
+        List<VolunteerCommentVO> list = volunteerService.selectReviewReplyList(vo);
+        
+        return new Gson().toJson(list);
+    }
 
-	// ==========================================================
-	// ▼▼▼ 봉사 후기 댓글 (Review Comments) ▼▼▼
-	// ==========================================================
-
-	// 댓글 목록 조회 (후기)
-	@ResponseBody
-	@RequestMapping(value = "reviewReplyList.vo", produces = "application/json; charset=UTF-8")
-	public String reviewReplyList(int actId, int reviewNo) {
-		VolunteerCommentVO vo = new VolunteerCommentVO();
-		vo.setActId(actId);
-		vo.setReviewNo(reviewNo);
-		
-		List<VolunteerCommentVO> list = volunteerService.selectReviewReplyList(vo);
-		return new Gson().toJson(list);
-	}
-
-	// 댓글 작성 (후기)
-	@ResponseBody
-	@RequestMapping("reviewInsertReply.vo")
-	public String reviewInsertReply(VolunteerCommentVO r) {
-		int result = volunteerService.insertReviewReply(r);
-		return result > 0 ? "success" : "fail";
-	}
-
+    // 2. 후기 댓글 등록 (reviewInsertReply.vo)
+    @ResponseBody
+    @RequestMapping("reviewInsertReply.vo")
+    public String reviewInsertReply(VolunteerCommentVO r) {
+        // 서비스 호출
+        int result = volunteerService.insertReviewReply(r);
+        return result > 0 ? "success" : "fail";
+    }
 	// 댓글 삭제 (공통)
 	@ResponseBody
 	@RequestMapping("deleteReply.vo")

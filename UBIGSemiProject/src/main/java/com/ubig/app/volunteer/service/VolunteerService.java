@@ -28,16 +28,14 @@ public interface VolunteerService {
 	// 5. 수정
 	int updateActivity(ActivityVO a);
 	
-	// --- 댓글 관련 (봉사 프로그램) ---
-    // [추가 사유] 봉사 프로그램 상세페이지 댓글 목록 조회
-    List<VolunteerCommentVO> selectActivityReplyList(int actId);
-    // [추가 사유] 봉사 프로그램 댓글 등록
-    int insertActivityReply(VolunteerCommentVO r);
-
-    // --- 댓글 관련 (봉사 후기) ---
-    // [추가 사유] 봉사 후기 상세페이지 댓글 목록 조회
+	// --- 댓글 관련 (봉사 후기 전용으로 변경) ---
+    // [수정] 봉사 후기 상세페이지 댓글 목록 조회 (REVIEW_NO 필수)
+    List<VolunteerCommentVO> selectReplyList(VolunteerCommentVO vo);
+ // [추가] 후기 댓글 목록 조회 (Controller가 찾는 이름) 12월 24일 15:29분 안티그래비티가 백업수정 다안해줌
     List<VolunteerCommentVO> selectReviewReplyList(VolunteerCommentVO vo);
-    // [추가 사유] 봉사 후기 댓글 등록
+    // [수정] 봉사 후기 댓글 등록 (REVIEW_NO 필수)
+    int insertReply(VolunteerCommentVO r);
+ // [추가] 후기 댓글 등록 (Controller가 찾는 이름)12월 24일 15:29분 안티그래비티가 백업수정 다안해줌
     int insertReviewReply(VolunteerCommentVO r);
 
     // --- 댓글 삭제 (공통) ---
