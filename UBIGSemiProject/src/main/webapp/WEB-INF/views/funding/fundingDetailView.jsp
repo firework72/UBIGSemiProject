@@ -90,12 +90,21 @@ body {
         <p><strong>내용:</strong> ${list.fundingContent}</p>
         <p><strong>목표 금액:</strong> ${list.fundingMaxMoney}원</p>
         <p><strong>현재 금액:</strong> ${list.fundingCurrentMoney}원</p>
-        <p><strong>달성률:</strong> ${fundingRate}%</p>
+        <c:choose>
+		    <c:when test="${list.fundingMaxMoney > 0}">
+		        <p><strong>달성률:</strong> 
+		            ${list.fundingCurrentMoney / list.fundingMaxMoney * 100}%
+		        </p>
+		    </c:when>
+		    <c:otherwise>
+		        <p><strong>달성률:</strong> 0%</p>
+		    </c:otherwise>
+		</c:choose>
     </div>
 
     <!-- 진행률 표시 -->
     <div class="progress-bar">
-        <div class="progress" style="width:${fundingRate}%;"></div>
+        <div class="progress" style="width:${list.fundingCurrentMoney / list.fundingMaxMoney * 100}%;"></div>
     </div>
 
     <!-- 후원 참여 -->

@@ -16,7 +16,6 @@ public interface FundingService {
 
 	FundingVO selectFunding2(int fundingNo);
 
-	
-	
-	
+	ArrayList<FundingVO> searchKeyword(String searchKeyword);
+
 }

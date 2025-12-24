@@ -10,11 +10,13 @@
 		FROM FUNDINGS
 	</select>
 	
-	<select id="selectFunding2" resultMap="FundingVOResultMap">
-		SELECT * 
-		FROM FUNDINGS
-		WHERE F_NO = #{fundingNo}
+	<select id="searchKeyword" resultMap="FundingVOResultMap" parameterType="string">
+	    SELECT * 
+	    FROM FUNDINGS
+	    WHERE USER_ID LIKE '%' || #{searchKeyword} || '%'
+	    OR F_TITLE LIKE '%' || #{searchKeyword} || '%'
 	</select>
+
 	
 	<insert id="insertFunding" parameterType="FundingVO">
 		INSERT INTO FUNDINGS (F_NO
@@ -25,9 +27,9 @@
 							 ,F_CURRENT_MONEY)
 		VALUES (SEQ_FUNDINGS.NEXTVAL
 			   ,#{userId}
-			   ,#{fTitle}
-			   ,#{fContent}
-			   ,#{fMaxMoney}
+			   ,#{fundingTitle}
+			   ,#{fundingContent}
+			   ,#{fundingMaxMoney}
 			   ,0)
 	</insert>
 	
@@ -60,6 +62,8 @@
         <result column="F_TITLE" property="fundingNo"/>
         <result column="INPUT_DATE" property="inputDate"/>
      </resultMap>
+     
+     
 
 
 </mapper>

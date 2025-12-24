@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.ubig.app.funding.service.DonationService;
 import com.ubig.app.vo.funding.DonationVO;
+import com.ubig.app.vo.funding.FundingVO;
 
 @Controller
 @RequestMapping("/donation")
@@ -28,6 +29,18 @@ public class DonationController {
 		model.addAttribute("list",list);
 		
 		return "funding/donationPage";
+	}
+	
+	//검색 기능
+	@RequestMapping("/searchKeyword")
+	public String searchKeyword(Model model,String searchKeyword) {
+			
+		ArrayList<DonationVO> list = service.searchKeyword(searchKeyword);
+			
+		model.addAttribute("list",list);
+			
+		return "funding/donationPage";
+			
 	}
 	
 	//후원 상세 페이지 이동

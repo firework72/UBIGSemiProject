@@ -32,7 +32,10 @@ public class FundingDao {
 		return sqlSession.selectOne("fundingMapper.selectFunding2",fundingNo);
 	}
 
-	
-	
+	public ArrayList<FundingVO> searchKeyword(SqlSessionTemplate sqlSession, String searchKeyword) {
+		
+		return (ArrayList)sqlSession.selectList("fundingMapper.searchKeyword",searchKeyword);
+	}
+
 	
 }

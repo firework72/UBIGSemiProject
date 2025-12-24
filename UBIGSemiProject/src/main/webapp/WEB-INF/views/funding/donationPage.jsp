@@ -10,11 +10,71 @@
         th, td { border: 1px solid #ccc; padding: 10px; text-align: center; }
         th { background-color: #f2f2f2; }
         .btn-back { display:block; width:100px; margin:20px auto; padding:10px; text-align:center; background:#4CAF50; color:white; text-decoration:none; border-radius:5px; }
+        
+        /* 상단 메뉴 */
+		.top-menu {
+		    float: right;
+		    margin-top: -10px;
+		}
+		.top-menu form {
+		    display: inline-block;
+		    margin-left: 10px;
+		}
+		.top-menu input[type="text"] {
+		    padding: 8px;
+		    border-radius: 5px;
+		    border: 1px solid #ccc;
+		}
+		.top-menu button {
+		    padding: 8px 12px;
+		    border-radius: 5px;
+		    border: none;
+		    cursor: pointer;
+		    color: white;
+		}
+		.top-menu .search-btn {
+		    background-color: #FFC107;
+		}
+		.top-menu .add-btn {
+		    background-color: #28a745;
+		}
     </style>
 </head>
 <body>
 
 <h2 style="text-align:center;">펀딩 목록</h2>
+
+<!-- 상단 메뉴: 검색 + 펀딩 추가 -->
+<div class="top-menu">
+    <!-- 검색 폼 -->
+    <form action="${pageContext.request.contextPath}/donation/searchKeyword" method="get">
+        <select id="searchType">
+        	<option value="all">전체</option>
+        	<option value="user">작성자</option>
+        	<option value="title">제목</option>
+        </select>
+       	
+        <input type="text" id="searchInput" name="searchKeyword" placeholder="검색어 입력" value="${param.searchKeyword}">
+        <button type="submit" class="search-btn">검색</button>
+    </form>
+    
+	<script>
+	    let select = document.getElementById('searchType');
+	    let input = document.getElementById('searchInput');
+	
+	    select.addEventListener('change', function() {
+	        if (this.value === 'user') {
+	            input.placeholder = '작성자 입력';
+	        } else if (this.value === 'title') {
+	            input.placeholder = '후원타입 입력';
+	        } 	
+	        else {
+	            input.placeholder = '검색어 입력';
+	        }
+	    });
+	</script>
+
+</div>
 
 <table>
     <tr>

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.ubig.app.funding.dao.DonationDao;
 import com.ubig.app.vo.funding.DonationVO;
+import com.ubig.app.vo.funding.FundingVO;
 
 @Service
 public class DonationServiceImpl implements DonationService{
@@ -22,6 +23,12 @@ public class DonationServiceImpl implements DonationService{
 	public ArrayList<DonationVO> selectDonation() {
 		
 		return dao.selectDonation(sqlSession);
+	}
+	
+	@Override
+	public ArrayList<DonationVO> searchKeyword(String searchKeyword) {
+		
+		return dao.searchKeyword(sqlSession,searchKeyword);
 	}
 	
 	@Override

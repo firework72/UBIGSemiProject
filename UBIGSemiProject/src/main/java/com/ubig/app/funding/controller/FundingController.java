@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.ubig.app.funding.common.FundingException;
 import com.ubig.app.funding.service.FundingService;
 import com.ubig.app.vo.funding.FundingHistoryVO;
 import com.ubig.app.vo.funding.FundingVO;
@@ -31,6 +32,18 @@ public class FundingController {
 		return "funding/fundingPage";
 	}
 	
+	//검색 기능
+	@RequestMapping("/searchKeyword")
+	public String searchKeyword(Model model,String searchKeyword) {
+		
+		ArrayList<FundingVO> list = service.searchKeyword(searchKeyword);
+		
+		model.addAttribute("list",list);
+		
+		return "funding/fundingPage";
+		
+	}
+	
 	//펀딩 상세 페이지 이동
 	@RequestMapping("/fundingDetailView")
 	public String fundingDetailView(Model model,int fundingNo) {
@@ -40,6 +53,13 @@ public class FundingController {
 		model.addAttribute("list",list);
 		
 		return "funding/fundingDetailView";
+	}
+	
+	//펀딩 등록 페이지 이동
+	@RequestMapping("/insertPage")
+	public String insertPage() {
+		
+		return "funding/insertPage";
 	}
 	
 	//펀딩 등록
@@ -60,22 +80,17 @@ public class FundingController {
 	
 	//펀딩 입금 기능
 	@RequestMapping("/insertMoney")
-	public String insertMoney(HttpSession session,FundingHistoryVO fundingHistoryVO) {
-		
-		System.out.println(fundingHistoryVO);
-		
-		int result = service.insertMoney(fundingHistoryVO);
-		
-		if(result>0) {
-			session.setAttribute("alertMsg", "펀딩 참여 성공");
-		}else {
-			session.setAttribute("alertMsg", "펀딩 참여 실패");
-		}
-		
-		return "redirect:/funding/fundingDetailView?fundingNo=" + fundingHistoryVO.getFundingNo();
+    public String insertMoney(HttpSession session, FundingHistoryVO FundingHistoryVO) {
+        
+		try {
+            service.insertMoney(FundingHistoryVO);
+            session.setAttribute("alertMsg", "펀딩 참여 성공");
+        } catch (FundingException e) {
+            session.setAttribute("alertMsg", e.getMessage());
+        }
 
-		
-	}
+        return "redirect:/funding/fundingDetailView?fundingNo=" + FundingHistoryVO.getFundingNo();
+    }
 	
 	
 	
