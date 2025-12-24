@@ -60,4 +60,10 @@ public class VolunteerReviewVO {
         return rRemove;
     }
     
+    // [추가] 활동 평균 별점 (목록/상세 표시용)
+    private double actRate;
+    public double getActRate() {
+    	return actRate;
+    }
+    
 }

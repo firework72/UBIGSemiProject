@@ -6,7 +6,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.List;
-import com.ubig.app.vo.member.MemberVO;
+
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +20,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.ubig.app.vo.member.MemberVO;
 import com.ubig.app.vo.volunteer.ActivityVO;
 import com.ubig.app.vo.volunteer.SignVO;
 import com.ubig.app.vo.volunteer.VolunteerCommentVO;
@@ -221,30 +222,50 @@ public class VolunteerController {
 	
 	
 	// ==========================================================
-	// ▼▼▼ 댓글 (Review / Comment) 관련 기능 ▼▼▼
+	// ▼▼▼ 봉사 프로그램 댓글 (Volunteer Activity Comments) ▼▼▼
 	// ==========================================================
 
-	// 댓글 목록 조회 (AJAX 통신용, JSON 반환한다고 가정하거나 단순히 JSP로 포워딩)
-	// 지금은 간단히 기능 매핑만 작성합니다.
-	// [추가 사유] 상세 페이지에서 화면 깜빡임 없이 댓글 목록을 갱신하여 사용자 경험을 높이기 위해 AJAX 요청을 처리함
-	@ResponseBody // AJAX로 데이터만 보낼 경우 사용
-	@RequestMapping(value = "replyList.vo", produces = "application/json; charset=UTF-8")
-	public String replyList(int actId) {
-		List<VolunteerCommentVO> list = volunteerService.selectReplyList(actId);
+	// 댓글 목록 조회 (봉사 프로그램)
+	@ResponseBody
+	@RequestMapping(value = "volunteerReplyList.vo", produces = "application/json; charset=UTF-8")
+	public String volunteerReplyList(int actId) {
+		List<VolunteerCommentVO> list = volunteerService.selectActivityReplyList(actId);
 		return new Gson().toJson(list);
 	}
 
-	// 댓글 작성
-	// [추가 사유] 봉사활동에 대한 문의나 의견을 남길 수 있도록 댓글 작성 기능을 구현함
+	// 댓글 작성 (봉사 프로그램)
 	@ResponseBody
-	@RequestMapping("insertReply.vo")
-	public String insertReply(VolunteerCommentVO r) {
-		int result = volunteerService.insertReply(r);
+	@RequestMapping("volunteerInsertReply.vo")
+	public String volunteerInsertReply(VolunteerCommentVO r) {
+		int result = volunteerService.insertActivityReply(r);
 		return result > 0 ? "success" : "fail";
 	}
 
-	// 댓글 삭제
-	// [추가 사유] 작성된 댓글을 사용자가 취소(삭제)할 수 있도록 하며, DB 데이터 보존을 위해 물리 삭제 대신 상태값 변경(UPDATE)을 수행함
+	// ==========================================================
+	// ▼▼▼ 봉사 후기 댓글 (Review Comments) ▼▼▼
+	// ==========================================================
+
+	// 댓글 목록 조회 (후기)
+	@ResponseBody
+	@RequestMapping(value = "reviewReplyList.vo", produces = "application/json; charset=UTF-8")
+	public String reviewReplyList(int actId, int reviewNo) {
+		VolunteerCommentVO vo = new VolunteerCommentVO();
+		vo.setActId(actId);
+		vo.setReviewNo(reviewNo);
+		
+		List<VolunteerCommentVO> list = volunteerService.selectReviewReplyList(vo);
+		return new Gson().toJson(list);
+	}
+
+	// 댓글 작성 (후기)
+	@ResponseBody
+	@RequestMapping("reviewInsertReply.vo")
+	public String reviewInsertReply(VolunteerCommentVO r) {
+		int result = volunteerService.insertReviewReply(r);
+		return result > 0 ? "success" : "fail";
+	}
+
+	// 댓글 삭제 (공통)
 	@ResponseBody
 	@RequestMapping("deleteReply.vo")
 	public String deleteReply(int cmtNo) {

@@ -22,4 +22,8 @@ public class VolunteerCommentVO {
 	private Date cmtUpdate;     // CMT_UPDATE (수정)
 	
 	private int cmtRemove;      // CMT_REMOVE (삭제)
+	
+	private Integer cmtRate;    // CMT_RATE (평점, NULL 허용)
+	
+	private Integer reviewNo;   // REVIEW_NO (후기 번호, NULL 허용)
 }
