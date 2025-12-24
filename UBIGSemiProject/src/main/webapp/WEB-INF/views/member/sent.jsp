@@ -10,6 +10,7 @@
     <title>유봉일공 - 쪽지함</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css?v=3">
     
     <style>
         body { background-color: #f8f9fa; }
@@ -33,9 +34,13 @@
         
         .btn-write { background-color: #FFC107; border: none; font-weight: bold; color: white; }
         .btn-write:hover { background-color: #e0a800; color: white; }
+        body {
+        	padding-top: 50px;
+        }
     </style>
 </head>
 <body>
+<jsp:include page="/WEB-INF/views/common/menubar.jsp" />
 
 <div class="container msg-container">
     
@@ -52,6 +57,9 @@
         </li>
         <li class="nav-item">
             <a class="nav-link active" href="${pageContext.request.contextPath}/message/sent.ms">보낸 쪽지함</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="${pageContext.request.contextPath}/kick/kickList.ki">차단 목록</a>
         </li>
     </ul>
 
@@ -80,7 +88,7 @@
                                     onclick="openMessageDetail(${msg.messageNo}, '${msg.messageReceiveUserId}', '${msg.messageContent}', '${msg.messageCreateDate}', '${msg.messageIsCheck}')">
                                     
                                     <td>
-                                        <c:if test="${msg.messageIsCheck == 'N'}">
+                                        <c:if test="${msg.messageIsCheck == 'N' or msg.messageIsCheck == 'K'}">
                                             <span class="badge bg-danger">안 읽음</span>
                                         </c:if>
                                         <c:if test="${msg.messageIsCheck == 'Y'}">

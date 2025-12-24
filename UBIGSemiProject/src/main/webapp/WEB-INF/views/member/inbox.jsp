@@ -58,6 +58,9 @@
         <li class="nav-item">
             <a class="nav-link" href="${pageContext.request.contextPath}/message/sent.ms">보낸 쪽지함</a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" href="${pageContext.request.contextPath}/kick/kickList.ki">차단 목록</a>
+        </li>
     </ul>
 
     <div class="card shadow-sm border-0">
@@ -220,7 +223,7 @@
         			error : function() {
         				alert("알 수 없는 오류가 발생했습니다.");
         			}
-        		})
+        		});
         	}
         	
         	if (isSuccess) {
