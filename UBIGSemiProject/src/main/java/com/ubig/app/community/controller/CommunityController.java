@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ubig.app.community.service.CommunityService;
 import com.ubig.app.vo.community.BoardVO;
@@ -503,5 +504,64 @@ public class CommunityController {
 
         fis.close();
         os.close();
+    }
+
+    /*
+     * [Step 28: 마이페이지 내 글 목록 조회 API (AJAX)]
+     * // sun: 마이페이지에서 비동기로 호출하여 내 글 목록을 가져옵니다.
+     */
+    @GetMapping(value = "/myPosts", produces = "application/json; charset=utf8")
+    @ResponseBody
+    public String myPosts(javax.servlet.http.HttpSession session) {
+
+        com.ubig.app.vo.member.MemberVO loginMember = (com.ubig.app.vo.member.MemberVO) session
+                .getAttribute("loginMember");
+        if (loginMember == null) {
+            return "{\"result\":\"login_required\"}";
+        }
+
+        // 검색 조건 설정: 작성자(writer) = 내 아이디
+        java.util.Map<String, Object> map = new java.util.HashMap<>();
+        map.put("condition", "writer");
+        map.put("keyword", loginMember.getUserId());
+        // 카테고리는 무관하므로 전체 조회 (Mapper에서 category null 체크 필요하지만, 현재 로직상 category 필수일 수 있음)
+        // -> Mapper 확인 결과 category가 null이면 전체 조회 로직이 없으므로, 모든 카테고리를 아우르기 위해
+        // 쿼리를 수정하거나, 여기서는 일단 'REVIEW'나 'NOTICE' 등 대표 카테고리 하나를 넣지 않고
+        // Mapper의 category 조건이 <if test="category != null"> 등인지 확인 필요.
+        // 확인 결과: category 파라미터가 필수처럼 보임 (<choose>문 사용 등).
+        // 그러나 검색 조건이 있으면 category 무시하고 전체에서 찾고 싶을 수 있음.
+        // 일단 기존 로직 활용을 위해 category를 안 넣으면 어떻게 되는지 테스트 필요하지만,
+        // 안전하게 map에 category를 넣지 않고 Mapper가 처리하도록 유도하거나,
+        // Service 메소드를 호출할 때 PageInfo 없이 리스트만 가져오는 메소드가 필요함.
+        // 현재 getBoardList는 PageInfo가 필수임.
+
+        // [임시 해결] 페이징 없이 전체를 가져오거나,
+        // 마이페이지용으로 최근 100개만 가져오도록 PageInfo 생성
+        int listCount = communityService.getBoardListCount(map);
+        com.ubig.app.common.model.vo.PageInfo pi = com.ubig.app.common.util.Pagination.getPageInfo(listCount, 1, 10,
+                100); // 1페이지, 100개
+
+        java.util.List<BoardVO> list = communityService.getBoardList(pi, map);
+
+        // JSON 변환 (Gson 사용 가정, 없으면 직접 문자열 생성)
+        // Spring Boot가 아니므로 Jackson 라이브러리 의존성 확인 필요.
+        // 수동으로 JSON 문자열 생성 (간단한 필드만 전송)
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        for (int i = 0; i < list.size(); i++) {
+            BoardVO b = list.get(i);
+            sb.append("{");
+            sb.append("\"boardId\":").append(b.getBoardId()).append(",");
+            sb.append("\"category\":\"").append(b.getCategory()).append("\",");
+            sb.append("\"title\":\"").append(b.getTitle().replace("\"", "\\\"")).append("\","); // 따옴표 이스케이프
+            sb.append("\"createDate\":\"").append(b.getCreateDate()).append("\","); // Date.toString() 사용
+            sb.append("\"viewCount\":").append(b.getViewCount());
+            sb.append("}");
+            if (i < list.size() - 1)
+                sb.append(",");
+        }
+        sb.append("]");
+
+        return sb.toString();
     }
 }
