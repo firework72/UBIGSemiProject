@@ -32,9 +32,9 @@ public class DonationServiceImpl implements DonationService{
 	}
 	
 	@Override
-	public int updateType(DonationVO donationVO) {
+	public ArrayList<DonationVO> selectDetailView(String userId) {
 		
-		return dao.updateType(sqlSession,donationVO);
+		return dao.selectDetailView(sqlSession,userId);
 	}
 	
 	@Override

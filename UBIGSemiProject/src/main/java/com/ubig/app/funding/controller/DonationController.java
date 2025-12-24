@@ -36,36 +36,26 @@ public class DonationController {
 	public String searchKeyword(Model model,String searchKeyword) {
 			
 		ArrayList<DonationVO> list = service.searchKeyword(searchKeyword);
-			
+		
 		model.addAttribute("list",list);
 			
 		return "funding/donationPage";
 			
 	}
 	
+	//저기 후원 해제 기능
+	
+	
 	//후원 상세 페이지 이동
 	@RequestMapping("/donationDetailView")
-	public String donationPage(Model model) {
+	public String donationPage(Model model,String userId) {
+		
+		ArrayList<DonationVO> list = service.selectDetailView(userId);
+		
+		model.addAttribute("list",list);
 		
 		return "funding/donationDetailView";
 	}
-	
-	//정기 후원 신청 
-	@RequestMapping("/updateType")
-	public String updateType(HttpSession session,DonationVO donationVO) {
-		
-		int result = service.updateType(donationVO);
-		
-		if(result>0) {
-			session.setAttribute("alertMsg", "타입 변경 완료");
-		}else {
-			session.setAttribute("alertMsg", "타입 변경 실패");
-		}
-				
-		return "funding/donationPage";
-		
-	}
-	
 	
 	//정기 후원
 	  
@@ -79,7 +69,7 @@ public class DonationController {
 		}else {
 			session.setAttribute("alertMsg", "정기 후원 실패"); }
 		  
-		 return "funding/donationPage"; 
+		 return "redirect:/donation"; 
 	}
 	 
 	
@@ -95,7 +85,7 @@ public class DonationController {
 			session.setAttribute("alertMsg", "일시 후원 실패");
 		}
 		
-		return "funding/donationPage";
+		return "redirect:/donation";
 	}
 	
 	

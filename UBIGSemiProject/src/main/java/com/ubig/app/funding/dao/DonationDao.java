@@ -21,11 +21,6 @@ public class DonationDao {
 		return (ArrayList)sqlSession.selectList("donationMapper.searchKeyword",searchKeyword);
 	}
 	
-	public int updateType(SqlSessionTemplate sqlSession, DonationVO donationVO) {
-		
-		return sqlSession.update("donationMapper.updateType",donationVO);
-	}
-	
 	public int donation(SqlSessionTemplate sqlSession, DonationVO donationVO) {
 		
 		return sqlSession.insert("donationMapper.donation",donationVO);
@@ -34,6 +29,11 @@ public class DonationDao {
 	public int donation2(SqlSessionTemplate sqlSession, DonationVO donationVO) {
 		
 		return sqlSession.insert("donationMapper.donation2",donationVO);
+	}
+
+	public ArrayList<DonationVO> selectDetailView(SqlSessionTemplate sqlSession,String userId) {
+	
+		return (ArrayList)sqlSession.selectOne("donationMapper.selectDetailView",userId);
 	}
 	
 	
