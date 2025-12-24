@@ -28,15 +28,8 @@
                                 <th>품종</th>
                                 <th>성별</th>
                                 <th>나이</th>
-                                <th>체중</th>
-                                <th>크기</th>
-                                <th>중성화</th>
-                                <th>접종</th>
-                                <th>건강상태</th>
                                 <th>입양상태</th>
-                                <th>입양조건</th>
                                 <th>지역</th>
-                                <th>마감일</th>
                                 <th>사진</th>
                                 <th style="min-width: 150px;">관리</th>
                             </tr>
@@ -45,7 +38,7 @@
                             <c:choose>
                                 <c:when test="${empty list}">
                                     <tr>
-                                        <td colspan="18" align="center">등록된 동물이 없습니다.</td>
+                                        <td colspan="11" align="center">등록된 동물이 없습니다.</td>
                                     </tr>
                                 </c:when>
                                 <c:otherwise>
@@ -64,23 +57,8 @@
                                             <td>${item.breed}</td>
                                             <td>${item.gender eq 1 ? '남아' : '여아'}</td>
                                             <td>${item.age}살</td>
-                                            <td>${item.weight}kg</td>
-                                            <td>${item.petSize}</td>
-                                            <td>${item.neutered eq 1 ? '완료' : '미완료'}</td>
-                                            <td>${item.vaccinationStatus}</td>
-                                            <td>
-                                                <div
-                                                    style="max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                                                    ${item.healthNotes}</div>
-                                            </td>
                                             <td>${item.adoptionStatus}</td>
-                                            <td>
-                                                <div
-                                                    style="max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                                                    ${item.adoptionConditions}</div>
-                                            </td>
                                             <td>${item.hopeRegion}</td>
-                                            <td>${item.deadlineDate}</td>
                                             <td><img src="${pageContext.request.contextPath}/resources/download/adoption/${item.photoUrl}"
                                                     alt="동물 사진" width="50" height="50"></td>
                                             <td>
@@ -91,10 +69,17 @@
                                                     <button type="button" class="btn-secondary"
                                                         style="padding: 5px 10px; font-size: 0.8rem;"
                                                         onclick="if(confirm('정말 삭제하시겠습니까?')) location.href='adoption.deleteanimal?anino=${item.animalNo}'">삭제</button>
-                                                    <button type="button" class="btn-primary"
-                                                        style="padding: 5px 10px; font-size: 0.8rem;"
-                                                        onclick="location.href='adoption.enrollpagepost?anino=${item.animalNo}'">게시글
-                                                        등록</button>
+
+                                                    <c:if test="${item.postNo eq 0}">
+                                                        <button type="button" class="btn-primary"
+                                                            style="padding: 5px 10px; font-size: 0.8rem;"
+                                                            onclick="if(confirm('게시글을 등록하시겠습니까?')) location.href='adoption.insert.board.direct?anino=${item.animalNo}'">게시글
+                                                            등록</button>
+                                                    </c:if>
+                                                    <c:if test="${item.postNo ne 0}">
+                                                        <span
+                                                            style="font-size: 0.8rem; color: green; text-align: center;">등록됨</span>
+                                                    </c:if>
                                                 </div>
                                             </td>
                                         </tr>

@@ -152,7 +152,7 @@
                 }
 
                 // 폼 제출 시 주소 합치기
-                document.querySelector('form[action="adoption.insert.animal"]').addEventListener('submit', function (e) {
+                document.querySelector('.adoption-form').addEventListener('submit', function (e) {
                     var roadAddr = document.getElementById('roadAddress').value;
                     var detailAddr = document.getElementById('detailAddress').value;
 
@@ -167,11 +167,9 @@
 
                 //동물 정보 가져온 것 대입하기
                 document.addEventListener('DOMContentLoaded', function () {
-                    // Check if we are in edit mode (values present)
                     if ("${animal.species}") document.querySelector("#species").value = "${animal.species}";
                     if ("${animal.animalName}") document.querySelector("#animalName").value = "${animal.animalName}";
                     if ("${animal.breed}") document.querySelector("#breed").value = "${animal.breed}";
-                    // Radio button handling for gender
                     if ("${animal.gender}") {
                         const genderVal = "${animal.gender}";
                         const genderRadio = document.querySelector(`input[name="gender"][value="${animal.gender}"]`);
@@ -180,7 +178,6 @@
                     if ("${animal.age}") document.querySelector("#age").value = "${animal.age}";
                     if ("${animal.weight}") document.querySelector("#weight").value = "${animal.weight}";
                     if ("${animal.petSize}") document.querySelector("#petSize").value = "${animal.petSize}";
-                    // Radio button handling for neutered
                     if ("${animal.neutered}") {
                         const neuteredVal = "${animal.neutered}";
                         const neuteredRadio = document.querySelector(`input[name="neutered"][value="${animal.neutered}"]`);
@@ -188,9 +185,23 @@
                     }
                     if ("${animal.vaccinationStatus}") document.querySelector("#vaccinationStatus").value = "${animal.vaccinationStatus}";
                     if ("${animal.healthNotes}") document.querySelector("#healthNotes").value = "${animal.healthNotes}";
-                    if ("${animal.adoptionStatus}") document.querySelector("#adoptionStatus").value = "${animal.adoptionStatus}";
+
+                    // 수정 시에는 상태가 '대기중'으로 초기화되므로 폼에서도 대기중으로 표시 (backend에서 forced reset)
+                    if ("${animal.animalNo}") {
+                        document.querySelector("#adoptionStatus").value = "대기중";
+                        // 사용자 혼란 방지를 위해 비활성화 하거나 메시지 표시 (선택사항)
+                    } else {
+                        if ("${animal.adoptionStatus}") document.querySelector("#adoptionStatus").value = "${animal.adoptionStatus}";
+                    }
                     if ("${animal.adoptionConditions}") document.querySelector("#adoptionConditions").value = "${animal.adoptionConditions}";
-                    if ("${animal.hopeRegion}") document.querySelector("#hopeRegion").value = "${animal.hopeRegion}";
+
+                    // 주소 정보 처리
+                    if ("${animal.hopeRegion}") {
+                        document.querySelector("#hopeRegion").value = "${animal.hopeRegion}";
+                        // 도로명 주소란에 전체 주소 표시
+                        document.querySelector("#roadAddress").value = "${animal.hopeRegion}";
+                    }
+
                     // Date formatting might be needed depending on how it's passed, but value assignment works for YYYY-MM-DD
                     if ("${animal.deadlineDate}") document.querySelector("#deadlineDate").value = "${animal.deadlineDate}";
                 });

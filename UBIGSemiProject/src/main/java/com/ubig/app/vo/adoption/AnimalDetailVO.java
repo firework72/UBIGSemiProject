@@ -30,5 +30,6 @@ public class AnimalDetailVO {
     private String hopeRegion; // 입양 희망 지역
     private Date deadlineDate; // 마감 기한
     private String userId; // 사용자 ID
+    private int postNo; // 게시글 번호 (Left Join)
 
 }

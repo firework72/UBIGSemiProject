@@ -44,7 +44,13 @@
 										</c:if>
 									</div>
 									<div class="card-content">
-										<div class="card-title">${item.postTitle}</div>
+										<div class="card-title">${item.animalName}</div>
+										<div class="card-details">
+											나이: ${item.animalAge}세<br>
+											성별: ${item.animalGender}<br>
+											몸무게: ${item.animalWeight}kg<br>
+											지역: ${item.hopeRegion}
+										</div>
 									</div>
 								</div>
 							</c:forEach>

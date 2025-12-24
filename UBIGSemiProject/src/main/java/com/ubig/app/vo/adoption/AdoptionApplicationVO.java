@@ -19,5 +19,6 @@ public class AdoptionApplicationVO {
     private int adoptStatus; // 신청 상태
     private Date applyDt; // 신청 날짜
     private String photoUrl; // 동물 사진 URL (JOIN)
+    private String applyDateStr; // 신청 날짜 (String Formatted)
 
 }

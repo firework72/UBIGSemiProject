@@ -45,6 +45,28 @@
             #{userId}
 		)
     </insert>
+	
+	<!-- 동물 정보 수정 -->
+	<update id="updateAnimal" parameterType="AnimalDetail">
+		UPDATE ANIMAL_DETAILS
+		SET
+			SPECIES = #{species},
+			ANIMAL_NAME = #{animalName},
+			BREED = #{breed},
+			GENDER = #{gender},
+			AGE = #{age},
+			WEIGHT = #{weight},
+			PET_SIZE = #{petSize},
+			NEUTERED = #{neutered},
+			VACCINATION_STATUS = #{vaccinationStatus},
+			HEALTH_NOTES = #{healthNotes},
+			ADOPTION_STATUS = #{adoptionStatus},
+			ADOPTION_CONDITIONS = #{adoptionConditions},
+			HOPE_REGION = #{hopeRegion},
+			DEADLINE_DATE = #{deadlineDate},
+			PHOTO_URL = #{photoUrl}
+		WHERE ANIMAL_NO = #{animalNo}
+	</update>
 
     <!-- 입양 신청 상태 변경  -->
     <update id="updateAdoptionStatus" parameterType="map">
@@ -69,7 +91,11 @@
             P.ANIMAL_NO,
             A.PHOTO_URL,
             A.ANIMAL_NAME,
-            A.ADOPTION_STATUS
+            A.ADOPTION_STATUS,
+            A.AGE AS ANIMAL_AGE,
+            A.GENDER AS ANIMAL_GENDER,
+            A.WEIGHT AS ANIMAL_WEIGHT,
+            A.HOPE_REGION
         FROM ADOPTION_POSTS P
         JOIN ANIMAL_DETAILS A ON P.ANIMAL_NO = A.ANIMAL_NO
         ORDER BY P.POST_REG_DATE DESC
@@ -106,6 +132,20 @@
 									#{views}
 							)
 	</insert>
+	
+	<!-- 보드 삭제 -->
+	<delete id="deletePost">
+		DELETE
+		FROM ADOPTION_POSTS
+		WHERE ANIMAL_NO = #{anino}			
+	</delete>
+	
+	<!-- 해당 동물의 입양 신청 내역 삭제 -->
+	<delete id="deleteApplicationsByAnimalNo">
+		DELETE
+		FROM ADOPTION_APPLICATIONS
+		WHERE ANIMAL_NO = #{anino}
+	</delete>
 	
 	<!-- anino로 동물 정보 가지고 오기 -->
 	<select id="goAdoptionDetail" resultType="AnimalDetail">
@@ -153,11 +193,12 @@
 		WHERE ANIMAL_NO = #{anino}
 	</select>
 	
-	<!-- 모든 동물 리스트 가져오기 -->
+	<!-- 모든 동물 리스트 가져오기 (Post유무 확인 위해 Join) -->
 	<select id="allList" resultType="AnimalDetail">
-        SELECT *
-        FROM ANIMAL_DETAILS
-        ORDER BY ANIMAL_NO DESC
+        SELECT A.*, P.POST_NO
+        FROM ANIMAL_DETAILS A
+        LEFT JOIN ADOPTION_POSTS P ON A.ANIMAL_NO = P.ANIMAL_NO
+        ORDER BY A.ANIMAL_NO DESC
 	</select>
 	
 	<!-- 유저가 등록한 입양 정보 가지고오기 -->
@@ -166,14 +207,16 @@
             P.POST_NO,
             P.POST_TITLE,
             P.POST_UPDATE_DATE,
+            TO_CHAR(P.POST_REG_DATE, 'YYYY-MM-DD') AS POST_REG_DATE,
             P.VIEWS,
-            P.ANIMAL_NO,
+            A.ANIMAL_NO,
             A.PHOTO_URL,
             A.ANIMAL_NAME,
             A.ADOPTION_STATUS
-        FROM ADOPTION_POSTS P
-        JOIN ANIMAL_DETAILS A ON P.ANIMAL_NO = A.ANIMAL_NO
+        FROM ANIMAL_DETAILS A
+        LEFT JOIN ADOPTION_POSTS P ON A.ANIMAL_NO = P.ANIMAL_NO
 		WHERE A.USER_ID = #{userId}
+		ORDER BY A.ANIMAL_NO DESC
 	</select>
 	
 	<!-- 유저가 신청한 입양 정보 가지고 오기 -->
@@ -183,7 +226,9 @@
             AP.ANIMAL_NO,
             AP.USER_ID,
             AP.ADOPT_STATUS,
+            AP.ADOPT_STATUS,
             AP.APPLY_DT,
+            TO_CHAR(AP.APPLY_DT, 'YYYY-MM-DD') AS APPLY_DATE_STR,
             A.PHOTO_URL
 		FROM ADOPTION_APPLICATIONS AP
         JOIN ANIMAL_DETAILS A ON AP.ANIMAL_NO = A.ANIMAL_NO
@@ -192,5 +237,20 @@
 	
 	
 	    
+	<select id="selectApplication" parameterType="_int" resultType="AdoptionApplicationVO">
+	    SELECT 
+	        ADOPTION_APP_ID,
+	        ANIMAL_NO,
+	        USER_ID,
+	        ADOPT_STATUS,
+	        APPLY_DT
+	    FROM ADOPTION_APPLICATIONS
+	    WHERE ADOPTION_APP_ID = #{adoptionAppId}
+	</select>
+
+	<delete id="deleteapp" parameterType="_int">
+	    DELETE FROM ADOPTION_APPLICATIONS
+	    WHERE ADOPTION_APP_ID = #{adoptionAppId}
+	</delete>
 
 </mapper>

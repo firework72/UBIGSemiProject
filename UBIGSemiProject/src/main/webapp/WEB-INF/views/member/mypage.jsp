@@ -177,9 +177,17 @@
                                             html += "<tr>";
                                             html += "<td>" + item.animalNo + "</td>";
                                             html += "<td><img src='${pageContext.request.contextPath}/resources/download/adoption/" + item.photoUrl + "' style='width:50px; height:50px; object-fit:cover;'></td>";
-                                            const formattedDate = item.postUpdateDate ? new Date(item.postUpdateDate).toLocaleDateString() : "-";
-                                            html += "<td>" + formattedDate + "</td>";
-                                            html += "<td>" + item.adoptionStatus + "</td>";
+                                            // const formattedDate = item.postUpdateDate ? new Date(item.postUpdateDate).toLocaleDateString() : "-";
+                                            // 등록일 (String으로 받아옴)
+                                            const regDate = item.postRegDate ? item.postRegDate : "-";
+                                            html += "<td>" + regDate + "</td>";
+                                            // 게시글(post) 정보가 없으면 미승인, 있으면 승인/상태
+                                            // postRegDate가 유효하면 게시글이 있는 것
+                                            if (!item.postRegDate) {
+                                                html += "<td>미승인</td>";
+                                            } else {
+                                                html += "<td>승인/" + item.adoptionStatus + "</td>";
+                                            }
                                             html += "<td><button type='button' class='btn btn-danger btn-sm' onclick='updateAdoption(" + item.animalNo + ")'>정보수정</button>  ";
                                             html += "<button type='button' class='btn btn-danger btn-sm' onclick='cancelAdoption(" + item.animalNo + ")'>등록취소</button></td>";
                                             html += "</tr>";
@@ -200,7 +208,7 @@
                                             html += "<tr>";
                                             html += "<td>" + item.adoptionAppId + "</td>";
                                             html += "<td><img src='${pageContext.request.contextPath}/resources/download/adoption/" + item.photoUrl + "' style='width:50px; height:50px; object-fit:cover;'></td>";
-                                            html += "<td>" + (item.applyDt || "-") + "</td>";
+                                            html += "<td>" + (item.applyDateStr || "-") + "</td>";
                                             // 상태 코드(int)를 문자열로 변환
                                             let statusStr = "";
                                             switch (item.adoptStatus) {
@@ -328,9 +336,9 @@
                                         <table class="table table-bordered text-center">
                                             <thead class="table-light">
                                                 <tr>
-                                                    <th>입양 번호</th>
+                                                    <th>등록번호</th>
                                                     <th>사진</th>
-                                                    <th>작성일</th>
+                                                    <th>등록일</th>
                                                     <th>상태</th>
                                                     <th>설정</th>
                                                 </tr>
@@ -344,7 +352,7 @@
                                         <table class="table table-bordered text-center">
                                             <thead class="table-light">
                                                 <tr>
-                                                    <th>신청 번호</th>
+                                                    <th>신청번호</th>
                                                     <th>사진</th>
                                                     <th>신청일</th>
                                                     <th>신청 상태</th>
