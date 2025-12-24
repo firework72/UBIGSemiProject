@@ -33,7 +33,10 @@
         SELECT COUNT(*) 
         FROM BOARDS 
         WHERE IS_DELETED = 'N' 
-        AND CATEGORY = #{category}
+        <!-- [Step 28: 수정] category가 있을 때만 필터링 (마이페이지 내 글 조회 시 전체 카테고리 검색) -->
+        <if test="category != null and category != ''">
+            AND CATEGORY = #{category}
+        </if>
         <if test="condition != null and keyword != null and keyword != ''">
             <choose>
                 <when test="condition == 'writer'">
@@ -59,8 +62,10 @@
             CREATE_DATE, UPDATE_DATE, VIEW_COUNT, IS_DELETED, IS_PINNED, HASHTAGS
         FROM BOARDS
         WHERE IS_DELETED = 'N'
-        <!-- [Step 31: 수정] 공지사항은 해당 카테고리 내에서만 상단 고정 -->
-        AND CATEGORY = #{category}
+        <!-- [Step 28: 수정] category가 있을 때만 필터링 -->
+        <if test="category != null and category != ''">
+            AND CATEGORY = #{category}
+        </if>
         <if test="condition != null and keyword != null and keyword != ''">
             <choose>
                 <when test="condition == 'writer'">

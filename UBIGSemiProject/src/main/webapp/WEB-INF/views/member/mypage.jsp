@@ -105,6 +105,7 @@
                                             신청 내역</button>
                                         <button id="myadoption" class="list-group-item list-group-item-action">입양 신청
                                             내역</button>
+                                        <!-- sun: 내가 쓴 글 버튼 클릭 시 AJAX로 데이터 요청 -->
                                         <button id="myboard" class="list-group-item list-group-item-action">내가 쓴
                                             글</button>
                                         <button id="delete" class="list-group-item list-group-item-action text-danger"
@@ -121,7 +122,7 @@
                                     const myupdate2 = document.querySelector("#myupdate2");
                                     const myvolunteer2 = document.querySelector("#myvolunteer2");
                                     const myadoption2 = document.querySelector("#myadoption2");
-                                    const myboard2 = document.querySelector("#myboard2");
+                                    const myboard2 = document.querySelector("#myboard2"); // sun: myboard2 복원
 
                                     const list = [myupdate2, myvolunteer2, myadoption2, myboard2];
 
@@ -129,19 +130,33 @@
 
                                     mymenu.addEventListener("click", function (e) {
 
-                                        // 모두 숨기기
-                                        list.forEach(el => el.style.display = "none");
+                                        // sun: 내가 쓴 글 버튼 클릭 처리
+                                        if (e.target.id === 'myboard') {
+                                            // 탭 UI 활성화 (기존 로직과 동일)
+                                            // 모두 숨기기
+                                            list.forEach(el => el.style.display = "none");
 
-                                        // 선택된 콘텐츠 보이기
-                                        const targetId = e.target.id + "2";
-                                        const targetContent = document.querySelector("#" + targetId);
-                                        if (targetContent) {
-                                            targetContent.style.display = "block";
-                                            getAdoptionData();
+                                            // myboard2 보이기
+                                            myboard2.style.display = "block";
+
+                                            // AJAX로 글 목록 가져오기
+                                            getMyPosts();
+                                        }
+                                        else {
+                                            // 기존 로직 (그대로 복원)
+                                            // 모두 숨기기
+                                            list.forEach(el => el.style.display = "none");
+
+                                            // 선택된 콘텐츠 보이기
+                                            const targetId = e.target.id + "2";
+                                            const targetContent = document.querySelector("#" + targetId);
+                                            if (targetContent) {
+                                                targetContent.style.display = "block";
+                                                getAdoptionData(); // sun: 기존처럼 무조건 호출 (수정 없음)
+                                            }
                                         }
 
                                         // 버튼 활성화 스타일 처리
-                                        // 모든 버튼에서 active 제거
                                         const allButtons = mymenu.querySelectorAll('.list-group-item');
                                         allButtons.forEach(btn => btn.classList.remove('active'));
 
@@ -239,6 +254,52 @@
                                 }
                                 function cancelAdoptionApp(adoptionAppId) {
                                     location.href = '${pageContext.request.contextPath}/adoption.deleteadoptionapp?adoptionAppId=' + adoptionAppId;
+                                }
+
+                                // sun: 내 글 목록 가져오기 함수 (AJAX)
+                                async function getMyPosts() {
+                                    const url = '${pageContext.request.contextPath}/community/myPosts';
+                                    const container = document.querySelector("#myboard2");
+
+                                    try {
+                                        const response = await fetch(url);
+                                        const list = await response.json();
+
+                                        if (!list || list.length === 0) {
+                                            container.innerHTML = '<h4 class="mb-4 fw-bold border-bottom pb-2">내가 쓴 글</h4><div class="p-4 text-center">작성한 글이 없습니다.</div>';
+                                            return;
+                                        }
+
+                                        let html = '<h4 class="mb-4 fw-bold border-bottom pb-2">내가 쓴 글</h4>';
+                                        html += '<table class="table table-hover text-center">';
+                                        html += '<thead class="table-light"><tr><th>번호</th><th>카테고리</th><th>제목</th><th>작성일</th><th>조회수</th></tr></thead>';
+                                        html += '<tbody>';
+
+                                        const catMap = {
+                                            'NOTICE': '공지사항',
+                                            'FREE': '자유게시판',
+                                            'REVIEW': '봉사후기',
+                                            'QNA': '문의사항'
+                                        };
+
+                                        list.forEach(board => {
+                                            const catName = catMap[board.category] || board.category;
+                                            html += '<tr onclick="location.href=\'${pageContext.request.contextPath}/community/detail?boardId=' + board.boardId + '\'" style="cursor:pointer;">';
+                                            html += '<td>' + board.boardId + '</td>';
+                                            html += '<td><span class="badge bg-secondary">' + catName + '</span></td>';
+                                            html += '<td class="text-start text-truncate" style="max-width: 300px;">' + board.title + '</td>';
+                                            html += '<td>' + board.createDate + '</td>';
+                                            html += '<td>' + board.viewCount + '</td>';
+                                            html += '</tr>';
+                                        });
+
+                                        html += '</tbody></table>';
+                                        container.innerHTML = html;
+
+                                    } catch (error) {
+                                        console.error('Error fetching my posts:', error);
+                                        container.innerHTML = '<h4 class="mb-4 fw-bold border-bottom pb-2">내가 쓴 글</h4><div class="alert alert-danger">데이터를 불러오는 중 오류가 발생했습니다.</div>';
+                                    }
                                 }
 
 
