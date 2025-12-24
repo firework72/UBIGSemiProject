@@ -14,4 +14,6 @@ public interface MessageService {
 
 	ArrayList<MessageVO> selectSent(String userId);
 
+	int isKicked(MessageVO message);
+
 }

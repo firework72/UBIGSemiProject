@@ -29,6 +29,10 @@ public class MessageDao {
 	public ArrayList<MessageVO> selectSent(SqlSessionTemplate sqlSession, String userId) {
 		return (ArrayList) sqlSession.selectList("messageMapper.selectSent", userId);
 	}
+
+	public int isKicked(SqlSessionTemplate sqlSession, MessageVO message) {
+		return sqlSession.selectOne("messageMapper.isKicked", message);
+	}
 	
 	
 

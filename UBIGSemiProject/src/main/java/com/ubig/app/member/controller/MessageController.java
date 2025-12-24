@@ -75,6 +75,23 @@ public class MessageController {
 		
 		// MESSAGES 테이블에 데이터를 추가한다.
 		
+		// 만약 수신자가 발신자를 차단한 상태라면 message 상태를 'K'로 보내야 하고, 아니라면 'N'으로 보내야 한다.
+		// message 상태가 'K'인 경우 수신자에게 표시되지 않으며, 발신자에게는 '읽지 않음'으로 표시된다
+		
+		// 현재 수신자가 발신자를 차단한 상태인지 확인
+		// 수신자는 messageReceiveUserId이고 발신자는 messageSendUserId이다.
+		
+		int isKicked = service.isKicked(message);
+		
+		// 만약 수신자가 발신자를 차단한 상태라면 (즉, 조회된 행의 개수가 0이 아니라면) message의 messageIsCheck를 'K'로 바꾼다.
+		
+		if (isKicked > 0) {
+			message.setMessageIsCheck("K");
+		}
+		else {
+			message.setMessageIsCheck("N");
+		}
+		
 		int result = service.insertMessage(message);
 		
 		if (result > 0) {

@@ -33,7 +33,7 @@
 			  ,#{messageSendUserId}
 			  ,#{messageReceiveUserId}
 			  ,#{messageContent}
-			  ,'N'
+			  ,#{messageIsCheck}
 			  ,SYSDATE)
 	</insert>
 	
@@ -47,5 +47,12 @@
 		FROM MESSAGES
 		WHERE MESSAGE_SEND_USER_ID = #{userId}
 		ORDER BY MESSAGE_CREATE_DATE DESC
+	</select>
+	
+	<select id="isKicked" parameterType="MessageVO" resultType="_int">
+		SELECT COUNT(*)
+		FROM KICKS
+		WHERE KICKER = #{messageReceiveUserId}
+		AND KICKED_USER = #{messageSendUserId}
 	</select>
 </mapper>

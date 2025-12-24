@@ -80,7 +80,7 @@
                                     onclick="openMessageDetail(${msg.messageNo}, '${msg.messageSendUserId}', '${msg.messageContent}', '${msg.messageCreateDate}', '${msg.messageIsCheck}')">
                                     
                                     <td>
-                                        <c:if test="${msg.messageIsCheck == 'N'}">
+                                        <c:if test="${msg.messageIsCheck == 'N' or msg.messageIsCheck == 'K'}">
                                             <span class="badge bg-danger">안 읽음</span>
                                         </c:if>
                                         <c:if test="${msg.messageIsCheck == 'Y'}">
