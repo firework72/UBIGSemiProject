@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ubig.app.member.service.KickService;
 import com.ubig.app.member.service.MessageService;
+import com.ubig.app.vo.member.KickVO;
 import com.ubig.app.vo.member.MemberVO;
 import com.ubig.app.vo.member.MessageVO;
 
@@ -21,7 +23,11 @@ import com.ubig.app.vo.member.MessageVO;
 public class MessageController {
 	
 	@Autowired
-	private MessageService service;
+	private MessageService messageService;
+	
+	@Autowired
+	private KickService kickService;
+	
 	
 	// TODO 쪽지함 기능
 	@RequestMapping("/inbox.ms")
@@ -32,9 +38,9 @@ public class MessageController {
 		
 		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
 		
-		ArrayList<MessageVO> list = service.selectInbox(loginMember.getUserId());
+		ArrayList<MessageVO> list = messageService.selectInbox(loginMember.getUserId());
 		
-		int unreadCount = service.unreadCount(loginMember.getUserId());
+		int unreadCount = messageService.unreadCount(loginMember.getUserId());
 		
 		for (MessageVO msg : list) {
 			System.out.println(msg);
@@ -54,9 +60,9 @@ public class MessageController {
 		
 		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
 		
-		ArrayList<MessageVO> list = service.selectSent(loginMember.getUserId());
+		ArrayList<MessageVO> list = messageService.selectSent(loginMember.getUserId());
 		
-		int unreadCount = service.unreadCount(loginMember.getUserId());
+		int unreadCount = messageService.unreadCount(loginMember.getUserId());
 		
 		for (MessageVO msg : list) {
 			System.out.println(msg);
@@ -81,7 +87,10 @@ public class MessageController {
 		// 현재 수신자가 발신자를 차단한 상태인지 확인
 		// 수신자는 messageReceiveUserId이고 발신자는 messageSendUserId이다.
 		
-		int isKicked = service.isKicked(message);
+		int isKicked = kickService.isKicked(KickVO.builder()
+												  .kicker(message.getMessageReceiveUserId())
+												  .kickedUser(message.getMessageSendUserId())
+												  .build());
 		
 		// 만약 수신자가 발신자를 차단한 상태라면 (즉, 조회된 행의 개수가 0이 아니라면) message의 messageIsCheck를 'K'로 바꾼다.
 		
@@ -92,7 +101,7 @@ public class MessageController {
 			message.setMessageIsCheck("N");
 		}
 		
-		int result = service.insertMessage(message);
+		int result = messageService.insertMessage(message);
 		
 		if (result > 0) {
 			session.setAttribute("alertMsg", "쪽지를 보냈습니다.");
@@ -104,32 +113,12 @@ public class MessageController {
 		}
 	}
 	
-	// 차단 여부 확인
-	@ResponseBody
-	@PostMapping("/isKicked.ms")
-	public String isKicked(HttpSession session, String messageSendUserId, String messageReceiveUserId) {
-		MessageVO message = MessageVO.builder()
-								     .messageSendUserId(messageSendUserId)
-								     .messageReceiveUserId(messageReceiveUserId)
-								     .build();
-		
-		int result = service.isKicked(message);
-		
-		// 이미 차단 상태라면 차단 테이블에 등록되어 있으므로 result > 0이다.
-		if (result > 0) {
-			return "kicked";
-		}
-		else {
-			return "notkicked";
-		}
-	}
-	
 	// 메시지 읽음 처리
 	@ResponseBody
 	@PostMapping("/read.ms")
 	public String readMessage(int messageNo) {
 		
-		int result = service.readMessage(messageNo);
+		int result = messageService.readMessage(messageNo);
 		
 		return "success";
 	}

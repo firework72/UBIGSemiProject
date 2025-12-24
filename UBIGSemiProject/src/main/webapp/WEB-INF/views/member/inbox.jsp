@@ -10,7 +10,7 @@
     <title>유봉일공 - 쪽지함</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css?v=3">
     <style>
         body { background-color: #f8f9fa; }
         .msg-container { max-width: 1000px; margin: 50px auto; }
@@ -33,9 +33,14 @@
         
         .btn-write { background-color: #FFC107; border: none; font-weight: bold; color: white; }
         .btn-write:hover { background-color: #e0a800; color: white; }
+        
+        body {
+        	padding-top: 50px;
+        }
     </style>
 </head>
 <body>
+<jsp:include page="/WEB-INF/views/common/menubar.jsp" />
 
 <div class="container msg-container">
     
@@ -80,7 +85,7 @@
                                     onclick="openMessageDetail(${msg.messageNo}, '${msg.messageSendUserId}', '${msg.messageContent}', '${msg.messageCreateDate}', '${msg.messageIsCheck}')">
                                     
                                     <td>
-                                        <c:if test="${msg.messageIsCheck == 'N' or msg.messageIsCheck == 'K'}">
+                                        <c:if test="${msg.messageIsCheck == 'N'}">
                                             <span class="badge bg-danger">안 읽음</span>
                                         </c:if>
                                         <c:if test="${msg.messageIsCheck == 'Y'}">
@@ -133,7 +138,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btnKick"></button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="btnKick"></button>
                 <button type="button" class="btn btn-primary" id="btnReply">답장하기</button>
             </div>
         </div>
@@ -190,11 +195,42 @@
         });
         
         // 차단하기 버튼 클릭 시 -> 차단할 건지 한번 더 물어본 후 yes를 누르면 차단 테이블에 등록
-        boolean isKicked = true;
+        var isKicked = true;
+        $("#btnKick").off("click").on("click", function() {
+        	var isSuccess = false;
+        	if (confirm(sender + "님을 차단하시겠습니까?")) {
+        		$.ajax({
+        			url : "${pageContext.request.contextPath}/kick/insertKick.ki",
+        			type : "POST",
+        			async : false,
+        			data : {
+        				kicker : '${loginMember.userId}',
+        				kickedUser : sender
+        			},
+        			success : function(data) {
+        				console.log(data);
+        				if (data == "success") {
+        					alert("차단되었습니다.");
+        					isSuccess = true;
+        				}
+        				else {
+        					alert("차단에 실패했습니다.");
+        				}
+        			},
+        			error : function() {
+        				alert("알 수 없는 오류가 발생했습니다.");
+        			}
+        		})
+        	}
+        	
+        	if (isSuccess) {
+        		$("#detailModal").modal("hide");
+        	}
+        });
         
         // 차단 버튼은 차단 테이블에 등록이 되어 있지 않은 경우에만 뜨도록 설정
         $.ajax({
-        	url :  "${pageContext.request.contextPath}/message/isKicked.me",
+        	url :  "${pageContext.request.contextPath}/kick/isKicked.ki",
         	type: "POST",
         	async : false,
         	data : {
@@ -202,6 +238,7 @@
         		messageReceiveUserId : '${loginMember.userId}'
         	},
         	success : function(data) {
+        		console.log(data);
         		if (data == "notkicked") {
         			isKicked = false;
         		}
@@ -219,7 +256,7 @@
         // 만약 선택된 쪽지가 아직 읽지 않은 쪽지라면, 읽음 상태로 변경한다.
         if(isCheck === 'N') {
             $.ajax({
-                url: "/message/read",
+                url: "${pageContext.request.contextPath}/message/read.ms",
                 type: "POST",
                 data: { messageNo: msgNo },
                 success: function(res) {

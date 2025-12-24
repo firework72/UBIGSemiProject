@@ -12,6 +12,7 @@
 	           ,MESSAGE_CREATE_DATE
 	    FROM MESSAGES
 	    WHERE MESSAGE_RECEIVE_USER_ID = #{userId}
+	    AND NOT MESSAGE_IS_CHECK = 'K'
 	    ORDER BY MESSAGE_CREATE_DATE DESC
 	</select>
 	
@@ -49,12 +50,6 @@
 		ORDER BY MESSAGE_CREATE_DATE DESC
 	</select>
 	
-	<select id="isKicked" parameterType="MessageVO" resultType="_int">
-		SELECT COUNT(*)
-		FROM KICKS
-		WHERE KICKER = #{messageReceiveUserId}
-		AND KICKED_USER = #{messageSendUserId}
-	</select>
 	
 	<update id="readMessage" parameterType="_int">
 		UPDATE MESSAGES

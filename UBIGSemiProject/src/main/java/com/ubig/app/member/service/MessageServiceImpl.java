@@ -43,12 +43,6 @@ public class MessageServiceImpl implements MessageService{
 		return dao.selectSent(sqlSession, userId);
 	}
 	
-	// 수신자가 발신자를 차단했는지 유무 체크
-	@Override
-	public int isKicked(MessageVO message) {
-		return dao.isKicked(sqlSession, message);
-	}
-	
 	// 메시지 읽음 처리
 	@Override
 	public int readMessage(int messageNo) {
