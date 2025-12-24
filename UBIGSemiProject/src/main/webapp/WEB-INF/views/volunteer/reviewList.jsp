@@ -190,7 +190,9 @@
                                                 </a>
                                             </td>
                                             <td class="star-points">
-                                                <c:forEach begin="1" end="${r.rRate}">⭐</c:forEach>
+                                                <span style="font-weight: bold; color: #ffc107;">⭐
+                                                    <fmt:formatNumber value="${r.actRate}" pattern="0.0" />
+                                                </span>
                                             </td>
                                             <td>${r.rId}</td>
                                             <td>
@@ -209,12 +211,12 @@
                 </div>
                 <div class="btn-area">
                     <%-- 아이디 체크 대신 userRole이 ADMIN인지 확인하도록 변경 --%>
-					<c:if test="${loginMember.userRole eq 'ADMIN'}">
-					    <a href="reviewWriteForm.vo" class="btn-main"
-					        style="background-color: #ffc107; color: #333; margin-right: 10px;">
-					        ✏️ 후기 작성하기 (관리자)
-					    </a>
-					</c:if>
+                        <c:if test="${loginMember.userRole eq 'ADMIN'}">
+                            <a href="reviewWriteForm.vo" class="btn-main"
+                                style="background-color: #ffc107; color: #333; margin-right: 10px;">
+                                ✏️ 후기 작성하기 (관리자)
+                            </a>
+                        </c:if>
                 </div>
 
             </body>

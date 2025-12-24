@@ -27,7 +27,7 @@
 	</select>
 
 	<select id="selectReviewListAll" parameterType="hashmap" resultType="com.ubig.app.vo.volunteer.VolunteerReviewVO">
-		SELECT R.*, A.ACT_TITLE
+		SELECT R.*, A.ACT_TITLE, A.ACT_RATE
 		FROM VOLUNTEER_REVIEWS R
 		JOIN ACTIVITIES A ON R.ACT_ID = A.ACT_ID
 		WHERE R.R_REMOVE = 0
@@ -106,17 +106,20 @@
 		WHERE ACT_ID = #{actId}
 	</update>
 
-	<select id="selectReplyList" parameterType="_int" resultType="com.ubig.app.vo.volunteer.VolunteerCommentVO">
+	<!-- 봉사 프로그램 댓글 조회 (REVIEW_NO IS NULL) -->
+	<select id="selectActivityReplyList" parameterType="int" resultType="com.ubig.app.vo.volunteer.VolunteerCommentVO">
 		SELECT *
 		FROM VOLUNTEER_BOARD_COMMENTS
 		WHERE ACT_ID = #{actId}
 		AND CMT_REMOVE = 0
+		AND REVIEW_NO IS NULL
 		ORDER BY CMT_NO DESC
 	</select>
 
-	<insert id="insertReply" parameterType="com.ubig.app.vo.volunteer.VolunteerCommentVO">
+	<!-- 봉사 프로그램 댓글 등록 -->
+	<insert id="insertActivityReply" parameterType="com.ubig.app.vo.volunteer.VolunteerCommentVO">
 		INSERT INTO VOLUNTEER_BOARD_COMMENTS (
-			CMT_NO, ACT_ID, USER_ID, CMT_ANSWER, CMT_DATE, CMT_UPDATE, CMT_REMOVE
+			CMT_NO, ACT_ID, USER_ID, CMT_ANSWER, CMT_DATE, CMT_UPDATE, CMT_REMOVE, CMT_RATE, REVIEW_NO
 		) VALUES (
 			SEQ_COMMENTS.NEXTVAL,
 			#{actId},
@@ -124,7 +127,36 @@
 			#{cmtAnswer},
 			SYSDATE,
 			SYSDATE,
-			0
+			0,
+			#{cmtRate, jdbcType=INTEGER},
+			NULL
+		)
+	</insert>
+
+	<!-- 봉사 후기 댓글 조회 -->
+	<select id="selectReviewReplyList" parameterType="com.ubig.app.vo.volunteer.VolunteerCommentVO" resultType="com.ubig.app.vo.volunteer.VolunteerCommentVO">
+		SELECT *
+		FROM VOLUNTEER_BOARD_COMMENTS
+		WHERE ACT_ID = #{actId}
+		AND CMT_REMOVE = 0
+		AND REVIEW_NO = #{reviewNo}
+		ORDER BY CMT_NO DESC
+	</select>
+
+	<!-- 봉사 후기 댓글 등록 -->
+	<insert id="insertReviewReply" parameterType="com.ubig.app.vo.volunteer.VolunteerCommentVO">
+		INSERT INTO VOLUNTEER_BOARD_COMMENTS (
+			CMT_NO, ACT_ID, USER_ID, CMT_ANSWER, CMT_DATE, CMT_UPDATE, CMT_REMOVE, CMT_RATE, REVIEW_NO
+		) VALUES (
+			SEQ_COMMENTS.NEXTVAL,
+			#{actId},
+			#{userId},
+			#{cmtAnswer},
+			SYSDATE,
+			SYSDATE,
+			0,
+			#{cmtRate, jdbcType=INTEGER},
+			#{reviewNo}
 		)
 	</insert>
 
@@ -133,6 +165,10 @@
 		SET CMT_REMOVE = 1
 		WHERE CMT_NO = #{cmtNo}
 	</update>
+	
+	<select id="selectCommentOne" parameterType="_int" resultType="com.ubig.app.vo.volunteer.VolunteerCommentVO">
+		SELECT * FROM VOLUNTEER_BOARD_COMMENTS WHERE CMT_NO = #{cmtNo}
+	</select>
 	
 	<select id="checkDuplicateSign" parameterType="com.ubig.app.vo.volunteer.SignVO" resultType="_int">
 		SELECT COUNT(*)
@@ -184,7 +220,7 @@
 	</select>
 
 	<select id="selectReviewOne" parameterType="int" resultType="com.ubig.app.vo.volunteer.VolunteerReviewVO">
-		SELECT R.*, A.ACT_TITLE
+		SELECT R.*, A.ACT_TITLE, A.ACT_RATE
 		FROM VOLUNTEER_REVIEWS R
 		JOIN ACTIVITIES A ON R.ACT_ID = A.ACT_ID
 		WHERE R.REVIEW_NO = #{reviewNo}
@@ -205,13 +241,15 @@
 		WHERE REVIEW_NO = #{reviewNo}
 	</update>
 	
-	<!-- 회원들이 봉사 후기에 평점 업데이팅 -->
+	<!-- 회원들이 봉사 후기에 평점 업데이팅 (댓글 기준) -->
 	<update id="updateActivityRate" parameterType="_int">
     UPDATE ACTIVITIES 
     SET ACT_RATE = (
-        SELECT NVL(AVG(R_RATE), 0) 
-        FROM VOLUNTEER_REVIEWS 
-        WHERE ACT_ID = #{actId} AND R_REMOVE = 0
+        SELECT NVL(AVG(CMT_RATE), 0) 
+        FROM VOLUNTEER_BOARD_COMMENTS 
+        WHERE ACT_ID = #{actId} 
+        AND CMT_REMOVE = 0
+		AND CMT_RATE IS NOT NULL
     )
     WHERE ACT_ID = #{actId}
 </update>

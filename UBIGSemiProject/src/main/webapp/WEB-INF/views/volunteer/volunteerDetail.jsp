@@ -81,13 +81,7 @@
 						<th>모집인원</th>
 						<td>${vo.actMax} 명</td>
 					</tr>
-					<tr>
-						<th>평점</th>
-						<td style="color: #ffc107; font-weight: bold;">
-							★
-							<fmt:formatNumber value="${vo.actRate}" pattern="#,##0.0" /> / 5.0
-						</td>
-					</tr>
+
 				</table>
 
 				<div style="padding: 15px; border: 1px solid #ddd; background-color: #f9f9f9; width: 500px;">
@@ -174,7 +168,7 @@
 					function selectReplyList() {
 						var actId = "${vo.actId}";
 						$.ajax({
-							url: "replyList.vo",
+							url: "volunteerReplyList.vo",
 							data: { actId: actId },
 							success: function (list) {
 								var value = "";
@@ -206,7 +200,7 @@
 						if (content.trim() == "") { alert("내용을 입력해주세요!"); return; }
 
 						$.ajax({
-							url: "insertReply.vo",
+							url: "volunteerInsertReply.vo",
 							data: {
 								actId: "${vo.actId}",
 								userId: "${loginMember.userId}",

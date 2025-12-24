@@ -53,16 +53,32 @@ public class VolunteerDao {
 	
 	// --- 댓글 관련 ---
     // [추가 사유] Controller의 댓글 목록 조회 요청을 처리하기 위해 Mapper의 selectReplyList 쿼리 호출
-    public List<VolunteerCommentVO> selectReplyList(int actId) {
-        return sqlSession.selectList("volunteerMapper.selectReplyList", actId);
+    // [수정] 파라미터 VO로 변경 (ActId + ReviewNo 분기 처리)
+    // 봉사 프로그램 댓글 조회
+    public List<VolunteerCommentVO> selectActivityReplyList(int actId) {
+        return sqlSession.selectList("volunteerMapper.selectActivityReplyList", actId);
     }
-    // [추가 사유] 댓글 등록 요청을 Mapper로 전달
-    public int insertReply(VolunteerCommentVO r) {
-        return sqlSession.insert("volunteerMapper.insertReply", r);
+    // 봉사 프로그램 댓글 등록
+    public int insertActivityReply(VolunteerCommentVO r) {
+        return sqlSession.insert("volunteerMapper.insertActivityReply", r);
+    }
+
+    // 봉사 후기 댓글 조회
+    public List<VolunteerCommentVO> selectReviewReplyList(VolunteerCommentVO vo) {
+        return sqlSession.selectList("volunteerMapper.selectReviewReplyList", vo);
+    }
+    // 봉사 후기 댓글 등록
+    public int insertReviewReply(VolunteerCommentVO r) {
+        return sqlSession.insert("volunteerMapper.insertReviewReply", r);
     }
     // [추가 사유] 댓글 삭제 요청을 Mapper로 전달 (UPDATE 수행)
     public int deleteReply(int cmtNo) {
         return sqlSession.delete("volunteerMapper.deleteReply", cmtNo);
+    }
+    
+    // [추가] 댓글 단건 조회 (삭제 시 ActId 확인용)
+    public VolunteerCommentVO selectCommentOne(int cmtNo) {
+        return sqlSession.selectOne("volunteerMapper.selectCommentOne", cmtNo);
     }
 
     // --- 신청 관련 ---

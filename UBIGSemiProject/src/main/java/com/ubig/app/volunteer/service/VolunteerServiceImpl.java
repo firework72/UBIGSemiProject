@@ -53,16 +53,46 @@ public class VolunteerServiceImpl implements VolunteerService {
 	}
 
     @Override
-    public List<VolunteerCommentVO> selectReplyList(int actId) {
-        return volunteerDao.selectReplyList(actId);
+    public List<VolunteerCommentVO> selectActivityReplyList(int actId) {
+        return volunteerDao.selectActivityReplyList(actId);
     }
+
     @Override
-    public int insertReply(VolunteerCommentVO r) {
-        return volunteerDao.insertReply(r);
+    public int insertActivityReply(VolunteerCommentVO r) {
+        int result = volunteerDao.insertActivityReply(r);
+        // [추가] 평점이 있는 경우 ACT_RATE 업데이트
+        if (result > 0 && r.getCmtRate() != null) {
+        	volunteerDao.updateActivityRate(r.getActId());
+        }
+        return result;
+    }
+
+    @Override
+    public List<VolunteerCommentVO> selectReviewReplyList(VolunteerCommentVO vo) {
+        return volunteerDao.selectReviewReplyList(vo);
+    }
+
+    @Override
+    public int insertReviewReply(VolunteerCommentVO r) {
+        int result = volunteerDao.insertReviewReply(r);
+        // [추가] 후기 댓글도 평점이 있으면 ACT_RATE 업데이트
+        if (result > 0 && r.getCmtRate() != null) {
+        	volunteerDao.updateActivityRate(r.getActId());
+        }
+        return result;
     }
     @Override
     public int deleteReply(int cmtNo) {
-        return volunteerDao.deleteReply(cmtNo);
+    	// [추가] 삭제 전 미리 정보 조회
+    	VolunteerCommentVO c = volunteerDao.selectCommentOne(cmtNo);
+    	
+        int result = volunteerDao.deleteReply(cmtNo);
+        
+        // [추가] 삭제 성공 & 평점이 있었던 댓글이라면 재계산
+        if (result > 0 && c != null && c.getCmtRate() != null) {
+        	volunteerDao.updateActivityRate(c.getActId());
+        }
+        return result;
     }
     
     @Override
