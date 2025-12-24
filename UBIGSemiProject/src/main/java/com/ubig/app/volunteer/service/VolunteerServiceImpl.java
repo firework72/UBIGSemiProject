@@ -53,28 +53,13 @@ public class VolunteerServiceImpl implements VolunteerService {
 	}
 
     @Override
-    public List<VolunteerCommentVO> selectActivityReplyList(int actId) {
-        return volunteerDao.selectActivityReplyList(actId);
+    public List<VolunteerCommentVO> selectReplyList(VolunteerCommentVO vo) {
+        return volunteerDao.selectReplyList(vo);
     }
 
     @Override
-    public int insertActivityReply(VolunteerCommentVO r) {
-        int result = volunteerDao.insertActivityReply(r);
-        // [추가] 평점이 있는 경우 ACT_RATE 업데이트
-        if (result > 0 && r.getCmtRate() != null) {
-        	volunteerDao.updateActivityRate(r.getActId());
-        }
-        return result;
-    }
-
-    @Override
-    public List<VolunteerCommentVO> selectReviewReplyList(VolunteerCommentVO vo) {
-        return volunteerDao.selectReviewReplyList(vo);
-    }
-
-    @Override
-    public int insertReviewReply(VolunteerCommentVO r) {
-        int result = volunteerDao.insertReviewReply(r);
+    public int insertReply(VolunteerCommentVO r) {
+        int result = volunteerDao.insertReply(r);
         // [추가] 후기 댓글도 평점이 있으면 ACT_RATE 업데이트
         if (result > 0 && r.getCmtRate() != null) {
         	volunteerDao.updateActivityRate(r.getActId());
@@ -178,6 +163,28 @@ public class VolunteerServiceImpl implements VolunteerService {
         
         if (result > 0 && r != null) {
             // [추가] 후기 삭제(숨김) 성공 시, 해당 활동의 평균 평점 업데이트
+            volunteerDao.updateActivityRate(r.getActId());
+        }
+        return result;
+    }
+    
+ // ==========================================
+    // ▼ [누락된 후기 전용 메서드 추가] ▼ 12월 24일 15:29분 안티그래비티가 백업수정 다안해줌
+    // ==========================================
+
+    @Override
+    public List<VolunteerCommentVO> selectReviewReplyList(VolunteerCommentVO vo) {
+        // 기존에 만들어둔 DAO 메서드 재사용
+        return volunteerDao.selectReplyList(vo);
+    }
+
+    @Override
+    public int insertReviewReply(VolunteerCommentVO r) {
+        // 1. 댓글 등록 (DAO 재사용)
+        int result = volunteerDao.insertReply(r);
+        
+        // 2. [중요] 평점 반영 로직 (후기 점수 갱신)
+        if (result > 0 && r.getCmtRate() != null) {
             volunteerDao.updateActivityRate(r.getActId());
         }
         return result;
