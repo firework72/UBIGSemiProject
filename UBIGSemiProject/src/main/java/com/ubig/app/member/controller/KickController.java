@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ubig.app.member.service.KickService;
+import com.ubig.app.member.service.MessageService;
 import com.ubig.app.vo.member.KickVO;
 import com.ubig.app.vo.member.MemberVO;
 
@@ -20,7 +21,10 @@ import com.ubig.app.vo.member.MemberVO;
 public class KickController {
 	
 	@Autowired
-	private KickService service;
+	private KickService kickService;
+	
+	@Autowired
+	private MessageService messageService;
 	
 	// 차단 여부 확인
 	@ResponseBody
@@ -31,7 +35,7 @@ public class KickController {
 						    .kickedUser(messageSendUserId)
 						    .build();
 		
-		int result = service.isKicked(kick);
+		int result = kickService.isKicked(kick);
 		
 		// 이미 차단 상태라면 차단 테이블에 등록되어 있으므로 result > 0이다.
 		if (result > 0) {
@@ -46,7 +50,7 @@ public class KickController {
 	@ResponseBody
 	@PostMapping("/insertKick.ki")
 	public String insertKick(HttpSession session, KickVO kick) {
-		int result = service.insertKick(kick);
+		int result = kickService.insertKick(kick);
 		
 		// 차단에 성공했다면 success, 아니라면 fail을 리턴한다.
 		if (result > 0) {
@@ -64,9 +68,12 @@ public class KickController {
 		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
 		// 현재 회원의 차단 리스트를 담아서 반환
 		
-		ArrayList<KickVO> list = service.selectKick(loginMember.getUserId());
+		ArrayList<KickVO> list = kickService.selectKick(loginMember.getUserId());
+		
+		int unreadCount = messageService.unreadCount(loginMember.getUserId());
 		
 		model.addAttribute("list", list);
+		model.addAttribute("unreadCount", unreadCount);
 		
 		return "member/kicklist";
 	}
@@ -78,7 +85,7 @@ public class KickController {
 		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
 		
 		// 차단 삭제 처리
-		int result = service.deleteKick(kickNo);
+		int result = kickService.deleteKick(kickNo);
 		
 		if (result > 0) {
 			session.setAttribute("alertMsg", "차단이 해제되었습니다.");
