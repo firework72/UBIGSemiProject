@@ -1,16 +1,19 @@
 package com.ubig.app.member.controller;
 
+import java.util.ArrayList;
+
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ubig.app.member.service.KickService;
 import com.ubig.app.vo.member.KickVO;
-import com.ubig.app.vo.member.MessageVO;
+import com.ubig.app.vo.member.MemberVO;
 
 @Controller
 @RequestMapping("/kick")
@@ -43,8 +46,7 @@ public class KickController {
 	@ResponseBody
 	@PostMapping("/insertKick.ki")
 	public String insertKick(HttpSession session, KickVO kick) {
-		int result = 0;
-		// int result = service.insertKick(kick);
+		int result = service.insertKick(kick);
 		
 		// 차단에 성공했다면 success, 아니라면 fail을 리턴한다.
 		if (result > 0) {
@@ -53,5 +55,38 @@ public class KickController {
 		else {
 			return "fail";
 		}
-	}	
+	}
+	
+	// 차단 리스트로 이동
+	@RequestMapping("/kickList.ki")
+	public String selectKick(HttpSession session, Model model) {
+		
+		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
+		// 현재 회원의 차단 리스트를 담아서 반환
+		
+		ArrayList<KickVO> list = service.selectKick(loginMember.getUserId());
+		
+		model.addAttribute("list", list);
+		
+		return "member/kicklist";
+	}
+	
+	// 차단 삭제
+	@PostMapping("/deleteKick.ki")
+	public String deleteKick(int kickNo, HttpSession session) {
+		
+		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
+		
+		// 차단 삭제 처리
+		int result = service.deleteKick(kickNo);
+		
+		if (result > 0) {
+			session.setAttribute("alertMsg", "차단이 해제되었습니다.");
+		}
+		else {
+			session.setAttribute("alertMsg", "차단 해제에 실패했습니다.");
+		}
+		
+		return "redirect:/kick/kickList.ki";
+	}
 }

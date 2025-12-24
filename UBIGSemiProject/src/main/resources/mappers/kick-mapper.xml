@@ -10,4 +10,26 @@
 		AND KICKED_USER = #{kickedUser}
 	</select>
 	
+	<insert id="insertKick" parameterType="KickVO">
+		INSERT INTO KICKS(KICK_NO
+						 ,KICKER
+						 ,KICKED_USER)
+		VALUES(SEQ_KICKS.NEXTVAL
+			  ,#{kicker}
+			  ,#{kickedUser})	
+	</insert>
+	
+	<select id="selectKick" parameterType="string" resultType="KickVO">
+		SELECT KICK_NO
+			  ,KICKER
+			  ,KICKED_USER
+		FROM KICKS
+		WHERE KICKER = #{userId}
+		ORDER BY KICKED_USER
+	</select>
+	
+	<delete id="deleteKick" parameterType="_int">
+		DELETE FROM KICKS
+		WHERE KICK_NO = #{kickNo}
+	</delete>
 </mapper>

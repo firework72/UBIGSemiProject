@@ -53,6 +53,9 @@
         <li class="nav-item">
             <a class="nav-link active" href="${pageContext.request.contextPath}/message/sent.ms">보낸 쪽지함</a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" href="${pageContext.request.contextPath}/kick/kickList.ki">차단 목록</a>
+        </li>
     </ul>
 
     <div class="card shadow-sm border-0">
