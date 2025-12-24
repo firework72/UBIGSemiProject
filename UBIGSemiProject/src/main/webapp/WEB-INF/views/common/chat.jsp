@@ -217,6 +217,14 @@
 
         if (msg === "") return;
         
+        // 09시부터 18시 사이가 아니라면 채팅 전송이 불가능하도록 설정
+        var currentTime = new Date();
+        
+        if (!(9 <= currentTime.getHours() && currentTime.getHours() < 18)) {
+        	alert("죄송합니다. 현재는 상담 시간이 아닙니다. (09시 ~ 18시에 상담 가능)");
+        	return;
+        }
+        
         // 관리자는 해당 채팅으로 못 치도록 설정
         if ("${loginMember.userRole}" == "ADMIN") {
         	alert("관리자는 이 채팅창을 이용할 수 없습니다.");
