@@ -17,11 +17,11 @@
 	    OR DONATION_TYPE LIKE '%' || #{searchKeyword} || '%'
 	</select>
 	
-	<!-- 정기 후원 신청 -->
-	<update id="updateType" parameterType="DonationVO">
-		UPDATE DONATION
-		SET DONATION_YN = 1
-	</update>
+	<select id="selectDetailView" resultType="DonationVO" parameterType="string">
+		SELECT *
+		FROM DONATIONS
+		WHERE USER_ID = #{userId}
+	</select>
 	
 	<!-- 정기 후원 -->
 	<insert id="donation" parameterType="DonationVO">
@@ -53,7 +53,7 @@
 			  ,#{userId}
 			  ,#{donationType}
 			  ,#{donationMoney}
-			  ,1
+			  ,2
 			  ,SYSDATE)
 	</insert>
 	

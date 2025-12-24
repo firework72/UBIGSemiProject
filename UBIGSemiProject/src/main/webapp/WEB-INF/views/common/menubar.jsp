@@ -90,8 +90,8 @@
                     <li class="dropdown">
                         <a href="#">후원</a>
                         <ul class="dropdown-content">
-                            <li><a href="#">펀딩 목록</a></li>
-                            <li><a href="#">후원하기</a></li>
+                            <li><a href="${pageContext.request.contextPath}/funding">펀딩 목록</a></li>
+                            <li><a href="${pageContext.request.contextPath}/donation">후원하기</a></li>
                         </ul>
                     </li>
                     <!-- 유저 관련 메뉴: 로그인 상태에 따라 다르게 보여주면 좋음 -->

@@ -10,6 +10,12 @@
 		FROM FUNDINGS
 	</select>
 	
+	<select id="selectFunding2" resultMap="FundingVOResultMap">
+		SELECT * 
+		FROM FUNDINGS
+		WHERE F_NO = #{fundingNo}
+	</select>
+	
 	<select id="searchKeyword" resultMap="FundingVOResultMap" parameterType="string">
 	    SELECT * 
 	    FROM FUNDINGS
