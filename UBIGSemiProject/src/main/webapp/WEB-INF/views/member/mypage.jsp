@@ -64,8 +64,12 @@
                         background-color: #e9ecef;
                         cursor: not-allowed;
                     }
-                    
-                    .error-msg { color: red; font-size: 0.8rem; display: none; }
+
+                    .error-msg {
+                        color: red;
+                        font-size: 0.8rem;
+                        display: none;
+                    }
                 </style>
             </head>
 
@@ -218,18 +222,25 @@
                                                 html += "</tr>";
                                             });
 
-                                            if (pi1.current > 1) {
-                                                html += "<button type='button'>이전</button>"
-                                            }
-
-                                            for (let i = pi1.startPage; i <= pi1.endPage; i++) {
-                                                html += "<button type='button'>" + i + "</button>";
-                                            }
-
-                                            if (pi1.current < pi1.totalPages) {
-                                                html += "<button type='button'>다음</button>"
-                                            }
                                             tbody1.innerHTML = html;
+
+                                            // 페이징 1 (등록 동물)
+                                            const pi1 = ResultMap.pi1;
+                                            let p1Html = "";
+                                            if (pi1) {
+                                                if (pi1.currentPage > 1) {
+                                                    p1Html += '<button type="button" class="btn btn-sm btn-outline-secondary mx-1" onclick="getAdoptionData(' + (pi1.currentPage - 1) + ', currPage2)">&lt;</button>';
+                                                }
+                                                for (let i = pi1.startPage; i <= pi1.endPage; i++) {
+                                                    let active = (pi1.currentPage == i) ? "btn-secondary" : "btn-outline-secondary";
+                                                    p1Html += '<button type="button" class="btn btn-sm ' + active + ' mx-1" onclick="getAdoptionData(' + i + ', currPage2)">' + i + '</button>';
+                                                }
+                                                if (pi1.currentPage < pi1.maxPage) {
+                                                    p1Html += '<button type="button" class="btn btn-sm btn-outline-secondary mx-1" onclick="getAdoptionData(' + (pi1.currentPage + 1) + ', currPage2)">&gt;</button>';
+                                                }
+                                            }
+                                            const area1 = document.querySelector("#pagingArea1");
+                                            if (area1) area1.innerHTML = p1Html;
                                         } else {
                                             tbody1.innerHTML = "<tr><td colspan='4'>등록한 내역이 없습니다.</td></tr>";
                                         }
@@ -260,8 +271,28 @@
                                                 html += "</tr>";
                                             });
                                             tbody2.innerHTML = html;
+
+                                            // 페이징 2 (입양 신청)
+                                            const pi2 = ResultMap.pi2;
+                                            let p2Html = "";
+                                            if (pi2) {
+                                                if (pi2.currentPage > 1) {
+                                                    p2Html += '<button type="button" class="btn btn-sm btn-outline-secondary mx-1" onclick="getAdoptionData(currPage1, ' + (pi2.currentPage - 1) + ')">&lt;</button>';
+                                                }
+                                                for (let i = pi2.startPage; i <= pi2.endPage; i++) {
+                                                    let active = (pi2.currentPage == i) ? "btn-secondary" : "btn-outline-secondary";
+                                                    p2Html += '<button type="button" class="btn btn-sm ' + active + ' mx-1" onclick="getAdoptionData(currPage1, ' + i + ')">' + i + '</button>';
+                                                }
+                                                if (pi2.currentPage < pi2.maxPage) {
+                                                    p2Html += '<button type="button" class="btn btn-sm btn-outline-secondary mx-1" onclick="getAdoptionData(currPage1, ' + (pi2.currentPage + 1) + ')">&gt;</button>';
+                                                }
+                                            }
+                                            const area2 = document.querySelector("#pagingArea2");
+                                            if (area2) area2.innerHTML = p2Html;
                                         } else {
                                             tbody2.innerHTML = "<tr><td colspan='4'>신청한 내역이 없습니다.</td></tr>";
+                                            const area2 = document.querySelector("#pagingArea2");
+                                            if (area2) area2.innerHTML = "";
                                         }
 
                                         return ResultMap;
@@ -339,7 +370,8 @@
 
                                     <div class="card-body p-4" id="myupdate2">
                                         <h4 class="mb-4 fw-bold border-bottom pb-2">내 정보 수정</h4>
-                                        <form action="${pageContext.request.contextPath}/user/update.me" method="post" id="updateForm">
+                                        <form action="${pageContext.request.contextPath}/user/update.me" method="post"
+                                            id="updateForm">
                                             <input type="hidden" name="userId" value="${loginMember.userId}">
 
                                             <div class="row mb-3">
@@ -353,8 +385,8 @@
                                             <div class="row mb-3">
                                                 <label class="col-sm-3 col-form-label fw-bold">이름</label>
                                                 <div class="col-sm-9">
-                                                    <input type="text" class="form-control" name="userName" id="userName" maxlength="10"
-                                                        value="${loginMember.userName}">
+                                                    <input type="text" class="form-control" name="userName"
+                                                        id="userName" maxlength="10" value="${loginMember.userName}">
                                                     <div class="error-msg" id="userNameError">1~10자의 한글로 작성해주세요.</div>
                                                 </div>
                                             </div>
@@ -362,16 +394,19 @@
                                             <div class="row mb-3">
                                                 <label class="col-sm-3 col-form-label fw-bold">닉네임</label>
                                                 <div class="col-sm-9">
-                                                    <input type="text" class="form-control" name="userNickname" id="userNickname" maxlength="10"
+                                                    <input type="text" class="form-control" name="userNickname"
+                                                        id="userNickname" maxlength="10"
                                                         value="${loginMember.userNickname}" required>
-                                                    <div class="error-msg" id="userNicknameError">1~10자의 영문, 한글, 숫자로 작성해주세요.</div>
+                                                    <div class="error-msg" id="userNicknameError">1~10자의 영문, 한글, 숫자로
+                                                        작성해주세요.</div>
                                                 </div>
                                             </div>
 
                                             <div class="row mb-3">
                                                 <label class="col-sm-3 col-form-label fw-bold">연락처</label>
                                                 <div class="col-sm-9">
-                                                    <input type="text" class="form-control" name="userContact" id="userContact" maxlength="11"
+                                                    <input type="text" class="form-control" name="userContact"
+                                                        id="userContact" maxlength="11"
                                                         value="${loginMember.userContact}" required>
                                                     <div class="error-msg" id="userContactError">숫자로만 11자리 작성해주세요.</div>
                                                 </div>
@@ -388,30 +423,33 @@
                                                     </div>
                                                     <input type="text" class="form-control mb-2" id="roadAddress"
                                                         placeholder="기본 주소" readonly>
-                                                    <input type="text" class="form-control" id="detailAddress" maxlength="20"
-                                                        placeholder="상세 주소를 입력해주세요">
-                                                    <div class="error-msg" id="detailAddressError">1~20자의 한글, 숫자, 공백으로 작성해주세요.</div>
+                                                    <input type="text" class="form-control" id="detailAddress"
+                                                        maxlength="20" placeholder="상세 주소를 입력해주세요">
+                                                    <div class="error-msg" id="detailAddressError">1~20자의 한글, 숫자, 공백으로
+                                                        작성해주세요.</div>
 
                                                     <input type="hidden" id="userAddress" name="userAddress"
                                                         value="${loginMember.userAddress}">
-                                                       
+
                                                 </div>
                                             </div>
-                                            
+
                                             <div class="row mb-3">
                                                 <label class="col-sm-3 col-form-label fw-bold">성별</label>
                                                 <div class="col-sm-9">
-							                        <div class="form-check">
-							                            <input class="form-check-input" type="radio" name="userGender" id="genderM" value="M" checked>
-							                            <label class="form-check-label" for="genderM">남성</label>
-							                        </div>
-							                        <div class="form-check">
-							                            <input class="form-check-input" type="radio" name="userGender" id="genderF" value="F">
-							                            <label class="form-check-label" for="genderF">여성</label>
-							                        </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="radio" name="userGender"
+                                                            id="genderM" value="M" checked>
+                                                        <label class="form-check-label" for="genderM">남성</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="radio" name="userGender"
+                                                            id="genderF" value="F">
+                                                        <label class="form-check-label" for="genderF">여성</label>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            
+
                                             <div class="row mb-3">
                                                 <label class="col-sm-3 col-form-label fw-bold">가입일</label>
                                                 <div class="col-sm-9">
@@ -454,6 +492,7 @@
                                                 <!-- 정보 들어오는 곳 -->
                                             </tbody>
                                         </table>
+                                        <div id="pagingArea1" class="d-flex justify-content-center mt-3 gap-1"></div>
 
                                         <h4 class="mt-4"> 입양 신청 내역 </h4>
                                         <table class="table table-bordered text-center">
@@ -470,6 +509,7 @@
                                                 <!-- 정보 들어오는 곳 -->
                                             </tbody>
                                         </table>
+                                        <div id="pagingArea2" class="d-flex justify-content-center mt-3 gap-1"></div>
 
 
                                     </div>
@@ -520,23 +560,23 @@
                     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
                     <script>
-                    	// 정규표현식
-	                	let nameRegExr = /^[가-힣]{1,10}$/;
-	                	let nicknameRegExr = /^[a-zA-Z0-9가-힣]{1,10}$/;
-	                	let contactRegExr = /^[0-9]{11}$/;
-	                	let addressRegExr = /^[가-힣0-9\s]+$/;
-	                	
-                    	// 0. 초기 로딩 시 남성/여성 체크
-                    	$(document).ready(function() {
-                    		let gender = '${loginMember.userGender}';
-                    		if (gender == 'M') {
-                    			$("#genderM").prop("check", true);
-                    		}
-                    		else {
-                    			$("#genderF").prop("check", true);
-                    		}
-                    	});
-                    
+                        // 정규표현식
+                        let nameRegExr = /^[가-힣]{1,10}$/;
+                        let nicknameRegExr = /^[a-zA-Z0-9가-힣]{1,10}$/;
+                        let contactRegExr = /^[0-9]{11}$/;
+                        let addressRegExr = /^[가-힣0-9\s]+$/;
+
+                        // 0. 초기 로딩 시 남성/여성 체크
+                        $(document).ready(function () {
+                            let gender = '${loginMember.userGender}';
+                            if (gender == 'M') {
+                                $("#genderM").prop("check", true);
+                            }
+                            else {
+                                $("#genderF").prop("check", true);
+                            }
+                        });
+
                         // 1. 초기 로딩 시 주소 분리
                         $(document).ready(function () {
                             var fullAddr = "${loginMember.userAddress}";
@@ -559,51 +599,51 @@
                                 }
                             }).open();
                         }
-                        
+
                         // 정규식 표현에 안 맞으면 차단
-                        
+
                         // 이름
-                        
-                        $("#userName").on("keyup", function() {
+
+                        $("#userName").on("keyup", function () {
                             var userName = $("#userName").val();
-                            
-                            if(!nameRegExr.test(userName)) {
+
+                            if (!nameRegExr.test(userName)) {
                                 $("#userNameError").show();
                             } else {
                                 $("#userNameError").hide();
                             }
                         });
-                        
+
                         // 닉네임
-                        
-                        $("#userNickname").on("keyup", function() {
+
+                        $("#userNickname").on("keyup", function () {
                             var userNickname = $("#userNickname").val();
-                            
-                            if(!nicknameRegExr.test(userNickname)) {
+
+                            if (!nicknameRegExr.test(userNickname)) {
                                 $("#userNicknameError").show();
                             } else {
                                 $("#userNicknameError").hide();
                             }
                         });
-                        
+
                         // 연락처
-                        
-                        $("#userContact").on("keyup", function() {
+
+                        $("#userContact").on("keyup", function () {
                             var userContact = $("#userContact").val();
-                            
-                            if(!contactRegExr.test(userContact)) {
+
+                            if (!contactRegExr.test(userContact)) {
                                 $("#userContactError").show();
                             } else {
                                 $("#userContactError").hide();
                             }
                         });
-                        
-                       	// 상세주소
-                       	
-                        $("#detailAddress").on("keyup", function() {
+
+                        // 상세주소
+
+                        $("#detailAddress").on("keyup", function () {
                             var detailAddress = $("#detailAddress").val();
-                            
-                            if(!addressRegExr.test(detailAddress)) {
+
+                            if (!addressRegExr.test(detailAddress)) {
                                 $("#detailAddressError").show();
                             } else {
                                 $("#detailAddressError").hide();
@@ -612,34 +652,34 @@
 
                         // 3. 폼 제출 전 조건 확인
                         $("#updateForm").on("submit", function () {
-                        	
-                        	let userName = $("#userName").val();
-                        	let userNickname = $("#userNickname").val();
-                        	let userContact = $("#userContact").val();
-                        	let detailAddress = $("#detailAddress").val();
-                      
-                        	
-                        	if (!nameRegExr.test(userName)) {
-                        		alert("이름은 1~10글자 사이의 한글만 가능합니다.");
-                        		return false;
-                        	}
-                        	
-                        	if (!nicknameRegExr.test(userNickname)) {
-                        		alert("닉네임은 1~10글자 사이의 영문, 한글, 숫자만 가능합니다.");
-                        		return false;
-                        	}
-                        	
-                        	if (!contactRegExr.test(userContact)) {
-                        		alert("연락처는 11자리의 숫자만 가능합니다.");
-                        		return false;
-                        	}
-                        	
-                        	if (!addressRegExr.test(detailAddress)) {
-                        		alert("상세주소는 한글, 숫자, 공백만 포함 가능합니다.");
-                        		return false;
-                        	}
-                        	
-                        	
+
+                            let userName = $("#userName").val();
+                            let userNickname = $("#userNickname").val();
+                            let userContact = $("#userContact").val();
+                            let detailAddress = $("#detailAddress").val();
+
+
+                            if (!nameRegExr.test(userName)) {
+                                alert("이름은 1~10글자 사이의 한글만 가능합니다.");
+                                return false;
+                            }
+
+                            if (!nicknameRegExr.test(userNickname)) {
+                                alert("닉네임은 1~10글자 사이의 영문, 한글, 숫자만 가능합니다.");
+                                return false;
+                            }
+
+                            if (!contactRegExr.test(userContact)) {
+                                alert("연락처는 11자리의 숫자만 가능합니다.");
+                                return false;
+                            }
+
+                            if (!addressRegExr.test(detailAddress)) {
+                                alert("상세주소는 한글, 숫자, 공백만 포함 가능합니다.");
+                                return false;
+                            }
+
+
                             var road = $("#roadAddress").val();
                             var detail = $("#detailAddress").val();
 
