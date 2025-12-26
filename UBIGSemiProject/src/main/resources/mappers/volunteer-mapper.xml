@@ -82,7 +82,7 @@
 			A.ACT_DATE,
 			A.ACT_END,
 			A.ACT_MAX,
-			(SELECT COUNT(*) FROM SIGNS S WHERE S.ACT_ID = A.ACT_ID) AS ACT_CUR,
+			(SELECT COUNT(*) FROM SIGNS S WHERE S.ACT_ID = A.ACT_ID AND S.SIGNS_STATUS = 1) AS ACT_CUR,
 			A.ACT_LAT,
 			A.ACT_LON,
 			A.ACT_LOAD,
@@ -228,27 +228,55 @@
 		WHERE REVIEW_NO = #{reviewNo}
 	</update>
 	
-	<!-- 회원들이 봉사 후기에 평점 업데이팅 (후기 점수 + 상세 댓글 점수 UNION ALL 평균) -->
+	<!-- 댓글 테이블(VOLUNTEER_BOARD_COMMENTS)만 바라보도록 쿼리를 단순화합니다.-->
 	<update id="updateActivityRate" parameterType="_int">
 	    UPDATE ACTIVITIES 
 	    SET ACT_RATE = (
-	        SELECT NVL(AVG(RATING), 0)
-	        FROM (
-	            SELECT R_RATE AS RATING
-	            FROM VOLUNTEER_REVIEWS
-	            WHERE ACT_ID = #{actId}
-	            AND R_REMOVE = 0
-	            UNION ALL
-	            SELECT CMT_RATE AS RATING
-	            FROM VOLUNTEER_BOARD_COMMENTS
-	            WHERE ACT_ID = #{actId}
-	            AND CMT_REMOVE = 0
-	            AND CMT_RATE IS NOT NULL
-	            AND REVIEW_NO IS NOT NULL 
-	        )
-	    )
+	        SELECT NVL(AVG(CMT_RATE), 0)
+	        FROM VOLUNTEER_BOARD_COMMENTS
+	        WHERE ACT_ID = #{actId}
+	        AND CMT_REMOVE = 0
+	        AND CMT_RATE > 0  )
 	    WHERE ACT_ID = #{actId}
 	</update>
+	
+	<!-- 봉사후기 중복 방지 메퍼 -->
+	<select id="checkDuplicateReview" parameterType="_int" resultType="_int">
+		SELECT COUNT(*)
+		FROM VOLUNTEER_REVIEWS
+		WHERE ACT_ID = #{actId}
+		AND R_REMOVE = 0
+	</select>
+	
+	
+	<select id="selectActivityNoReview" resultType="activity">
+        SELECT A.ACT_ID, A.ACT_TITLE, A.ACT_DATE
+        FROM ACTIVITIES A
+        WHERE NOT EXISTS (
+            SELECT 1 
+            FROM VOLUNTEER_REVIEWS R
+            WHERE R.ACT_ID = A.ACT_ID 
+            AND R.R_REMOVE = 0
+        )
+        ORDER BY A.ACT_DATE DESC
+    </select>
+    
+    
+    <update id="updateSignStatus" parameterType="com.ubig.app.vo.volunteer.SignVO">
+		UPDATE SIGNS
+		SET SIGNS_STATUS = #{signsStatus}
+		WHERE SIGNS_NO = #{signsNo}
+	</update>
+
+	<update id="increaseActivityCur" parameterType="_int">
+		UPDATE ACTIVITIES
+		SET ACT_CUR = ACT_CUR + 1
+		WHERE ACT_ID = #{actId}
+	</update>
+
+	<select id="selectSignOne" parameterType="_int" resultType="com.ubig.app.vo.volunteer.SignVO">
+		SELECT * FROM SIGNS WHERE SIGNS_NO = #{signsNo}
+	</select>
 	
 	
 

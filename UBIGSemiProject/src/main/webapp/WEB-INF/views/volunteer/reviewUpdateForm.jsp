@@ -97,17 +97,8 @@
 						    <label>후기 제목</label>
 						    <input type="text" name="rTitle" value="${r.rTitle}" placeholder="제목을 입력해주세요" required>
 						</div>
-
-                    <div class="form-group">
-                        <label>평점</label>
-                        <select name="rRate">
-                            <option value="5" <c:if test="${r.rRate == 5}">selected</c:if>>⭐⭐⭐⭐⭐ (5점)</option>
-                            <option value="4" <c:if test="${r.rRate == 4}">selected</c:if>>⭐⭐⭐⭐ (4점)</option>
-                            <option value="3" <c:if test="${r.rRate == 3}">selected</c:if>>⭐⭐⭐ (3점)</option>
-                            <option value="2" <c:if test="${r.rRate == 2}">selected</c:if>>⭐⭐ (2점)</option>
-                            <option value="1" <c:if test="${r.rRate == 1}">selected</c:if>>⭐ (1점)</option>
-                        </select>
-                    </div>
+					<!-- 평점 삭제 12월 26일 -->
+                    <input type="hidden" name="rRate" value="${r.rRate}">
 
                     <div class="form-group">
                         <label>후기 내용</label>

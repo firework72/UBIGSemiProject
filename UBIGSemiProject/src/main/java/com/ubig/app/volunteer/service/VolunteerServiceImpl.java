@@ -110,11 +110,24 @@ public class VolunteerServiceImpl implements VolunteerService {
 
     @Override
     public int insertReview(VolunteerReviewVO r) {
+        // [1단계: 추가됨] 중복 체크 먼저 수행
+        // DAO에 checkDuplicateReview 메서드가 없으면 빨간줄이 뜨니, 
+        // 꼭 DAO와 Mapper에 먼저 추가해야 합니다.
+        int count = volunteerDao.checkDuplicateReview(r.getActId());
+        
+        if (count > 0) {
+            System.out.println("❌ 중복 후기 감지! ACT_ID: " + r.getActId());
+            return -2; // "이미 등록됨"을 뜻하는 -2를 리턴 (Controller로 전달됨)
+        }
+
+        // [2단계: 기존 로직] 후기 등록
         int result = volunteerDao.insertReview(r);
-        // [추가] 후기 등록 성공 시, 해당 활동의 평균 평점 업데이트
+
+        // [3단계: 기존 로직] 등록 성공 시 활동 평균 평점 재계산
         if (result > 0) {
             volunteerDao.updateActivityRate(r.getActId());
         }
+        
         return result;
     }
 
@@ -189,6 +202,80 @@ public class VolunteerServiceImpl implements VolunteerService {
         }
         return result;
     }
+    
+    
+    // VolunteerServiceImpl.java (구현 클래스)
+
+    @Override
+    public List<ActivityVO> selectActivityNoReview() {
+        return volunteerDao.selectActivityNoReview();
+    }
+    
+
+
+    // [관리자] 승인/반려 프로세스 구현
+    @Override
+    public int updateSignStatusAdmin(int signsNo, String status) {
+        // 1. 어떤 신청인지 정보 조회
+        SignVO sign = volunteerDao.selectSignOne(signsNo);
+        if (sign == null) return 0; // 신청 정보가 없으면 실패
+
+        SignVO updateVO = new SignVO();
+        updateVO.setSignsNo(signsNo);
+
+        // A. '승인(approve)' 요청일 때
+        if ("approve".equals(status)) {
+            // 정원 체크: 활동 정보를 가져와서 꽉 찼는지 확인
+            ActivityVO activity = volunteerDao.selectActivityOne(sign.getActId());
+            if (activity.getActCur() >= activity.getActMax()) {
+                return -1; // 정원 초과! 승인 불가
+            }
+
+            // 상태를 '1(승인)'로 변경
+            updateVO.setSignsStatus(1);
+            int result = volunteerDao.updateSignStatus(updateVO);
+
+            // 변경 성공 시, 활동 인원수 +1 증가
+            if (result > 0) {
+                volunteerDao.increaseActivityCur(sign.getActId());
+            }
+            return result;
+        } 
+        
+        // B. '반려(reject)' 요청일 때
+        else if ("reject".equals(status)) {
+            // 상태를 '2(반려)'로 변경 (인원수 변동 없음)
+            updateVO.setSignsStatus(2);
+            return volunteerDao.updateSignStatus(updateVO);
+        }
+
+        return 0; // status 값이 이상할 때
+    }
+
+    // [사용자] 취소 프로세스 구현
+    @Override
+    public int updateSignStatusUser(int signsNo) {
+        // 1. 어떤 신청인지 정보 조회
+        SignVO sign = volunteerDao.selectSignOne(signsNo);
+        if (sign == null) return 0;
+
+        // 2. 상태를 '3(취소)'으로 변경
+        SignVO updateVO = new SignVO();
+        updateVO.setSignsNo(signsNo);
+        updateVO.setSignsStatus(3); 
+
+        int result = volunteerDao.updateSignStatus(updateVO);
+
+        // 3. 만약 '승인(1)' 상태였던 것을 취소했다면 -> 인원수 -1 감소
+        // (대기 상태였다면 인원수에 반영 안 됐으므로 줄일 필요 없음)
+        if (result > 0 && sign.getSignsStatus() == 1) {
+            volunteerDao.decreaseActivityCur(sign.getActId());
+        }
+
+        return result;
+    }
+    
+
 
 }
     
