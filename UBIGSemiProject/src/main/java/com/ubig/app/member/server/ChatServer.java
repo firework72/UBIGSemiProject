@@ -101,11 +101,14 @@ public class ChatServer extends TextWebSocketHandler{
 			// 보낸 이가 어드민이라면 현재 자신이 채팅을 치고 있는 일반 회원 및 해당 채팅방을 열람중인 모든 어드민에게 메시지를 전송해야 한다.
 			else {
 				String receiveUserId = adminTargetUser.get(loginMember.getUserId());
-				users.get(receiveUserId).sendMessage(tm);
-				System.out.println(receiveUserId + "에게 메시지를 전송합니다...");
+				// 해당 회원이 접속중이라면 웹소켓으로 실시간으로 보내고, 아니라면 실시간으로 보내지는 않는다.
+				if (users.containsKey(receiveUserId)) {
+					users.get(receiveUserId).sendMessage(tm);
+					System.out.println(receiveUserId + "에게 메시지를 전송합니다...");
+				}
 				
 				for (Entry<String, WebSocketSession> entry : admins.entrySet()) {
-					if (adminTargetUser.get(entry.getKey()).equals(receiveUserId)) {
+					if (adminTargetUser.get(entry.getKey()).equals(receiveUserId) && entry.getValue() != session) {
 						entry.getValue().sendMessage(tm);
 						System.out.println(entry.getKey() + "에게 메시지를 전송합니다...");
 					}

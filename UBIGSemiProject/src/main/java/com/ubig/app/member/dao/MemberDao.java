@@ -1,8 +1,12 @@
 package com.ubig.app.member.dao;
 
+import java.util.ArrayList;
+
+import org.apache.ibatis.session.RowBounds;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.ubig.app.common.model.vo.PageInfo;
 import com.ubig.app.vo.member.MemberVO;
 
 @Repository
@@ -38,6 +42,18 @@ public class MemberDao {
 
 	public int addAge(SqlSessionTemplate sqlSession) {
 		return sqlSession.update("memberMapper.addAge");
+	}
+	
+	// 회원 아이디 오름차순으로 전부 가져오기
+	public ArrayList<MemberVO> selectListByUserIdAsc(SqlSessionTemplate sqlSession, PageInfo pi) {
+		int offset = pi.getBoardLimit() * (pi.getCurrentPage() - 1);
+		int limit = pi.getBoardLimit();
+		RowBounds rb = new RowBounds(offset, limit);
+		return (ArrayList) sqlSession.selectList("memberMapper.selectListByUserIdAsc", null, rb);
+	}
+
+	public int listCount(SqlSessionTemplate sqlSession) {
+		return sqlSession.selectOne("memberMapper.listCount");
 	}
 
 

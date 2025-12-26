@@ -57,4 +57,17 @@
 		WHERE MESSAGE_NO = #{messageNo}
 		AND MESSAGE_IS_CHECK = 'N'
 	</update>
+	
+	<select id="receiveListCount" parameterType="string" resultType="int">
+		SELECT COUNT(*)
+		FROM MESSAGES
+		WHERE MESSAGE_RECEIVE_USER_ID = #{userId}
+		AND NOT MESSAGE_IS_CHECK = 'K'
+	</select>
+	
+	<select id="sendListCount" parameterType="string" resultType="int">
+		SELECT COUNT(*)
+		FROM MESSAGES
+		WHERE MESSAGE_SEND_USER_ID = #{userId}
+	</select>
 </mapper>

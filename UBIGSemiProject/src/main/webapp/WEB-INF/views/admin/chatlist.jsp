@@ -73,7 +73,32 @@
                     </tbody>
                 </table>
             </div>
-
+			<div id="pagingArea">
+				<ul class="pagination">
+					<c:choose>
+                		<c:when test="${pi.currentPage eq 1 }"> <!-- 현재페이지 1이면 이전버튼 비활성화 -->
+		                    <li class="page-item disabled"><a class="page-link" href="${pageContext.request.contextPath}/admin/chatList.ch?curPage=${pi.currentPage - 1}">Previous</a></li>
+                		</c:when>
+                		<c:otherwise>
+                			<li class="page-item"><a class="page-link" href="${pageContext.request.contextPath}/admin/chatList.ch?curPage=${pi.currentPage - 1}">Previous</a></li>
+                		</c:otherwise>
+                	</c:choose>
+                    
+                    <c:forEach var="i" begin="${pi.startPage }" end="${pi.endPage }">
+<!--                     	el표기법으로 3항연산자를 이용하여 조건이 부합할 땐 disabled 속성 넣기 아니면 빈값처리 -->
+                    	<li class="page-item ${i eq pi.currentPage ? 'disabled' : '' }"><a class="page-link" href="${pageContext.request.contextPath}/admin/chatList.ch?curPage=${i}">${i }</a></li>
+                    </c:forEach>
+                    
+                    <c:choose>
+                    	<c:when test="${pi.currentPage eq pi.maxPage }">
+		                    <li class="page-item disabled"><a class="page-link" href="${pageContext.request.contextPath}/admin/chatList.ch?curPage=${pi.currentPage + 1}">Next</a></li>
+                    	</c:when>
+                    	<c:otherwise>
+                    		<li class="page-item"><a class="page-link" href="${pageContext.request.contextPath}/admin/chatList.ch?curPage=${pi.currentPage + 1}">Next</a></li>
+                    	</c:otherwise>
+                    </c:choose>
+				</ul>
+			</div>
         </main>
     </div>
 </div>

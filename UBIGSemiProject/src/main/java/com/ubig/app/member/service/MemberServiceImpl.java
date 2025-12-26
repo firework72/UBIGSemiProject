@@ -1,9 +1,12 @@
 package com.ubig.app.member.service;
 
+import java.util.ArrayList;
+
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ubig.app.common.model.vo.PageInfo;
 import com.ubig.app.member.dao.MemberDao;
 import com.ubig.app.vo.member.MemberVO;
 
@@ -56,6 +59,18 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public int addAge() {
 		return dao.addAge(sqlSession);
+	}
+	
+	// 회원 아이디 오름차순으로 전부 가져오기
+	@Override
+	public ArrayList<MemberVO> selectListByUserIdAsc(PageInfo pi) {
+		return dao.selectListByUserIdAsc(sqlSession, pi);
+	}
+	
+	// 현재 회원 수 가져오기
+	@Override
+	public int listCount() {
+		return dao.listCount(sqlSession);
 	}
 	
 }

@@ -9,10 +9,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ubig.app.common.model.vo.PageInfo;
 import com.ubig.app.member.service.KickService;
 import com.ubig.app.member.service.MessageService;
+import com.ubig.app.member.template.Pagination;
 import com.ubig.app.vo.member.KickVO;
 import com.ubig.app.vo.member.MemberVO;
 import com.ubig.app.vo.member.MessageVO;
@@ -31,14 +34,21 @@ public class MessageController {
 	
 	// TODO 쪽지함 기능
 	@RequestMapping("/inbox.ms")
-	public String inbox(HttpSession session, Model model) {
+	public String inbox(HttpSession session, @RequestParam(value="curPage", defaultValue="1") int curPage, Model model) {
 		
 		// 내가 받은 쪽지들만을 표기해줘야 한다.
 		// 그러기 위해 messageReceiveUserId가 현재 로그인된 아이디인 것만 선택해온다.
 		
 		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
 		
-		ArrayList<MessageVO> list = messageService.selectInbox(loginMember.getUserId());
+		int listCount = messageService.receiveListCount(loginMember.getUserId());
+		
+		int boardLimit = 20;
+		int pageLimit = 10;
+		
+		PageInfo pi = Pagination.getPageInfo(listCount, curPage, boardLimit, pageLimit);
+		
+		ArrayList<MessageVO> list = messageService.selectInbox(loginMember.getUserId(), pi);
 		
 		int unreadCount = messageService.unreadCount(loginMember.getUserId());
 		
@@ -48,19 +58,27 @@ public class MessageController {
 		
 		model.addAttribute("list", list);
 		model.addAttribute("unreadCount", unreadCount);
+		model.addAttribute("pi", pi);
 		
 		return "member/inbox";
 	}
 	
 	// TODO 보낸메시지 확인 기능
 	@RequestMapping("/sent.ms")
-	public String sent(HttpSession session, Model model) {
+	public String sent(HttpSession session, @RequestParam(value="curPage", defaultValue="1") int curPage, Model model) {
 		// 내가 보낸 쪽지들만을 표기해줘야 한다.
 		// 그러기 위해 messageSendUserId가 현재 로그인된 아이디인 것만 선택해온다.
 		
 		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
 		
-		ArrayList<MessageVO> list = messageService.selectSent(loginMember.getUserId());
+		int listCount = messageService.sendListCount(loginMember.getUserId());
+		
+		int boardLimit = 20;
+		int pageLimit = 10;
+		
+		PageInfo pi = Pagination.getPageInfo(listCount, curPage, boardLimit, pageLimit);
+		
+		ArrayList<MessageVO> list = messageService.selectSent(loginMember.getUserId(), pi);
 		
 		int unreadCount = messageService.unreadCount(loginMember.getUserId());
 		
@@ -70,6 +88,7 @@ public class MessageController {
 		
 		model.addAttribute("list", list);
 		model.addAttribute("unreadCount", unreadCount);
+		model.addAttribute("pi", pi);
 		
 		return "member/sent";
 	}
