@@ -1,6 +1,8 @@
 package com.ubig.app.adoption.service;
 
-import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.ibatis.session.RowBounds;
 import java.util.Map;
 
 import org.mybatis.spring.SqlSessionTemplate;
@@ -42,8 +44,14 @@ public class AdoptionServiceImpl implements AdoptionService {
 
 	// PageInfo를 가지고 메인 페이지 게시글 목록 가져오기
 	@Override
-	public ArrayList<AdoptionMainListVO> selectAdoptionMainList(AdoptionPageInfoVO pi) {
-		return dao.selectAdoptionMainList(sqlSession, pi);
+	public List<AdoptionMainListVO> selectAdoptionMainList(AdoptionPageInfoVO pi) {
+
+		int limit = pi.getBoardLimit();
+		int offset = (pi.getCurrentPage() - 1) * limit;
+
+		RowBounds rowBounds = new RowBounds(offset, limit);
+
+		return dao.selectAdoptionMainList(sqlSession, pi, rowBounds);
 	}
 
 	// AdoptionPostVO를 가지고 게시글 등록하기
@@ -91,20 +99,38 @@ public class AdoptionServiceImpl implements AdoptionService {
 
 	// 관리자용 동물/게시글 전체 목록 가져오기
 	@Override
-	public ArrayList<AnimalDetailVO> managepost() {
+	public List<AnimalDetailVO> managepost() {
 		return dao.managepost(sqlSession);
 	}
 
-	// userId를 가지고 등록한 동물 목록 가져오기
+	// userId를 가지고 등록한 동물 목록 가져오기 (페이징)
 	@Override
-	public ArrayList<AdoptionMainListVO> selectAnimalList1(String userId) {
-		return dao.selectAnimalList1(sqlSession, userId);
+	public List<AdoptionMainListVO> selectAnimalList1(String userId, AdoptionPageInfoVO pi) {
+		int limit = pi.getBoardLimit();
+		int offset = (pi.getCurrentPage() - 1) * limit;
+		RowBounds rowBounds = new RowBounds(offset, limit);
+		return dao.selectAnimalList1(sqlSession, userId, rowBounds);
 	}
 
-	// userId를 가지고 신청한 입양 목록 가져오기
+	// userId를 가지고 등록한 동물 수 세기
 	@Override
-	public ArrayList<AdoptionApplicationVO> selectAnimalList2(String userId) {
-		return dao.selectAnimalList2(sqlSession, userId);
+	public int myList1Count(String userId) {
+		return dao.myList1Count(sqlSession, userId);
+	}
+
+	// userId를 가지고 신청한 입양 목록 가져오기 (페이징)
+	@Override
+	public List<AdoptionApplicationVO> selectAnimalList2(String userId, AdoptionPageInfoVO pi) {
+		int limit = pi.getBoardLimit();
+		int offset = (pi.getCurrentPage() - 1) * limit;
+		RowBounds rowBounds = new RowBounds(offset, limit);
+		return dao.selectAnimalList2(sqlSession, userId, rowBounds);
+	}
+
+	// userId를 가지고 신청한 입양 수 세기
+	@Override
+	public int myList2Count(String userId) {
+		return dao.myList2Count(sqlSession, userId);
 	}
 
 	// anino를 가지고 게시글 삭제하기

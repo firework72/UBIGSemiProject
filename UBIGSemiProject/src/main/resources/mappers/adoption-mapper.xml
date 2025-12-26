@@ -219,6 +219,13 @@
 		ORDER BY A.ANIMAL_NO DESC
 	</select>
 	
+	<!-- 유저가 등록한 동물 수 세기 -->
+	<select id="selectAnimalList1Count" resultType="_int">
+		SELECT COUNT(*)
+		FROM ANIMAL_DETAILS
+		WHERE USER_ID = #{userId}
+	</select>
+	
 	<!-- 유저가 신청한 입양 정보 가지고 오기 -->
 	<select id="selectAnimalList2" resultType="AdoptionApplicationVO">
 		SELECT 
@@ -226,13 +233,20 @@
             AP.ANIMAL_NO,
             AP.USER_ID,
             AP.ADOPT_STATUS,
-            AP.ADOPT_STATUS,
             AP.APPLY_DT,
             TO_CHAR(AP.APPLY_DT, 'YYYY-MM-DD') AS APPLY_DATE_STR,
             A.PHOTO_URL
 		FROM ADOPTION_APPLICATIONS AP
-        JOIN ANIMAL_DETAILS A ON AP.ANIMAL_NO = A.ANIMAL_NO
+        LEFT JOIN ANIMAL_DETAILS A ON AP.ANIMAL_NO = A.ANIMAL_NO
 		WHERE AP.USER_ID = #{userId}
+		ORDER BY AP.APPLY_DT DESC
+	</select>
+	
+	<!-- 유저가 신청한 입양 수 세기 -->
+	<select id="selectAnimalList2Count" resultType="_int">
+		SELECT COUNT(*)
+		FROM ADOPTION_APPLICATIONS
+		WHERE USER_ID = #{userId}
 	</select>
 	
 	

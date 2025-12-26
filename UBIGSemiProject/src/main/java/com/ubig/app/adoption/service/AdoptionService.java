@@ -1,6 +1,6 @@
 package com.ubig.app.adoption.service;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import com.ubig.app.vo.adoption.AdoptionApplicationVO;
@@ -21,7 +21,7 @@ public interface AdoptionService {
 	int listCount();
 
 	// PageInfo를 가지고 메인 페이지 게시글 목록 가져오기
-	ArrayList<AdoptionMainListVO> selectAdoptionMainList(AdoptionPageInfoVO pi);
+	List<AdoptionMainListVO> selectAdoptionMainList(AdoptionPageInfoVO pi);
 
 	// AdoptionPostVO를 가지고 게시글 등록하기
 	int insertBoard(AdoptionPostVO post);
@@ -42,13 +42,19 @@ public interface AdoptionService {
 	int checkpost(int anino);
 
 	// 관리자용 동물/게시글 전체 목록 가져오기
-	ArrayList<AnimalDetailVO> managepost();
+	List<AnimalDetailVO> managepost();
 
-	// userId를 가지고 등록한 동물 목록 가져오기
-	ArrayList<AdoptionMainListVO> selectAnimalList1(String userId);
+	// userId를 가지고 등록한 동물 목록 가져오기 (페이징)
+	List<AdoptionMainListVO> selectAnimalList1(String userId, AdoptionPageInfoVO pi);
+
+	// userId를 가지고 등록한 동물 수 세기
+	int myList1Count(String userId);
 
 	// userId를 가지고 신청한 입양 목록 가져오기
-	ArrayList<AdoptionApplicationVO> selectAnimalList2(String userId);
+	List<AdoptionApplicationVO> selectAnimalList2(String userId, AdoptionPageInfoVO pi);
+
+	// userId를 가지고 신청한 입양 수 세기
+	int myList2Count(String userId);
 
 	// anino를 가지고 게시글 삭제하기
 	int deletePost(int anino);

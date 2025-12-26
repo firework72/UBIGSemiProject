@@ -1,6 +1,6 @@
 package com.ubig.app.adoption.dao;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,16 +33,9 @@ public class AdoptionDao {
 	}
 
 	// PageInfo를 가지고 메인 페이지 게시글 목록 가져오기
-	public ArrayList<AdoptionMainListVO> selectAdoptionMainList(SqlSessionTemplate sqlSession,
-			AdoptionPageInfoVO pi) {
-
-		int limit = pi.getBoardLimit();
-		int offset = (pi.getCurrentPage() - 1) * limit;
-
-		RowBounds rowBounds = new RowBounds(offset, limit);
-
-		return (ArrayList) sqlSession.selectList("adoptionMapper.selectAdoptionMainList", null,
-				rowBounds);
+	public List<AdoptionMainListVO> selectAdoptionMainList(SqlSessionTemplate sqlSession,
+			AdoptionPageInfoVO pi, RowBounds rowBounds) {
+		return sqlSession.selectList("adoptionMapper.selectAdoptionMainList", null, rowBounds);
 	}
 
 	// AdoptionPostVO를 가지고 게시글 등록하기
@@ -84,18 +77,30 @@ public class AdoptionDao {
 	}
 
 	// 관리자용 동물/게시글 전체 목록 가져오기
-	public ArrayList<AnimalDetailVO> managepost(SqlSessionTemplate sqlSession) {
-		return (ArrayList) sqlSession.selectList("adoptionMapper.allList");
+	public List<AnimalDetailVO> managepost(SqlSessionTemplate sqlSession) {
+		return sqlSession.selectList("adoptionMapper.allList");
 	}
 
-	// userId를 가지고 등록한 동물 목록 가져오기
-	public ArrayList<AdoptionMainListVO> selectAnimalList1(SqlSessionTemplate sqlSession, String userId) {
-		return (ArrayList) sqlSession.selectList("adoptionMapper.selectAnimalList1", userId);
+	// userId를 가지고 등록한 동물 목록 가져오기 (페이징)
+	public List<AdoptionMainListVO> selectAnimalList1(SqlSessionTemplate sqlSession, String userId,
+			RowBounds rowBounds) {
+		return sqlSession.selectList("adoptionMapper.selectAnimalList1", userId, rowBounds);
 	}
 
-	// userId를 가지고 신청한 입양 목록 가져오기
-	public ArrayList<AdoptionApplicationVO> selectAnimalList2(SqlSessionTemplate sqlSession, String userId) {
-		return (ArrayList) sqlSession.selectList("adoptionMapper.selectAnimalList2", userId);
+	// userId를 가지고 등록한 동물 수 세기
+	public int myList1Count(SqlSessionTemplate sqlSession, String userId) {
+		return sqlSession.selectOne("adoptionMapper.selectAnimalList1Count", userId);
+	}
+
+	// userId를 가지고 신청한 입양 목록 가져오기 (페이징)
+	public List<AdoptionApplicationVO> selectAnimalList2(SqlSessionTemplate sqlSession, String userId,
+			RowBounds rowBounds) {
+		return sqlSession.selectList("adoptionMapper.selectAnimalList2", userId, rowBounds);
+	}
+
+	// userId를 가지고 신청한 입양 수 세기
+	public int myList2Count(SqlSessionTemplate sqlSession, String userId) {
+		return sqlSession.selectOne("adoptionMapper.selectAnimalList2Count", userId);
 	}
 
 	// anino를 가지고 게시글 삭제하기

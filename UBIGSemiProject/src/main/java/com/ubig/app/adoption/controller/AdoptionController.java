@@ -1,9 +1,9 @@
 package com.ubig.app.adoption.controller;
 
+import java.util.List;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +13,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -188,13 +189,13 @@ public class AdoptionController {
 		int listCount = service.listCount();
 
 		int boardLimit = 9; // 한 페이지당 게시글 수
-		int pageLimit = 2; // 페이지 번호 표시 수
+		int pageLimit = 5; // 페이지 번호 표시 수
 
 		// 페이징 정보 생성
 		AdoptionPageInfoVO pi = AdoptionPagination.getPageInfo(listCount, currentPage, boardLimit, pageLimit);
 
 		// 페이징된 목록 조회
-		ArrayList<AdoptionMainListVO> adoptionList = service.selectAdoptionMainList(pi);
+		List<AdoptionMainListVO> adoptionList = service.selectAdoptionMainList(pi);
 
 		model.addAttribute("pi", pi);
 		model.addAttribute("adoptionList", adoptionList);
@@ -336,7 +337,7 @@ public class AdoptionController {
 	@RequestMapping("/adoption.postmanage")
 	public String postManage(Model model) {
 		// 관리용 동물 전체 리스트 조회
-		ArrayList<AnimalDetailVO> list = service.managepost();
+		List<AnimalDetailVO> list = service.managepost();
 		model.addAttribute("list", list);
 		return "/adoption/adoptionpostmanage";
 	}
@@ -344,17 +345,39 @@ public class AdoptionController {
 	// userId를 가지고 마이페이지용 입양 데이터(JSON) 가져오기
 	@ResponseBody
 	@RequestMapping(value = "/adoption.mypage", produces = "application/json; charset=UTF-8")
-	public String mypage(Model model, HttpSession session) {
+	public String mypage(HttpSession session,
+			@RequestBody(required = false) Map<String, String> body) { // required는 오류 완충장치
+
+		int page1 = 1;
+		int page2 = 1;
+
+		if (body != null) {
+			if (body.get("page1") != null)
+				page1 = Integer.parseInt(body.get("page1"));
+			if (body.get("page2") != null)
+				page2 = Integer.parseInt(body.get("page2"));
+		}
+
 		MemberVO user = (MemberVO) session.getAttribute("loginMember");
 
-		// 1. 유저가 등록한 동물 내역
-		ArrayList<AdoptionMainListVO> list1 = service.selectAnimalList1(user.getUserId());
-		// 2. 유저가 신청한 입양 내역
-		ArrayList<AdoptionApplicationVO> list2 = service.selectAnimalList2(user.getUserId());
+		int boardLimit = 5; // 한 페이지당 게시글 수
+		int pageLimit = 5; // 페이지 번호 표시 수
+
+		// 1. 유저가 등록한 동물 내역 (페이징 1)
+		int listCount1 = service.myList1Count(user.getUserId());
+		AdoptionPageInfoVO pi1 = AdoptionPagination.getPageInfo(listCount1, page1, boardLimit, pageLimit);
+		List<AdoptionMainListVO> list1 = service.selectAnimalList1(user.getUserId(), pi1);
+
+		// 2. 유저가 신청한 입양 내역 (페이징 2)
+		int listCount2 = service.myList2Count(user.getUserId());
+		AdoptionPageInfoVO pi2 = AdoptionPagination.getPageInfo(listCount2, page2, boardLimit, pageLimit);
+		List<AdoptionApplicationVO> list2 = service.selectAnimalList2(user.getUserId(), pi2);
 
 		Map<String, Object> listAll = new HashMap<>();
 		listAll.put("myAdoptions", list1);
+		listAll.put("pi1", pi1);
 		listAll.put("myApplications", list2);
+		listAll.put("pi2", pi2);
 
 		return new Gson().toJson(listAll);
 	}
