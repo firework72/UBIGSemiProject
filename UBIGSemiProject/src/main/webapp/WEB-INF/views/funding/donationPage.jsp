@@ -9,42 +9,165 @@
     <title>후원 목록</title>
 
     <style>
-        body { font-family:'Noto Sans KR', sans-serif; background-color:#f8f9fa; padding-top:50px; color:#333; line-height:1.6; }
-        h2 { text-align:center; font-size:2rem; margin:40px 0 20px; color:#2c3e50; }
+        /* ===============================
+   기본 설정
+================================ */
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background-color: #f8f9fa;
+    padding-top: 50px;
+    color: #333;
+    line-height: 1.6;
+}
 
-        /* 상단 메뉴 */
-        .top-menu { display:flex; justify-content:flex-end; align-items:center; margin:0 20px 30px; gap:10px; flex-wrap:wrap; }
-        .top-menu select, .top-menu input[type="text"] { padding:8px 12px; border-radius:5px; border:1px solid #ccc; font-size:0.95rem; }
-        .top-menu button { padding:8px 16px; border:none; border-radius:5px; font-weight:600; cursor:pointer; transition: all 0.3s; }
-        .search-btn { background-color:#FFC107; color:white; }
-        .search-btn:hover { background-color:#FFA000; transform:translateY(-2px); }
-        .add-btn { background-color:#28a745; color:white; }
-        .add-btn:hover { background-color:#218838; transform:translateY(-2px); }
+h2 {
+    text-align: center;
+    font-size: 2rem;
+    margin: 40px 0 20px;
+    color: #2c3e50;
+}
 
-        /* 테이블 */
-        table { width:90%; max-width:1200px; margin:0 auto 40px; border-collapse:collapse; background-color:white; border-radius:10px; overflow:hidden; box-shadow:0 8px 20px rgba(0,0,0,0.1); }
-        th, td { padding:15px; text-align:center; border-bottom:1px solid #eee; }
-        th { background-color:#FFC107; color:white; font-weight:700; }
-        tr:nth-child(even) { background-color:#f9f9f9; }
-        tr:hover { background-color:#fff3cd; }
+/* ===============================
+   상단 검색 영역
+================================ */
+.top-menu {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin: 0 20px 30px;
+    gap: 10px;
+    flex-wrap: wrap;
+}
 
-        /* 정기 해제 버튼 */
-        .cancel-btn { padding:5px 10px; background:#dc3545; color:white; border:none; border-radius:5px; cursor:pointer; transition:all 0.2s; }
-        .cancel-btn:hover { background:#c82333; transform:translateY(-2px); }
+.top-menu select,
+.top-menu input[type="text"] {
+    padding: 8px 12px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 0.95rem;
+}
 
-        /* 후원하기 버튼 */
-        .btn-back { display:inline-block; width:150px; margin:0 auto 60px; padding:12px 0; text-align:center; background-color:#28a745; color:white; text-decoration:none; border-radius:50px; font-weight:700; box-shadow:0 4px 8px rgba(0,0,0,0.2); transition:all 0.3s; }
-        .btn-back:hover { background-color:#218838; transform:translateY(-3px); }
+.top-menu button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
 
-        /* 반응형 */
-        @media(max-width:1024px){
-            .top-menu { flex-direction:column; align-items:flex-start; }
-            table { width:95%; }
-        }
-        @media(max-width:768px){
-            table, th, td { font-size:0.85rem; }
-            .btn-back { width:120px; padding:10px 0; }
-        }
+.search-btn {
+    background-color: #FFC107;
+    color: #fff;
+}
+
+.search-btn:hover {
+    background-color: #FFA000;
+    transform: translateY(-2px);
+}
+
+/* ===============================
+   테이블
+================================ */
+table {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto 40px;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+th, td {
+    padding: 15px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+}
+
+th {
+    background-color: #FFC107;
+    color: #fff;
+    font-weight: 700;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tr:hover {
+    background-color: #fff3cd;
+}
+
+/* ===============================
+   버튼 스타일
+================================ */
+.cancel-btn {
+    padding: 6px 12px;
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+}
+
+.cancel-btn:hover {
+    background-color: #c82333;
+    transform: translateY(-2px);
+}
+
+.btn-area {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto 60px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn-back {
+    width: 150px;
+    padding: 12px 0;
+    text-align: center;
+    background-color: #28a745;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: 700;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: all 0.3s;
+}
+
+.btn-back:hover {
+    background-color: #218838;
+    transform: translateY(-3px);
+}
+
+/* ===============================
+   반응형
+================================ */
+@media (max-width: 1024px) {
+    .top-menu {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    table {
+        width: 95%;
+    }
+}
+
+@media (max-width: 768px) {
+    table, th, td {
+        font-size: 0.85rem;
+    }
+    .btn-back {
+        width: 120px;
+        padding: 10px 0;
+    }
+}
+
     </style>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -62,10 +185,6 @@
             <option value="user">작성자</option>
             <option value="title">후원타입</option>
         </select>
-        <label>정기</label>
-        <input type="radio" name="donationType" value="1">
-        <label>일시</label>
-        <input type="radio" name="donationType" value="2">
         <input type="text" id="searchInput" name="searchKeyword" placeholder="검색어 입력" value="${param.searchKeyword}">
         <button type="submit" class="search-btn">검색</button>
     </form>
@@ -103,7 +222,7 @@
             </td>
             <td><fmt:formatDate value="${d.donationDate}" pattern="yyyy-MM-dd"/></td>
             <td>
-                <c:if test="${d.donationType == 1 && d.donationYn == 1}">
+                <c:if test="${d.donationType eq 1 && d.donationYn == 1 && loginMember.userId eq d.userId}">
                     <button class="cancel-btn" data-id="${d.donationNo}">정기 해제</button>
                 </c:if>
             </td>
@@ -111,28 +230,39 @@
     </c:forEach>
 </table>
 
-<a href="${pageContext.request.contextPath}/donation/donationDetailView" class="btn-back">후원하기</a>
+<div class="btn-area">
+    <a href="${pageContext.request.contextPath}/donation/donationDetailView"
+       class="btn-back">후원하기</a>
+</div>
+
 
 <script>
 $(document).ready(function(){
+
+    // 정기 후원 해제 버튼 클릭 이벤트
     $(".cancel-btn").click(function(){
         if(!confirm("정기 후원을 해제하시겠습니까?")) return;
 
-        let donationNo = $(this).data("id");
-        let btn = $(this);
+        let donationNo = $(this).data("id");  // 버튼에 있는 데이터 ID 가져오기
+        let btn = $(this);  // 클릭한 버튼 객체
 
         $.ajax({
-            url: "${pageContext.request.contextPath}/donation/cancelDonation",
+            url: "${pageContext.request.contextPath}/donation/cancelDonation", // 컨트롤러 요청 주소
             type: "POST",
             data: { donationNo: donationNo },
+            dataType: "text", // 서버에서 단순 문자열 반환 예상
             success: function(response){
-                // 상태 변경
-                $("#status" + donationNo).text("신청 취소");
-                // 버튼 제거
-                btn.remove();
+                if(response === "success"){
+                    // 상태 텍스트 변경
+                    $("#status" + donationNo).text("신청 취소");
+                    // 버튼 제거
+                    btn.remove();
+                } else {
+                    alert("정기 후원 해제 실패: 서버 처리 오류");
+                }
             },
             error: function(xhr, status, error){
-                alert("정기 후원 해제 실패: " + error);
+                alert("정기 후원 해제 실패: " + error + "\nHTTP 상태: " + xhr.status);
             }
         });
     });
@@ -145,6 +275,7 @@ $(document).ready(function(){
     });
 });
 </script>
+
 
 </body>
 </html>

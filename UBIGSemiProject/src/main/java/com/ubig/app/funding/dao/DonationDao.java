@@ -36,9 +36,9 @@ public class DonationDao {
 		return sqlSession.selectOne("donationMapper.selectDetailView",userId);
 	}
 
-	public int cancelDonation(SqlSessionTemplate sqlSession, int donationNo) {
+	public int cancelDonation(SqlSessionTemplate sqlSession, String userId) {
 		
-		return sqlSession.update("donationMapper.selectDetailView",donationNo);
+		return sqlSession.delete("donationMapper.cancelDonation",userId);
 	}
 	
 	

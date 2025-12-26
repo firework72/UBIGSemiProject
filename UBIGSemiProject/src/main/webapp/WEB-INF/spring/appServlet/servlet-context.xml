@@ -43,6 +43,11 @@
 			<mapping path="/user/mypage.me"/>
 			<mapping path="/user/update.me"/>
 			<mapping path="/user/delete.me"/>
+			<!-- Jae -->
+			<mapping path="/donation"/>
+			<mapping path="/donation/**"/>
+			<mapping path="/funding"/>
+			<mapping path="/funding/**"/>
 			<!-- 제외하고싶은 매핑 주소 <exclude-mapping path=""/> -->
 			<beans:bean class="com.ubig.app.common.interceptor.LoginInterceptor"/>
 		</interceptor>

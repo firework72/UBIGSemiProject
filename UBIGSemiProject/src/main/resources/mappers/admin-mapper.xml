@@ -9,6 +9,13 @@
 		SELECT *
 		FROM MEMBERS
 	</select>
+	
+	<select id="searchKeyword" resultType="MemberVO" parameterType="string">
+	    SELECT * 
+	    FROM MEMBERS
+	    WHERE USER_ID LIKE '%' || #{searchKeyword} || '%'
+	    OR USER_NAME LIKE '%' || #{searchKeyword} || '%'
+	</select>
 
 	<update id="updateStatus" parameterType="map">
 		UPDATE MEMBERS
