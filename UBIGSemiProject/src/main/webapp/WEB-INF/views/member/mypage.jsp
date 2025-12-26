@@ -154,7 +154,7 @@
                                             const targetContent = document.querySelector("#" + targetId);
                                             if (targetContent) {
                                                 targetContent.style.display = "block";
-                                                getAdoptionData(); // sun: 기존처럼 무조건 호출 (수정 없음)
+                                                getAdoptionData(currPage1, currPage2);
                                             }
                                         }
 
@@ -166,85 +166,110 @@
                                         e.target.classList.add('active');
                                     });
 
-
-
-
                                 });
-                                //입양 관련 내용 비동기 통신
-                                async function getAdoptionData(url = '${pageContext.request.contextPath}/adoption.mypage', data = {}, method = 'POST') {
+                                // 전역 변수로 현재 페이지 상태 관리
+                                let currPage1 = 1;
+                                let currPage2 = 1;
 
-                                    const response = await fetch(url, {
-                                        method: 'POST',
-                                        headers: {
-                                            "Content-type": "application/json"
-                                        },
-                                        body: JSON.stringify(data)
-                                    });
-                                    //객체로 파싱까지
-                                    const ResultMap = await response.json();
+                                //입양 관련 내용 비동기통신
+                                async function getAdoptionData(page1 = currPage1, page2 = currPage2) {
 
-                                    // 1. 내가 등록한 입양 내역 (myAdoptions) 처리
-                                    const tbody1 = document.querySelector("#myadoption2 table:nth-of-type(1) tbody");
-                                    tbody1.innerHTML = ""; // 기존 내용 초기화
+                                    // 상태 업데이트 (중요)
+                                    currPage1 = page1;
+                                    currPage2 = page2;
 
-                                    const myAdoptions = ResultMap.myAdoptions;
-                                    if (myAdoptions && myAdoptions.length > 0) {
-                                        let html = "";
-                                        myAdoptions.forEach(item => {
-                                            html += "<tr>";
-                                            html += "<td>" + item.animalNo + "</td>";
-                                            html += "<td><img src='${pageContext.request.contextPath}/resources/download/adoption/" + item.photoUrl + "' style='width:50px; height:50px; object-fit:cover;'></td>";
-                                            // const formattedDate = item.postUpdateDate ? new Date(item.postUpdateDate).toLocaleDateString() : "-";
-                                            // 등록일 (String으로 받아옴)
-                                            const regDate = item.postRegDate ? item.postRegDate : "-";
-                                            html += "<td>" + regDate + "</td>";
-                                            // 게시글(post) 정보가 없으면 미승인, 있으면 승인/상태
-                                            // postRegDate가 유효하면 게시글이 있는 것
-                                            if (!item.postRegDate) {
-                                                html += "<td>미승인</td>";
-                                            } else {
-                                                html += "<td>승인/" + item.adoptionStatus + "</td>";
-                                            }
-                                            html += "<td><button type='button' class='btn btn-danger btn-sm' onclick='updateAdoption(" + item.animalNo + ")'>정보수정</button>  ";
-                                            html += "<button type='button' class='btn btn-danger btn-sm' onclick='cancelAdoption(" + item.animalNo + ")'>등록취소</button></td>";
-                                            html += "</tr>";
+                                    const url = '${pageContext.request.contextPath}/adoption.mypage';
+
+                                    try {
+                                        const response = await fetch(url, {
+                                            method: 'POST', // 컨트롤러 설정에 따름
+                                            headers: {
+                                                "Content-Type": "application/json"
+                                            },
+                                            body: JSON.stringify({ page1, page2 })
                                         });
-                                        tbody1.innerHTML = html;
-                                    } else {
-                                        tbody1.innerHTML = "<tr><td colspan='4'>등록한 내역이 없습니다.</td></tr>";
-                                    }
+                                        //객체로 파싱까지
+                                        const ResultMap = await response.json();
 
-                                    // 2. 내가 신청한 입양 내역 (myApplications) 처리
-                                    const tbody2 = document.querySelector("#myadoption2 table:nth-of-type(2) tbody");
-                                    tbody2.innerHTML = ""; // 기존 내용 초기화
+                                        // 1. 내가 등록한 입양 내역 (myAdoptions) 처리
+                                        const tbody1 = document.querySelector("#myadoption2 table:nth-of-type(1) tbody");
+                                        tbody1.innerHTML = ""; // 기존 내용 초기화
 
-                                    const myApplications = ResultMap.myApplications;
-                                    if (myApplications && myApplications.length > 0) {
-                                        let html = "";
-                                        myApplications.forEach(item => {
-                                            html += "<tr>";
-                                            html += "<td>" + item.adoptionAppId + "</td>";
-                                            html += "<td><img src='${pageContext.request.contextPath}/resources/download/adoption/" + item.photoUrl + "' style='width:50px; height:50px; object-fit:cover;'></td>";
-                                            html += "<td>" + (item.applyDateStr || "-") + "</td>";
-                                            // 상태 코드(int)를 문자열로 변환
-                                            let statusStr = "";
-                                            switch (item.adoptStatus) {
-                                                case 1: statusStr = "신청완료"; break;
-                                                case 2: statusStr = "심사중"; break;
-                                                case 3: statusStr = "승인"; break;
-                                                case 4: statusStr = "거절"; break;
-                                                default: statusStr = "접수중";
+                                        const myAdoptions = ResultMap.myAdoptions;
+                                        if (myAdoptions && myAdoptions.length > 0) {
+                                            let html = "";
+                                            myAdoptions.forEach(item => {
+                                                html += "<tr>";
+                                                html += "<td>" + item.animalNo + "</td>";
+                                                html += "<td><img src='${pageContext.request.contextPath}/resources/download/adoption/" + item.photoUrl + "' style='width:50px; height:50px; object-fit:cover;'></td>";
+                                                // const formattedDate = item.postUpdateDate ? new Date(item.postUpdateDate).toLocaleDateString() : "-";
+                                                // 등록일 (String으로 받아옴)
+                                                const regDate = item.postRegDate ? item.postRegDate : "-";
+                                                html += "<td>" + regDate + "</td>";
+                                                // 게시글(post) 정보가 없으면 미승인, 있으면 승인/상태
+                                                // postRegDate가 유효하면 게시글이 있는 것
+                                                if (!item.postRegDate) {
+                                                    html += "<td>미승인</td>";
+                                                } else {
+                                                    html += "<td>승인/" + item.adoptionStatus + "</td>";
+                                                }
+                                                html += "<td><button type='button' class='btn btn-danger btn-sm' onclick='updateAdoption(" + item.animalNo + ")'>정보수정</button>  ";
+                                                html += "<button type='button' class='btn btn-danger btn-sm' onclick='cancelAdoption(" + item.animalNo + ")'>등록취소</button></td>";
+                                                html += "</tr>";
+                                            });
+
+                                            if (pi1.current > 1) {
+                                                html += "<button type='button'>이전</button>"
                                             }
-                                            html += "<td>" + statusStr + "</td>";
-                                            html += "<td><button type='button' class='btn btn-danger btn-sm' onclick='cancelAdoptionApp(" + item.adoptionAppId + ")'>신청취소</button></td>";
-                                            html += "</tr>";
-                                        });
-                                        tbody2.innerHTML = html;
-                                    } else {
-                                        tbody2.innerHTML = "<tr><td colspan='4'>신청한 내역이 없습니다.</td></tr>";
-                                    }
 
-                                    return ResultMap;
+                                            for (let i = pi1.startPage; i <= pi1.endPage; i++) {
+                                                html += "<button type='button'>" + i + "</button>";
+                                            }
+
+                                            if (pi1.current < pi1.totalPages) {
+                                                html += "<button type='button'>다음</button>"
+                                            }
+                                            tbody1.innerHTML = html;
+                                        } else {
+                                            tbody1.innerHTML = "<tr><td colspan='4'>등록한 내역이 없습니다.</td></tr>";
+                                        }
+
+                                        // 2. 내가 신청한 입양 내역 (myApplications) 처리
+                                        const tbody2 = document.querySelector("#myadoption2 table:nth-of-type(2) tbody");
+                                        tbody2.innerHTML = ""; // 기존 내용 초기화
+
+                                        const myApplications = ResultMap.myApplications;
+                                        if (myApplications && myApplications.length > 0) {
+                                            let html = "";
+                                            myApplications.forEach(item => {
+                                                html += "<tr>";
+                                                html += "<td>" + item.adoptionAppId + "</td>";
+                                                html += "<td><img src='${pageContext.request.contextPath}/resources/download/adoption/" + item.photoUrl + "' style='width:50px; height:50px; object-fit:cover;'></td>";
+                                                html += "<td>" + (item.applyDateStr || "-") + "</td>";
+                                                // 상태 코드(int)를 문자열로 변환
+                                                let statusStr = "";
+                                                switch (item.adoptStatus) {
+                                                    case 1: statusStr = "신청완료"; break;
+                                                    case 2: statusStr = "심사중"; break;
+                                                    case 3: statusStr = "승인"; break;
+                                                    case 4: statusStr = "거절"; break;
+                                                    default: statusStr = "접수중";
+                                                }
+                                                html += "<td>" + statusStr + "</td>";
+                                                html += "<td><button type='button' class='btn btn-danger btn-sm' onclick='cancelAdoptionApp(" + item.adoptionAppId + ")'>신청취소</button></td>";
+                                                html += "</tr>";
+                                            });
+                                            tbody2.innerHTML = html;
+                                        } else {
+                                            tbody2.innerHTML = "<tr><td colspan='4'>신청한 내역이 없습니다.</td></tr>";
+                                        }
+
+                                        return ResultMap;
+
+                                    } catch (error) {
+                                        console.error("Error:", error);
+                                        alert("데이터를 불러오는 중 오류가 발생했습니다.\n" + error);
+                                    }
                                 }
 
                                 //입양 관련 수정+삭제 링크 함수들
