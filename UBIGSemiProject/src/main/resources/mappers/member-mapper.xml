@@ -74,4 +74,10 @@
 		SET USER_STATUS = 'N'
 		WHERE USER_ID = #{userId}
 	</update>
+	
+	<!-- 모든 회원의 나이에 1 더하기 -->
+	<update id="addAge">
+		UPDATE MEMBERS
+		SET USER_AGE = USER_AGE + 1
+	</update>
 </mapper>

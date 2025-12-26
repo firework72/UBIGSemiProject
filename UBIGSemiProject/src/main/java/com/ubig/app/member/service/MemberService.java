@@ -16,4 +16,6 @@ public interface MemberService {
 
 	int updateMember(MemberVO m);
 
+	int addAge();
+
 }
