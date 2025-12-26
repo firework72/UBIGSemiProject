@@ -59,7 +59,9 @@
 	        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 	        z-index: 9999;
 	        overflow: hidden;
-	        flex-direction: column;
+	        
+	        display: flex;          /* 이걸 추가해야 아래 flex-direction이 먹힙니다. */
+		    flex-direction: column; /* 세로 방향으로 배치 */
 	    }
 	
 	    /* 채팅창 헤더 */
