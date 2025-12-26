@@ -37,4 +37,11 @@ public class AdminChatServiceImpl implements AdminChatService{
 		return dao.selectChat(sqlSession, userId);
 	}
 	
+	//
+	@Override
+	public int listCount() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
 }

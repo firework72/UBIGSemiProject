@@ -80,4 +80,21 @@
 		UPDATE MEMBERS
 		SET USER_AGE = USER_AGE + 1
 	</update>
+	
+	<!-- 회원 아이디 오름차순으로 전부 가져오기 (어드민 제외) -->
+	<select id="selectListByUserIdAsc" resultType="MemberVO">
+		SELECT *
+		FROM MEMBERS
+		WHERE USER_STATUS = 'Y'
+		AND USER_ROLE = 'MEMBER'
+		ORDER BY USER_ID
+	</select>
+	
+	<!-- 회원 수 가져오기 (어드민 제외) -->
+	<select id="listCount" resultType="_int">
+		SELECT COUNT(*)
+		FROM MEMBERS
+		WHERE USER_STATUS = 'Y'
+		AND USER_ROLE = 'MEMBER'
+	</select>
 </mapper>
