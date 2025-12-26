@@ -7,21 +7,41 @@
 <head>
 <meta charset="UTF-8">
 <title>봉사활동 신청자 목록</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
 <style>
-    body { font-family: 'Malgun Gothic', sans-serif; padding: 20px; } /* 폰트 약간 개선 */
+    body { font-family: 'Malgun Gothic', sans-serif; padding: 20px; }
     h2 { border-bottom: 2px solid #ccc; padding-bottom: 10px; }
     table { width: 100%; border-collapse: collapse; margin-top: 20px; }
     th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
     th { background-color: #f0f0f0; }
+    
     .btn-back { 
         display: inline-block; margin-top: 20px; padding: 10px 20px; 
         background-color: #555; color: white; text-decoration: none; border-radius: 4px;
     }
     .empty-alert { text-align: center; padding: 30px; font-weight: bold; color: #777; }
     
-    /* 상태값에 색상 입히기 (선택사항) */
+    /* 상태값 색상 */
     .status-wait { color: orange; font-weight: bold; }
     .status-ok { color: green; font-weight: bold; }
+    .status-no { color: red; font-weight: bold; } /* 반려/취소용 */
+
+    /* [추가] 버튼 스타일 */
+    .btn-action {
+        padding: 5px 10px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        margin: 0 2px;
+        color: white;
+    }
+    .btn-approve { background-color: #28a745; } /* 초록 */
+    .btn-reject { background-color: #dc3545; }  /* 빨강 */
+    .btn-cancel { background-color: #6c757d; }  /* 회색 */
+    
+    .btn-action:hover { opacity: 0.8; }
 </style>
 </head>
 <body>
@@ -43,6 +63,7 @@
                         <th>신청자ID</th>
                         <th>신청일</th>
                         <th>상태</th>
+                        <th>관리</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -50,7 +71,6 @@
                         <tr>
                             <td>${sign.signsNo}</td>
                             <td>${sign.signsId}</td>
-                            
                             <td>
                                 <fmt:formatDate value="${sign.signsDate}" pattern="yyyy-MM-dd HH:mm"/>
                             </td>
@@ -63,10 +83,28 @@
                                     <c:when test="${sign.signsStatus == 1}">
                                         <span class="status-ok">승인됨</span>
                                     </c:when>
+                                    <c:when test="${sign.signsStatus == 2}">
+                                        <span class="status-no">반려됨</span>
+                                    </c:when>
                                     <c:otherwise>
-                                        <span>취소/기타</span>
+                                        <span class="status-no">취소됨</span>
                                     </c:otherwise>
                                 </c:choose>
+                            </td>
+
+                            <td>
+                                <%-- 1. 관리자(ADMIN)일 때: 대기중(0)인 건에만 승인/반려 버튼 노출 --%>
+                                <c:if test="${sessionScope.loginMember.userRole eq 'ADMIN' and sign.signsStatus == 0}">
+                                    <button type="button" class="btn-action btn-approve" onclick="updateAdmin(${sign.signsNo}, 'approve')">승인</button>
+                                    <button type="button" class="btn-action btn-reject" onclick="updateAdmin(${sign.signsNo}, 'reject')">반려</button>
+                                </c:if>
+
+                                <%-- 2. 신청자 본인(userId 일치)일 때: 대기(0)거나 승인(1) 상태면 취소 가능 --%>
+                                <c:if test="${sessionScope.loginMember.userId eq sign.signsId}">
+                                    <c:if test="${sign.signsStatus == 0 or sign.signsStatus == 1}">
+                                        <button type="button" class="btn-action btn-cancel" onclick="updateUser(${sign.signsNo})">신청취소</button>
+                                    </c:if>
+                                </c:if>
                             </td>
                         </tr>
                     </c:forEach>
@@ -76,6 +114,59 @@
     </c:choose>
 
     <a href="volunteerDetail.vo?actId=${param.actId}" class="btn-back">뒤로 가기</a>
+
+    <script>
+        // 1. 관리자 승인/반려 AJAX
+        function updateAdmin(signsNo, statusType) {
+            var confirmMsg = (statusType === 'approve') ? "승인하시겠습니까?" : "반려하시겠습니까?";
+            
+            if(confirm(confirmMsg)) {
+                $.ajax({
+                    url: "updateSignStatusAdmin.vo",
+                    type: "post",
+                    data: {
+                        signsNo: signsNo,
+                        status: statusType
+                    },
+                    success: function(result) {
+                        if(result === "success") {
+                            alert("처리되었습니다.");
+                            location.reload(); // 새로고침해서 상태 반영
+                        } else if(result === "full") {
+                            alert("⚠️ 모집 인원이 꽉 차서 승인할 수 없습니다!");
+                        } else {
+                            alert("처리 실패. 관리자에게 문의하세요.");
+                        }
+                    },
+                    error: function() {
+                        alert("통신 오류가 발생했습니다.");
+                    }
+                });
+            }
+        }
+
+        // 2. 사용자 취소 AJAX
+        function updateUser(signsNo) {
+            if(confirm("정말 봉사 신청을 취소하시겠습니까?")) {
+                $.ajax({
+                    url: "updateSignStatusUser.vo",
+                    type: "post",
+                    data: { signsNo: signsNo },
+                    success: function(result) {
+                        if(result === "success") {
+                            alert("취소되었습니다.");
+                            location.reload();
+                        } else {
+                            alert("취소 처리에 실패했습니다.");
+                        }
+                    },
+                    error: function() {
+                        alert("통신 오류가 발생했습니다.");
+                    }
+                });
+            }
+        }
+    </script>
 
 </body>
 </html>

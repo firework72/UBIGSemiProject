@@ -123,4 +123,48 @@ public class VolunteerDao {
 	public int updateActivityRate(int actId) {
 		return sqlSession.update("volunteerMapper.updateActivityRate", actId);
 	}
+	
+	// VolunteerDao.java 에 추가
+	public int checkDuplicateReview(int actId) {
+	    // 해당 봉사활동 ID로 작성된(삭제되지 않은) 후기가 있는지 개수 확인
+	    return sqlSession.selectOne("volunteerMapper.checkDuplicateReview", actId);
+	}
+	
+	// [추가] 후기 작성용: 아직 후기가 없는 봉사활동 목록 조회
+	public List<ActivityVO> selectActivityNoReview() {
+	    return sqlSession.selectList("volunteerMapper.selectActivityNoReview");
+	}
+	
+	
+	// -----------------------------------------------------------
+    // [추가] 관리자 승인/반려 및 사용자 취소 관련 메소드
+    // -----------------------------------------------------------
+
+    // 1. 신청 상태 변경 (대기0 -> 승인1 / 반려2 / 취소3)
+    public int updateSignStatus(SignVO s) {
+        return sqlSession.update("volunteerMapper.updateSignStatus", s);
+    }
+
+    // 2. 승인 시 -> 활동 현재 인원 1명 증가
+    public int increaseActivityCur(int actId) {
+        return sqlSession.update("volunteerMapper.increaseActivityCur", actId);
+    }
+
+    // 3. 취소 시 -> 활동 현재 인원 1명 감소 (기존 Mapper 활용)
+    public int decreaseActivityCur(int actId) {
+        return sqlSession.update("volunteerMapper.decreaseActivityCur", actId);
+    }
+
+    // 4. 신청 정보 단건 조회 (상태 변경 전, 현재 상태나 활동ID 확인용)
+    public SignVO selectSignOne(int signsNo) {
+        return sqlSession.selectOne("volunteerMapper.selectSignOne", signsNo);
+    }
+	
+	
+	
+	
+	
+	
+	
+	
 }

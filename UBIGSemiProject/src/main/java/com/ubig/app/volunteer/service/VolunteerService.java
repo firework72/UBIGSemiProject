@@ -65,5 +65,22 @@ public interface VolunteerService {
 
     // [추가 사유] 후기 삭제 기능
     int deleteReview(int reviewNo);
+    
+    // VolunteerService.java (인터페이스)
+
+    // [추가] 후기 없는 활동 목록 조회
+    List<ActivityVO> selectActivityNoReview();
+    
+
+
+    // [관리자] 신청 승인/반려 처리 (signsNo:신청번호, status:처리상태)
+    // 리턴값 설명 -> 1:성공, 0:실패, -1:정원초과
+    int updateSignStatusAdmin(int signsNo, String status); 
+
+    // [사용자] 신청 취소 처리
+    // 리턴값 설명 -> 1:성공, 0:실패
+    int updateSignStatusUser(int signsNo);
+    
+    
 
 }
