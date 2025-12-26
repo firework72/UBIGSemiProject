@@ -114,8 +114,12 @@
                                         <!-- sun: 내가 쓴 글 버튼 클릭 시 AJAX로 데이터 요청 -->
                                         <button id="myboard" class="list-group-item list-group-item-action">내가 쓴
                                             글</button>
-                                        <button id="delete" class="list-group-item list-group-item-action text-danger"
-                                            onclick="deleteMember()">회원 탈퇴</button>
+                                        <!-- Dong : 회원 탈퇴 처리 -->
+                                        <form action="${pageContext.request.contextPath}/user/delete.me" method="post">
+                                            <button id="delete" class="list-group-item list-group-item-action text-danger"
+                                            	onclick="return deleteMember();">회원 탈퇴</button>
+                                        </form>
+
                                     </div>
                                 </div>
                             </div>
@@ -693,9 +697,7 @@
 
                         // 4. 회원 탈퇴 함수
                         function deleteMember() {
-                            if (confirm("정말로 탈퇴하시겠습니까? 탈퇴 시 복구할 수 없습니다.")) {
-                                location.href = "/member/delete"; // Controller에 매핑 필요
-                            }
+                        	return confirm("정말로 탈퇴하시겠습니까? 탈퇴 시 복구할 수 없습니다.");
                         }
                     </script>
             </body>

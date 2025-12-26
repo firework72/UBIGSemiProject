@@ -36,6 +36,10 @@ public class MemberDao {
 		return sqlSession.update("memberMapper.deleteMember", userId);
 	}
 
+	public int addAge(SqlSessionTemplate sqlSession) {
+		return sqlSession.update("memberMapper.addAge");
+	}
+
 
 
 }

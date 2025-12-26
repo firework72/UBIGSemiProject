@@ -51,8 +51,11 @@ public class MemberServiceImpl implements MemberService {
 	public int deleteMember(String userId) {
 		return dao.deleteMember(sqlSession, userId);
 	}
-
-
 	
+	// 나이에 1 더하기
+	@Override
+	public int addAge() {
+		return dao.addAge(sqlSession);
+	}
 	
 }
