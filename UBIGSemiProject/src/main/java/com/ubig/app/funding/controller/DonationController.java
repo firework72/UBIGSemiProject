@@ -7,11 +7,14 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ubig.app.funding.service.DonationService;
 import com.ubig.app.vo.funding.DonationVO;
-import com.ubig.app.vo.funding.FundingVO;
+import com.ubig.app.vo.member.MemberVO;
 
 @Controller
 @RequestMapping("/donation")
@@ -48,11 +51,15 @@ public class DonationController {
 	
 	//후원 상세 페이지 이동
 	@RequestMapping("/donationDetailView")
-	public String donationPage(Model model,String userId) {
+	public String donationPage(HttpSession session,Model model) {
 		
-		ArrayList<DonationVO> list = service.selectDetailView(userId);
+		MemberVO m = (MemberVO)session.getAttribute("loginMember");
 		
-		model.addAttribute("list",list);
+		int result = service.selectDetailView(m.getUserId());
+        
+		System.out.println(result);
+		
+		model.addAttribute("result", result);
 		
 		return "funding/donationDetailView";
 	}
@@ -71,6 +78,17 @@ public class DonationController {
 		  
 		 return "redirect:/donation"; 
 	}
+	
+	//정기 후원 해제
+	@PostMapping("/donation/cancelDonation")
+	@ResponseBody
+	public String cancelRegularDonation(@RequestParam int donationNo) {
+	    
+		int result = service.cancelDonation(donationNo);
+	   
+	    return "redirect:/donation"; 
+	}
+
 	 
 	
 	//일시 후원

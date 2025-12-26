@@ -4,13 +4,13 @@
 <head>
 <meta charset="UTF-8">
 <title>유봉일공 - 펀딩 추가</title>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css?v=3">
 
 <style>
 body {
     font-family: 'Noto Sans KR', sans-serif;
     background-color: #f8f9fa;
-    padding: 20px;
+    padding: 100px;
 }
 
 h2 {
@@ -66,6 +66,8 @@ h2 {
 </head>
 
 <body>
+
+<jsp:include page="/WEB-INF/views/common/menubar.jsp"></jsp:include>
 
 <h2>새로운 펀딩 추가</h2>
 

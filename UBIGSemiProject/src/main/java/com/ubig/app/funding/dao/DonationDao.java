@@ -31,9 +31,14 @@ public class DonationDao {
 		return sqlSession.insert("donationMapper.donation2",donationVO);
 	}
 
-	public ArrayList<DonationVO> selectDetailView(SqlSessionTemplate sqlSession,String userId) {
+	public int selectDetailView(SqlSessionTemplate sqlSession,String userId) {
 	
-		return (ArrayList)sqlSession.selectOne("donationMapper.selectDetailView",userId);
+		return sqlSession.selectOne("donationMapper.selectDetailView",userId);
+	}
+
+	public int cancelDonation(SqlSessionTemplate sqlSession, int donationNo) {
+		
+		return sqlSession.update("donationMapper.selectDetailView",donationNo);
 	}
 	
 	

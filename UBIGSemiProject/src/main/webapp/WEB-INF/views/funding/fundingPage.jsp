@@ -1,49 +1,23 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<html>
+<!DOCTYPE html>
+<html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>유봉일공 - 펀딩 목록</title>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
+<title>펀딩 목록</title>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css?v=3">
 
 <style>
 body {
     font-family: 'Noto Sans KR', sans-serif;
     background-color: #f8f9fa;
-    padding: 20px;
+    padding: 100px;
 }
 
 h2 {
     display: inline-block;
-}
-
-/* 상단 메뉴 */
-.top-menu {
-    float: right;
-    margin-top: -10px;
-}
-.top-menu form {
-    display: inline-block;
-    margin-left: 10px;
-}
-.top-menu input[type="text"] {
-    padding: 8px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-}
-.top-menu button {
-    padding: 8px 12px;
-    border-radius: 5px;
-    border: none;
-    cursor: pointer;
-    color: white;
-}
-.top-menu .search-btn {
-    background-color: #FFC107;
-}
-.top-menu .add-btn {
-    background-color: #28a745;
 }
 
 /* 카드 컨테이너 */
@@ -52,7 +26,6 @@ h2 {
     flex-wrap: wrap;
     gap: 20px;
     justify-content: center;
-    clear: both;
 }
 
 /* 카드 스타일 */
@@ -123,48 +96,32 @@ h2 {
 @media (max-width: 768px) { .card { width: 100%; } }
 </style>
 </head>
-
 <body>
+
+<jsp:include page="/WEB-INF/views/common/menubar.jsp"></jsp:include>
 
 <h2>펀딩 목록</h2>
 
-<!-- 상단 메뉴: 검색 + 펀딩 추가 -->
-<div class="top-menu">
-    <!-- 검색 폼 -->
-    <form action="${pageContext.request.contextPath}/funding/searchKeyword" method="get">
-        <select id="searchType">
-        	<option value="all">전체</option>
-        	<option value="user">작성자</option>
-        	<option value="title">제목</option>
-        </select>
-       	
-        <input type="text" id="searchInput" name="searchKeyword" placeholder="검색어 입력" value="${param.searchKeyword}">
-        <button type="submit" class="search-btn">검색</button>
-    </form>
-    
-	<script>
-	    let select = document.getElementById('searchType');
-	    let input = document.getElementById('searchInput');
-	
-	    select.addEventListener('change', function() {
-	        if (this.value === 'user') {
-	            input.placeholder = '작성자 입력';
-	        } else if (this.value === 'title') {
-	            input.placeholder = '제목 입력';
-	        } else {
-	            input.placeholder = '검색어 입력';
-	        }
-	    });
-	</script>
+<h2>펀딩 목록</h2>
 
-
-    <!-- 펀딩 추가 버튼 -->
+<!-- 펀딩 추가 버튼 -->
+<div style="text-align: right; margin-bottom: 20px;">
     <form action="${pageContext.request.contextPath}/funding/insertPage" method="get">
-        <button type="submit" class="add-btn">펀딩 추가</button>
+        <button type="submit" style="
+            padding: 12px 25px;
+            border-radius: 30px;
+            border: none;
+            background: #FFC107;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        " onmouseover="this.style.background='#FFA000';" onmouseout="this.style.background='#FFC107';">
+            펀딩 추가
+        </button>
     </form>
 </div>
 
-<div style="clear:both;"></div>
 
 <div class="container">
     <c:forEach var="funding" items="${list}">
@@ -178,17 +135,21 @@ h2 {
             <!-- 달성률 계산 -->
             <c:choose>
                 <c:when test="${funding.fundingMaxMoney > 0}">
-                    <c:set var="fundingRate" value="${funding.fundingCurrentMoney / funding.fundingMaxMoney * 100}" />
+                    <c:set var="fundingRate" value="${funding.fundingCurrentMoney * 100.0 / funding.fundingMaxMoney}" />
                 </c:when>
                 <c:otherwise>
                     <c:set var="fundingRate" value="0" />
                 </c:otherwise>
             </c:choose>
-            <p><strong>달성률:</strong> ${fundingRate}%</p>
+
+            <!-- 달성률 표시 -->
+            <p><strong>달성률:</strong> 
+                <fmt:formatNumber value="${fundingRate}" type="number" maxFractionDigits="2"/>%
+            </p>
 
             <!-- 진행률 표시 -->
             <div class="progress-bar">
-                <div class="progress" style="width:${fundingRate}%;"></div>
+                <div class="progress" style="width: <c:out value='${fundingRate}'/>%; min-width:1%;"></div>
             </div>
 
             <!-- 상세보기 버튼 -->

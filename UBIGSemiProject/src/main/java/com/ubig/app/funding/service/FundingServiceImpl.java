@@ -48,9 +48,9 @@ public class FundingServiceImpl implements FundingService{
 	}
 
 	@Override
-	public FundingVO selectFunding2(int fundingNo) {
+	public FundingVO fundingDetailView(int fundingNo) {
 		
-		return dao.selectFunding2(sqlSession,fundingNo);
+		return dao.fundingDetailView(sqlSession,fundingNo);
 	}
 	
 	@Override
