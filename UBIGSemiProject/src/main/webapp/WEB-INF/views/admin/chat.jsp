@@ -227,7 +227,7 @@
 			
 			console.log(JSON.parse(message.data));
 			
-			receiveMessage(JSON.parse(message.data).chatContent);
+			receiveMessage(JSON.parse(message.data));
 		}
 		
 		
@@ -277,14 +277,24 @@
     }
     
     // 4. 메시지 수신 (화면에 표시하기)
-    function receiveMessage(msg) {
+    function receiveMessage(data) {
         var chatArea = document.getElementById("chatMessageArea");
         
-        var otherMsgHtml = '<div class="msg-row other-msg">' +
-					        '<div class="msg-bubble">' + msg + '</div>' +
-					    '</div>';
+        var msgHtml = "";
+        console.log(data.chatSendUserId);
+        
+        if (data.chatSendUserId === 'admin') {
+        	msgHtml = '<div class="msg-row my-msg">' +
+		        '<div class="msg-bubble">' + data.chatContent + '</div>' +
+		    '</div>';
+        }
+        else {
+        	msgHtml = '<div class="msg-row other-msg">' +
+		        '<div class="msg-bubble">' + data.chatContent + '</div>' +
+		    '</div>';
+        }
 					    
-		chatArea.insertAdjacentHTML('beforeend', otherMsgHtml);
+		chatArea.insertAdjacentHTML('beforeend', msgHtml);
         
         // 스크롤 최하단으로 이동
         chatArea.scrollTop = chatArea.scrollHeight;
