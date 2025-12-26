@@ -40,11 +40,19 @@ public class MemberServiceImpl implements MemberService {
 		return dao.messageCheckId(sqlSession, userId);
 	}
 	
+	// 회원 수정 처리
+	@Override
+	public int updateMember(MemberVO m) {
+		return dao.updateMember(sqlSession, m);
+	}
+	
 	// 회원 탈퇴 처리
 	@Override
 	public int deleteMember(String userId) {
 		return dao.deleteMember(sqlSession, userId);
 	}
+
+
 	
 	
 }

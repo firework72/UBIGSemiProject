@@ -56,6 +56,18 @@
 		AND USER_STATUS = 'Y'
 	</select>
 	
+	<!-- 회원 수정 처리 -->
+	<update id="updateMember" parameterType="MemberVO">
+		UPDATE MEMBERS
+		SET USER_NAME = #{userName}
+		   ,USER_NICKNAME = #{userNickname}
+		   ,USER_CONTACT = #{userContact}
+		   ,USER_ADDRESS = #{userAddress}
+		   ,USER_GENDER = #{userGender}
+		   ,USER_MODIFY_DATE = SYSDATE
+		WHERE USER_ID = #{userId}
+	</update>
+	
 	<!-- 회원 탈퇴 처리 : USER_STATUS를 N으로 바꾼다 -->
 	<update id="deleteMember" parameterType="string">
 		UPDATE MEMBERS
