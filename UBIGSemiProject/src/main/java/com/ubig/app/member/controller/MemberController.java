@@ -173,8 +173,24 @@ public class MemberController {
 	}
 	
 	// TODO 회원수정 처리
+	@PostMapping("/update.me")
+	public String updateMember(HttpSession session, Model model, MemberVO m) {
+		
+		int result = service.updateMember(m);
+		
+		if (result > 0) {
+			session.setAttribute("alertMsg", "정보 수정에 성공했습니다.");
+			MemberVO loginMember = service.loginMember(m);
+			session.setAttribute("loginMember", loginMember);
+		}
+		else {
+			session.setAttribute("alertMsg", "정보 수정에 실패했습니다.");
+		}
+		
+		return "redirect:/user/mypage.me";
+	}
 
-	// TODO 회원탈퇴 처리
+	// 회원탈퇴 처리
 	@PostMapping("/delete.me")
 	public String deleteMember(HttpSession session, Model model) {
 		
@@ -182,7 +198,7 @@ public class MemberController {
 		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
 		
 		if (loginMember != null) {
-			// TODO 회원탈퇴 처리
+			// 회원탈퇴 처리
 			int result = service.deleteMember(loginMember.getUserId());
 			if (result > 0) {
 				session.removeAttribute("loginMember");

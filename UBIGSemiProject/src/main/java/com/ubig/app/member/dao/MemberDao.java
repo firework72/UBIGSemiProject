@@ -27,9 +27,15 @@ public class MemberDao {
 	public int messageCheckId(SqlSessionTemplate sqlSession, String userId) {
 		return sqlSession.selectOne("memberMapper.messageCheckId", userId);
 	}
+	
+	public int updateMember(SqlSessionTemplate sqlSession, MemberVO m) {
+		return sqlSession.update("memberMapper.updateMember", m);
+	}
 
 	public int deleteMember(SqlSessionTemplate sqlSession, String userId) {
 		return sqlSession.update("memberMapper.deleteMember", userId);
 	}
+
+
 
 }

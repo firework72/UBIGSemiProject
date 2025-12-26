@@ -14,4 +14,6 @@ public interface MemberService {
 
 	int deleteMember(String userId);
 
+	int updateMember(MemberVO m);
+
 }
