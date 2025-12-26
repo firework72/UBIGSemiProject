@@ -8,10 +8,10 @@
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <link rel="stylesheet" href="">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css?v=3">
     
     <style>
-        body { background-color: #f8f9fa; }
+        body { background-color: #f8f9fa; padding-top: 50px;}
         .signup-card {
             max-width: 600px;
             margin: 50px auto;
@@ -38,6 +38,7 @@
     </style>
 </head>
 <body>
+<jsp:include page="/WEB-INF/views/common/menubar.jsp" />
 <div class="card signup-card">
     <div class="signup-header">
         유봉일공 회원가입

@@ -8,6 +8,7 @@
             <meta name="viewport" content="width=device-width, initial-scale=1">
             <title>유봉일공 - 로그인</title>
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+            <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css?v=3">
             <style>
                 body {
                     background-color: #f8f9fa;
@@ -55,7 +56,7 @@
         </head>
 
         <body>
-
+			<jsp:include page="/WEB-INF/views/common/menubar.jsp" />
             <div class="card login-card">
                 <div class="login-header">
                     유봉일공 LOGIN
