@@ -250,7 +250,7 @@
 	</select>
 	
 	
-	    
+	<!-- 입양 신청 번호로 입양 신청정보 리스트 조회 -->	  
 	<select id="selectApplication" parameterType="_int" resultType="AdoptionApplicationVO">
 	    SELECT 
 	        ADOPTION_APP_ID,
@@ -260,11 +260,29 @@
 	        APPLY_DT
 	    FROM ADOPTION_APPLICATIONS
 	    WHERE ADOPTION_APP_ID = #{adoptionAppId}
+	    ORDER BY ADOPTION_STATUS
 	</select>
 
+	<!-- 입양 신청 번호로 해당 입양 신청취소(삭제) -->
 	<delete id="deleteapp" parameterType="_int">
 	    DELETE FROM ADOPTION_APPLICATIONS
 	    WHERE ADOPTION_APP_ID = #{adoptionAppId}
 	</delete>
+	
+	<!-- anino에 해당하는 동물등록상태 반려로 바꾸기 -->
+	<update id="denyBoard" parameterType="_int">
+		UPDATE ANIMAL_DETAILS
+		SET ADOPTION_STATUS ='반려'
+		WHERE ANIMAL_NO = #{anino}
+	</update>
+	
+	<!-- 신청서 중복 체크 확인 -->
+	<select id="checkApplication" parameterType="Map" resultType="_int">
+		SELECT COUNT(*)
+		FROM ADOPTION_APPLICATIONS
+		WHERE ANIMAL_NO = #{animalNo}
+		AND USER_ID = #{userId}
+	</select>
+	
 
 </mapper>

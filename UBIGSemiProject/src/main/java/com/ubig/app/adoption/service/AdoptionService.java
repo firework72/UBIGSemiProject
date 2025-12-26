@@ -71,4 +71,10 @@ public interface AdoptionService {
 	// adoptionAppId를 가지고 신청서 삭제하기
 	int deleteapp(int adoptionAppId);
 
+	// 입양 등록 반려하기
+	int denyBoard(int anino);
+
+	// 입양 중복 체크
+	int checkApplication(int animalNo, String userId);
+
 }

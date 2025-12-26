@@ -28,12 +28,17 @@ import com.ubig.app.vo.adoption.AdoptionPageInfoVO;
 import com.ubig.app.vo.adoption.AdoptionPostVO;
 import com.ubig.app.vo.adoption.AnimalDetailVO;
 import com.ubig.app.vo.member.MemberVO;
+import com.ubig.app.member.service.MessageService;
+import com.ubig.app.vo.member.MessageVO;
 
 @Controller
 public class AdoptionController {
 
 	@Autowired
 	AdoptionService service;
+
+	@Autowired
+	MessageService messageService;
 
 	// anino를 가지고 입양 상세 페이지로 이동하기
 	@RequestMapping("/adoption.detailpage")
@@ -107,6 +112,14 @@ public class AdoptionController {
 		MemberVO user = (MemberVO) session.getAttribute("loginMember");
 		application.setUserId(user.getUserId());
 		application.setAdoptStatus(1); // 1: 신청완료 상태로 초기화
+
+		// 0.같은 동물에 대한 신청이 있는지 확인
+		int check = service.checkApplication(application.getAnimalNo(), application.getUserId());
+
+		if (check > 0) {
+			session.setAttribute("alertMsgAd", "이미 입양 신청을 하셨습니다.");
+			return "redirect:/adoption.detailpage?anino=" + application.getAnimalNo();
+		}
 
 		// 1. 신청서 저장
 		int result = service.insertApplication(application);
@@ -381,5 +394,15 @@ public class AdoptionController {
 
 		return new Gson().toJson(listAll);
 	}
+
+	// 게시글(입양 등록) 반려하기 animalNo를 가지고 동물 상태 "반려"로 만들기
+	@RequestMapping("/adoption.deny.board.direct")
+	public String denyBoard(int anino, HttpSession session) {
+		int result = service.denyBoard(anino);
+		return "redirect:/adoption.postmanage";
+	}
+
+	// 쪽지를 보내는 메서드
+	// "**되었습니다." 하는 메시지와 USERID를 파라미터로 받아서 유저에게 쪽지 보내주기
 
 }
