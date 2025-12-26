@@ -10,7 +10,7 @@
 		FROM FUNDINGS
 	</select>
 	
-	<select id="selectFunding2" resultMap="FundingVOResultMap">
+	<select id="fundingDetailView" resultMap="FundingVOResultMap">
 		SELECT * 
 		FROM FUNDINGS
 		WHERE F_NO = #{fundingNo}

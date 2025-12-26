@@ -48,7 +48,7 @@ public class FundingController {
 	@RequestMapping("/fundingDetailView")
 	public String fundingDetailView(Model model,int fundingNo) {
 		
-		FundingVO list = service.selectFunding2(fundingNo);
+		FundingVO list = service.fundingDetailView(fundingNo);
 		
 		model.addAttribute("list",list);
 		
