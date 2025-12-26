@@ -106,6 +106,7 @@
                                 <c:otherwise>
                                     <li><a href="#">${loginMember.userNickname}님</a></li>
                                     <li><a href="${pageContext.request.contextPath}/user/mypage.me">마이페이지</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/message/inbox.ms">쪽지함</a></li>
                                     <li>
                                         <form id="logoutForm" action="${pageContext.request.contextPath}/user/logout.me"
                                             method="post">
