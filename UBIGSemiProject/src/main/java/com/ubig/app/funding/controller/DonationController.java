@@ -36,18 +36,27 @@ public class DonationController {
 	
 	//검색 기능
 	@RequestMapping("/searchKeyword")
-	public String searchKeyword(Model model,String searchKeyword) {
+	public String searchKeyword(Model model,String searchKeyword,String searchType) {
 			
 		ArrayList<DonationVO> list = service.searchKeyword(searchKeyword);
+		
+		// 후원 타입 검색
+	    if ("정기".equals(searchKeyword)) {
+	        list = service.searchKeyword("1");
+	    } 
+	    else if ("일시".equals(searchKeyword)) {
+	        list = service.searchKeyword("2");
+	    } 
+	    // 그 외 검색
+	    else {
+	        list = service.searchKeyword(searchKeyword);
+	    }
 		
 		model.addAttribute("list",list);
 			
 		return "funding/donationPage";
 			
 	}
-	
-	//저기 후원 해제 기능
-	
 	
 	//후원 상세 페이지 이동
 	@RequestMapping("/donationDetailView")
@@ -57,15 +66,12 @@ public class DonationController {
 		
 		int result = service.selectDetailView(m.getUserId());
         
-		System.out.println(result);
-		
 		model.addAttribute("result", result);
 		
 		return "funding/donationDetailView";
 	}
 	
 	//정기 후원
-	  
 	@RequestMapping("/donation") 
 	public String donation(HttpSession session,DonationVO donationVO) {
 	  
@@ -79,17 +85,22 @@ public class DonationController {
 		 return "redirect:/donation"; 
 	}
 	
-	//정기 후원 해제
-	@PostMapping("/donation/cancelDonation")
-	@ResponseBody
-	public String cancelRegularDonation(@RequestParam int donationNo) {
-	    
-		int result = service.cancelDonation(donationNo);
-	   
-	    return "redirect:/donation"; 
-	}
-
-	 
+	// 정기 후원 해제
+    @PostMapping("/cancelDonation")
+    @ResponseBody
+    public String cancelDonation(HttpSession session) {
+        
+    	MemberVO m = (MemberVO)session.getAttribute("loginMember");
+    	
+    	int result = service.cancelDonation(m.getUserId());
+    	
+    	if(result>0) {
+    		return "success";
+    	}else {
+    		return "fail";
+    	}
+    	
+    }
 	
 	//일시 후원
 	@RequestMapping("/donation2")

@@ -44,9 +44,9 @@ public class DonationServiceImpl implements DonationService{
 	}
 	
 	@Override
-	public int cancelDonation(int donationNo) {
+	public int cancelDonation(String userId) {
 		
-		return dao.cancelDonation(sqlSession,donationNo);
+		return dao.cancelDonation(sqlSession,userId);
 	}
 	
 	@Override

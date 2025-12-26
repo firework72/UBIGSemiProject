@@ -44,11 +44,11 @@
 	</insert>
 	
 	<!-- 정기 후원 해제 -->
-	<update id="cancelDonation" parameterType="int">
-		UPDATE DONATIONS
-		SET DONATION_YN = 2
-		WHERE DONATION_NO = #{donationNo}
-	</update>
+	<delete id="cancelDonation" parameterType="string">
+		DELETE FROM DONATIONS
+		WHERE DONATION_TYPE = 1
+		AND USER_ID = #{userId}
+	</delete>
 	
 	<!-- 일시 후원 -->
 	<insert id="donation2" parameterType="DonationVO">

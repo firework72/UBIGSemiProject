@@ -17,7 +17,7 @@ public interface DonationService {
 
 	int selectDetailView(String userId);
 
-	int cancelDonation(int donationNo);
+	int cancelDonation(String userId);
 	
 	
 }

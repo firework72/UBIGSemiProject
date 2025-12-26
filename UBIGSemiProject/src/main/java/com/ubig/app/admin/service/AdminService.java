@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.ubig.app.vo.community.BoardVO;
+import com.ubig.app.vo.funding.DonationVO;
 import com.ubig.app.vo.member.MemberVO;
 import com.ubig.app.vo.volunteer.ActivityVO;
 
@@ -24,5 +25,7 @@ public interface AdminService {
 	ArrayList<BoardVO> selectBoard();
 
 	ArrayList<ActivityVO> selectActivity();
+
+	ArrayList<MemberVO> searchKeyword(String searchKeyword);
 
 }
