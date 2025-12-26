@@ -43,7 +43,7 @@
                                 </c:when>
                                 <c:otherwise>
                                     <c:forEach var="item" items="${list}">
-                                        <tr>
+                                        <tr onclick="location.href='adoption.detailpage?anino=${item.animalNo}'">
                                             <td><input type="checkbox" name="animalNo" value="${item.animalNo}"></td>
                                             <td>${item.animalNo}</td>
                                             <td>${item.animalName}</td>

@@ -116,6 +116,13 @@ public class AdoptionController {
 		// 0.같은 동물에 대한 신청이 있는지 확인
 		int check = service.checkApplication(application.getAnimalNo(), application.getUserId());
 
+		// 0.내가 등록한 동물을 입양 신청하고 있지 않는지 확인
+		AnimalDetailVO animal = service.goAdoptionDetail(application.getAnimalNo());
+		if (animal != null && animal.getUserId().equals(user.getUserId())) {
+			session.setAttribute("alertMsgAd", "본인이 등록한 동물에는 입양 신청을 할 수 없습니다.");
+			return "redirect:/adoption.detailpage?anino=" + application.getAnimalNo();
+		}
+
 		if (check > 0) {
 			session.setAttribute("alertMsgAd", "이미 입양 신청을 하셨습니다.");
 			return "redirect:/adoption.detailpage?anino=" + application.getAnimalNo();
