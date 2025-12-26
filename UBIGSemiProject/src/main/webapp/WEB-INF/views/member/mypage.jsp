@@ -207,7 +207,7 @@
                                         if (myAdoptions && myAdoptions.length > 0) {
                                             let html = "";
                                             myAdoptions.forEach(item => {
-                                                html += "<tr>";
+                                                html += "<tr onclick='location.href=\"${pageContext.request.contextPath}/adoption.detailpage?anino=" + item.animalNo + "\"'>";
                                                 html += "<td>" + item.animalNo + "</td>";
                                                 html += "<td><img src='${pageContext.request.contextPath}/resources/download/adoption/" + item.photoUrl + "' style='width:50px; height:50px; object-fit:cover;'></td>";
                                                 // const formattedDate = item.postUpdateDate ? new Date(item.postUpdateDate).toLocaleDateString() : "-";
@@ -221,8 +221,8 @@
                                                 } else {
                                                     html += "<td>승인/" + item.adoptionStatus + "</td>";
                                                 }
-                                                html += "<td><button type='button' class='btn btn-danger btn-sm' onclick='updateAdoption(" + item.animalNo + ")'>정보수정</button>  ";
-                                                html += "<button type='button' class='btn btn-danger btn-sm' onclick='cancelAdoption(" + item.animalNo + ")'>등록취소</button></td>";
+                                                html += "<td><button type='button' class='btn btn-danger btn-sm' onclick='event.stopPropagation(); updateAdoption(" + item.animalNo + ")'>정보수정</button>  ";
+                                                html += "<button type='button' class='btn btn-danger btn-sm' onclick='event.stopPropagation(); cancelAdoption(" + item.animalNo + ")'>등록취소</button></td>";
                                                 html += "</tr>";
                                             });
 
@@ -257,7 +257,7 @@
                                         if (myApplications && myApplications.length > 0) {
                                             let html = "";
                                             myApplications.forEach(item => {
-                                                html += "<tr>";
+                                                html += "<tr onclick= 'location.href=\"${pageContext.request.contextPath}/adoption.detailpage?anino=" + item.animalNo + "\"' >";
                                                 html += "<td>" + item.adoptionAppId + "</td>";
                                                 html += "<td><img src='${pageContext.request.contextPath}/resources/download/adoption/" + item.photoUrl + "' style='width:50px; height:50px; object-fit:cover;'></td>";
                                                 html += "<td>" + (item.applyDateStr || "-") + "</td>";
@@ -265,9 +265,8 @@
                                                 let statusStr = "";
                                                 switch (item.adoptStatus) {
                                                     case 1: statusStr = "신청완료"; break;
-                                                    case 2: statusStr = "심사중"; break;
-                                                    case 3: statusStr = "승인"; break;
-                                                    case 4: statusStr = "거절"; break;
+                                                    case 2: statusStr = "입양완료"; break;
+                                                    case 3: statusStr = "반려"; break;
                                                     default: statusStr = "접수중";
                                                 }
                                                 html += "<td>" + statusStr + "</td>";

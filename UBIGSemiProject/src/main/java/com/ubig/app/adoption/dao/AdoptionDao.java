@@ -128,4 +128,14 @@ public class AdoptionDao {
 		return sqlSession.delete("adoptionMapper.deleteapp", adoptionAppId);
 	}
 
+	// anino를 가지고 해당 동물 정보상태 반려하기
+	public int denyBoard(SqlSessionTemplate sqlSession, int anino) {
+		return sqlSession.update("adoptionMapper.denyBoard", anino);
+	}
+
+	// 신청서 중복 체크 로직
+	public int checkApplication(SqlSessionTemplate sqlSession, Map<String, Object> map) {
+		return sqlSession.selectOne("adoptionMapper.checkApplication", map);
+	}
+
 }

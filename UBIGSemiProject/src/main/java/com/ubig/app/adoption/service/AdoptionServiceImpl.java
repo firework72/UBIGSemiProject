@@ -1,10 +1,10 @@
 package com.ubig.app.adoption.service;
 
+import java.util.HashMap;
 import java.util.List;
-
-import org.apache.ibatis.session.RowBounds;
 import java.util.Map;
 
+import org.apache.ibatis.session.RowBounds;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -161,6 +161,21 @@ public class AdoptionServiceImpl implements AdoptionService {
 	@Override
 	public int deleteapp(int adoptionAppId) {
 		return dao.deleteapp(sqlSession, adoptionAppId);
+	}
+
+	// 입양 등록 반려하기
+	@Override
+	public int denyBoard(int anino) {
+		return dao.denyBoard(sqlSession, anino);
+	}
+
+	// 입양 신청 중복 체크
+	@Override
+	public int checkApplication(int animalNo, String userId) {
+		Map<String, Object> map = new HashMap<>();
+		map.put("animalNo", animalNo);
+		map.put("userId", userId);
+		return dao.checkApplication(sqlSession, map);
 	}
 
 }
