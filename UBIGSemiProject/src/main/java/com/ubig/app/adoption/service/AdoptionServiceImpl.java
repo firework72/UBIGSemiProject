@@ -97,10 +97,13 @@ public class AdoptionServiceImpl implements AdoptionService {
 		return dao.checkpost(sqlSession, anino);
 	}
 
-	// 관리자용 동물/게시글 전체 목록 가져오기
+	// 관리자용 동물/게시글 전체 목록 가져오기 (페이징)
 	@Override
-	public List<AnimalDetailVO> managepost() {
-		return dao.managepost(sqlSession);
+	public List<AnimalDetailVO> managepost(AdoptionPageInfoVO pi) {
+		int limit = pi.getBoardLimit();
+		int offset = (pi.getCurrentPage() - 1) * limit;
+		RowBounds rowBounds = new RowBounds(offset, limit);
+		return dao.managepost(sqlSession, rowBounds);
 	}
 
 	// userId를 가지고 등록한 동물 목록 가져오기 (페이징)
@@ -178,4 +181,9 @@ public class AdoptionServiceImpl implements AdoptionService {
 		return dao.checkApplication(sqlSession, map);
 	}
 
+	// 관리자용 동물/게시글 전체 목록 갯수
+	@Override
+	public int managepostCount() {
+		return dao.managepostCount(sqlSession);
+	}
 }

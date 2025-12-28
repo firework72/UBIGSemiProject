@@ -98,6 +98,31 @@
                         </tbody>
                     </table>
                 </div>
+
+                <!-- 페이징 처리 -->
+                <div align="center" style="margin-top: 20px;">
+                    <c:if test="${pi.currentPage ne 1}">
+                        <button class="btn-secondary"
+                            onclick="location.href='adoption.postmanage?currentPage=${pi.currentPage-1}'">&lt;</button>
+                    </c:if>
+
+                    <c:forEach var="p" begin="${pi.startPage}" end="${pi.endPage}">
+                        <c:choose>
+                            <c:when test="${p eq pi.currentPage}">
+                                <button class="btn-primary" disabled>${p}</button>
+                            </c:when>
+                            <c:otherwise>
+                                <button class="btn-secondary"
+                                    onclick="location.href='adoption.postmanage?currentPage=${p}'">${p}</button>
+                            </c:otherwise>
+                        </c:choose>
+                    </c:forEach>
+
+                    <c:if test="${pi.currentPage ne pi.maxPage}">
+                        <button class="btn-secondary"
+                            onclick="location.href='adoption.postmanage?currentPage=${pi.currentPage+1}'">&gt;</button>
+                    </c:if>
+                </div>
             </div>
 
             <script>

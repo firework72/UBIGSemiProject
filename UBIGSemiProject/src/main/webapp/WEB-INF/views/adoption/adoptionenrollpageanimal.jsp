@@ -39,17 +39,18 @@
                     </c:if>
 
                     <label>1. 축종 (Species)</label>
-                    <select name="species" id="species">
+                    <select name="species" id="species" required>
                         <option value="1">강아지</option>
                         <option value="2">고양이</option>
-                        <option value="3">기타</option>
                     </select>
 
                     <label>2. 이름 (Name)</label>
-                    <input type="text" name="animalName" id="animalName" placeholder="예: 뽀삐">
+                    <input type="text" name="animalName" id="animalName" placeholder="예: 뽀삐" required
+                        pattern="^[가-힣a-zA-Z0-9\s]+$" title="특수문자는 사용할 수 없습니다 (한글, 영문, 숫자, 공백 허용)">
 
                     <label>3. 품종 (Breed)</label>
-                    <input type="text" name="breed" id="breed" placeholder="예: 말티즈">
+                    <input type="text" name="breed" id="breed" placeholder="예: 말티즈" required pattern="^[가-힣a-zA-Z\s]+$"
+                        title="특수문자 및 숫자는 사용할 수 없습니다 (한글, 영문, 공백 허용)">
 
                     <label>4. 성별 (Gender)</label>
                     <div class="radio-group">
@@ -60,13 +61,14 @@
                     </div>
 
                     <label>5. 나이 (Age / 살)</label>
-                    <input type="number" name="age" id="age" step="0.1" placeholder="예: 2.5">
+                    <input type="number" name="age" id="age" step="0.1" placeholder="예: 2.5" required min="0" max="50">
 
                     <label>6. 체중 (Weight / kg)</label>
-                    <input type="number" name="weight" id="weight" step="0.1" placeholder="예: 5.2">
+                    <input type="number" name="weight" id="weight" step="0.1" placeholder="예: 5.2" required min="0"
+                        max="100">
 
                     <label>7. 크기 (Size)</label>
-                    <input type="number" name="petSize" id="petSize" step="0.1" placeholder="크기 수치 입력">
+                    <input type="number" name="petSize" id="petSize" step="0.1" placeholder="크기 수치 입력" required min="0">
 
                     <label>8. 중성화 여부 (Neutered)</label>
                     <div class="radio-group">
@@ -76,43 +78,45 @@
                                 id="neuteredN" value="0" checked> 미완료(No)</label>
                     </div>
 
-                    <label>9. 접종 상태 (Vaccination Status)</label>
-                    <input type="text" name="vaccinationStatus" id="vaccinationStatus" placeholder="예: 3차 완료">
+                    <label>9. 접종 상태 (Vaccination Status)_선택</label>
+                    <input type="text" name="vaccinationStatus" id="vaccinationStatus" placeholder="예: 3차 완료"
+                        defaultValue="미접종">
 
-                    <label>10. 특이사항 (Health Notes)</label>
-                    <textarea name="healthNotes" id="healthNotes" rows="3" placeholder="건강 상태 및 특징 작성"></textarea>
+                    <label>10. 특이사항 (Health Notes)_선택</label>
+                    <textarea name="healthNotes" id="healthNotes" rows="3" placeholder="건강 상태 및 특징 작성"
+                        defaultValue="건강 상태 정상"></textarea>
 
-                    <label>11. 입양 상태 (Status)</label>
+                    <label>11. 입양 상태 (Status)_선택</label>
                     <select name="adoptionStatus" id="adoptionStatus">
                         <option value="대기중">대기중</option>
                         <option value="신청중" disabled>신청중</option>
                         <option value="완료" disabled>완료</option>
                     </select>
 
-                    <label>12. 입양 조건 (Conditions)</label>
-                    <textarea name="adoptionConditions" id="adoptionConditions" rows="3"
-                        placeholder="필수 입양 조건 작성"></textarea>
+                    <label>12. 입양 조건 (Conditions)_선택</label>
+                    <textarea name="adoptionConditions" id="adoptionConditions" rows="3" placeholder="필수 입양 조건 작성"
+                        defaultValue="조건 없음"></textarea>
 
                     <label>13. 입양 희망 지역 (Hope Region)</label>
                     <div style="display: flex; gap: 10px; margin-bottom: 10px;">
                         <input type="text" id="postcode" name="postcode" placeholder="우편번호" readonly
-                            style="width: 150px; margin-bottom: 0;">
+                            style="width: 150px; margin-bottom: 0;" required>
                         <button type="button" onclick="execDaumPostcode()" class="btn-secondary"
                             style="padding: 10px;">주소 검색</button>
                     </div>
                     <input type="text" id="roadAddress" name="roadAddress" placeholder="도로명 주소" readonly
-                        style="margin-bottom: 10px;">
-                    <input type="text" id="detailAddress" name="detailAddress" placeholder="상세 주소">
+                        style="margin-bottom: 10px;" required>
                     <input type="hidden" name="hopeRegion" id="hopeRegion">
 
                     <label>14. 공고 마감일 (Deadline)</label>
-                    <input type="date" name="deadlineDate" id="deadlineDate">
+                    <input type="date" name="deadlineDate" id="deadlineDate" required>
 
                     <label>15. 사진 첨부 (Photo)</label>
                     <c:if test="${not empty animal.photoUrl}">
                         <div style="margin-bottom: 5px;">현재 파일: ${animal.photoUrl}</div>
                     </c:if>
-                    <input type="file" name="uploadFile" accept="image/*" style="border: none; padding-left: 0;">
+                    <input type="file" name="uploadFile" accept="image/*" style="border: none; padding-left: 0;" ${empty
+                        animal ? 'required' : '' }>
 
                     <div class="text-center mt-20">
                         <input type="submit" value="${not empty animal ? '동물 정보 수정하기' : '동물 정보 등록하기'}"
@@ -121,7 +125,7 @@
                 </form>
             </div>
 
-            <!--이 부분은 AI에게 문의하여 작성한 주소 api를 가져와서 입력받는 부분입니다.-->
+            <!--작성한 주소 api를 가져와서 입력받는 부분입니다.-->
             <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
             <script>
                 function execDaumPostcode() {
@@ -151,17 +155,12 @@
                     }).open();
                 }
 
-                // 폼 제출 시 주소 합치기
+                // 폼 제출 시 주소 합치기 (상세 주소 로직 제거)
                 document.querySelector('.adoption-form').addEventListener('submit', function (e) {
                     var roadAddr = document.getElementById('roadAddress').value;
-                    var detailAddr = document.getElementById('detailAddress').value;
 
                     if (roadAddr) {
-                        var fullAddr = roadAddr;
-                        if (detailAddr) {
-                            fullAddr += " " + detailAddr;
-                        }
-                        document.getElementById('hopeRegion').value = fullAddr;
+                        document.getElementById('hopeRegion').value = roadAddr;
                     }
                 });
 
@@ -202,7 +201,6 @@
                         document.querySelector("#roadAddress").value = "${animal.hopeRegion}";
                     }
 
-                    // Date formatting might be needed depending on how it's passed, but value assignment works for YYYY-MM-DD
                     if ("${animal.deadlineDate}") document.querySelector("#deadlineDate").value = "${animal.deadlineDate}";
                 });
             </script>

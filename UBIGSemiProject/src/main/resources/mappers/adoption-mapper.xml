@@ -112,7 +112,7 @@
 	</select>
 	
 	<!-- 보드 등록 -->
-	<insert id="insertBoard" parameterType="AdoptionBoard">
+	<insert id="insertBoard" parameterType="AdoptionPostVO">
 		INSERT INTO ADOPTION_POSTS(
 									POST_NO,
 									ANIMAL_NO,
@@ -295,6 +295,13 @@
 		FROM ADOPTION_APPLICATIONS
 		WHERE ANIMAL_NO = #{animalNo}
 		AND USER_ID = #{userId}
+	</select>
+
+	<!-- 관리자용 동물/게시글 전체 목록 갯수 -->
+	<select id="managepostCount" resultType="_int">
+		SELECT COUNT(*)
+		FROM ANIMAL_DETAILS
+		LEFT JOIN ADOPTION_POSTS ON ANIMAL_DETAILS.ANIMAL_NO = ADOPTION_POSTS.ANIMAL_NO
 	</select>
 	
 

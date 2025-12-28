@@ -91,8 +91,12 @@
 				</div>
 
 				<div class="btn-group">
-					<button id="enroll" class="btn-primary">입양 글 등록하기</button>
-					<button id="postManage" class="btn-secondary">입양 글 관리하기(관리자 전용)</button>
+					<c:if test="${not empty loginMember}">
+						<button id="enroll" class="btn-primary">입양 글 등록하기</button>
+					</c:if>
+					<c:if test="${not empty loginMember && loginMember.userRole eq 'ADMIN'}">
+						<button id="postManage" class="btn-secondary">입양 글 관리하기(관리자 전용)</button>
+					</c:if>
 				</div>
 			</div>
 

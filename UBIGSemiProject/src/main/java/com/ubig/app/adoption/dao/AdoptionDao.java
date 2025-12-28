@@ -77,8 +77,8 @@ public class AdoptionDao {
 	}
 
 	// 관리자용 동물/게시글 전체 목록 가져오기
-	public List<AnimalDetailVO> managepost(SqlSessionTemplate sqlSession) {
-		return sqlSession.selectList("adoptionMapper.allList");
+	public List<AnimalDetailVO> managepost(SqlSessionTemplate sqlSession, RowBounds rowBounds) {
+		return sqlSession.selectList("adoptionMapper.allList", null, rowBounds);
 	}
 
 	// userId를 가지고 등록한 동물 목록 가져오기 (페이징)
@@ -136,6 +136,11 @@ public class AdoptionDao {
 	// 신청서 중복 체크 로직
 	public int checkApplication(SqlSessionTemplate sqlSession, Map<String, Object> map) {
 		return sqlSession.selectOne("adoptionMapper.checkApplication", map);
+	}
+
+	// 관리자용 동물/게시글 전체 목록 갯수
+	public int managepostCount(SqlSessionTemplate sqlSession) {
+		return sqlSession.selectOne("adoptionMapper.managepostCount");
 	}
 
 }

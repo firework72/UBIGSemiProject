@@ -29,7 +29,6 @@ import com.ubig.app.vo.adoption.AdoptionPostVO;
 import com.ubig.app.vo.adoption.AnimalDetailVO;
 import com.ubig.app.vo.member.MemberVO;
 import com.ubig.app.member.service.MessageService;
-import com.ubig.app.vo.member.MessageVO;
 
 @Controller
 public class AdoptionController {
@@ -90,9 +89,17 @@ public class AdoptionController {
 	public String insertBoardDirect(int anino, HttpSession session) {
 		MemberVO user = (MemberVO) session.getAttribute("loginMember");
 
+		// 1. 동물 정보를 조회하여 실제 소유자(등록자)의 ID를 가져옴
+		AnimalDetailVO animal = service.goAdoptionDetail(anino);
+
+		if (animal == null) {
+			session.setAttribute("alertMsgAd", "존재하지 않는 동물입니다.");
+			return "redirect:/adoption.postmanage";
+		}
+
 		AdoptionPostVO post = new AdoptionPostVO();
 		post.setAnimalNo(anino);
-		post.setUserId(user.getUserId());
+		post.setUserId(animal.getUserId()); // 관리자가 아닌 동물 등록자의 ID로 설정
 		post.setPostTitle("입양을 기다려요"); // 기본 제목 설정
 		post.setViews(0);
 
@@ -355,10 +362,23 @@ public class AdoptionController {
 
 	// 게시글 관리 페이지로 이동하기
 	@RequestMapping("/adoption.postmanage")
-	public String postManage(Model model) {
-		// 관리용 동물 전체 리스트 조회
-		List<AnimalDetailVO> list = service.managepost();
+	public String postManage(Model model,
+			@RequestParam(value = "currentPage", defaultValue = "1") int currentPage) {
+
+		// 1. 전체 관리 항목 수 조회
+		int listCount = service.managepostCount();
+
+		// 2. 페이징 처리 (pageLimit=5, boardLimit=10)
+		int pageLimit = 5;
+		int boardLimit = 10;
+		AdoptionPageInfoVO pi = AdoptionPagination.getPageInfo(listCount, currentPage, boardLimit, pageLimit);
+
+		// 3. 관리용 동물 전체 리스트 조회 (페이징 적용)
+		List<AnimalDetailVO> list = service.managepost(pi);
+
 		model.addAttribute("list", list);
+		model.addAttribute("pi", pi);
+
 		return "/adoption/adoptionpostmanage";
 	}
 

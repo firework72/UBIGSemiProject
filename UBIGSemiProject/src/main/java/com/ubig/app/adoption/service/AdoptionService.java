@@ -42,7 +42,7 @@ public interface AdoptionService {
 	int checkpost(int anino);
 
 	// 관리자용 동물/게시글 전체 목록 가져오기
-	List<AnimalDetailVO> managepost();
+	List<AnimalDetailVO> managepost(AdoptionPageInfoVO pi);
 
 	// userId를 가지고 등록한 동물 목록 가져오기 (페이징)
 	List<AdoptionMainListVO> selectAnimalList1(String userId, AdoptionPageInfoVO pi);
@@ -76,5 +76,8 @@ public interface AdoptionService {
 
 	// 입양 중복 체크
 	int checkApplication(int animalNo, String userId);
+
+	// 관리자용 동물/게시글 전체 목록 갯수
+	int managepostCount();
 
 }
