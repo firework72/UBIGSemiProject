@@ -116,8 +116,9 @@
                                             글</button>
                                         <!-- Dong : 회원 탈퇴 처리 -->
                                         <form action="${pageContext.request.contextPath}/user/delete.me" method="post">
-                                            <button id="delete" class="list-group-item list-group-item-action text-danger"
-                                            	onclick="return deleteMember();">회원 탈퇴</button>
+                                            <button id="delete"
+                                                class="list-group-item list-group-item-action text-danger"
+                                                onclick="return deleteMember();">회원 탈퇴</button>
                                         </form>
 
                                     </div>
@@ -186,6 +187,9 @@
                                     currPage1 = page1;
                                     currPage2 = page2;
 
+                                    // 검색어 가져오기
+                                    const keyword = document.querySelector("#searchKeyword") ? document.querySelector("#searchKeyword").value : "";
+
                                     const url = '${pageContext.request.contextPath}/adoption.mypage';
 
                                     try {
@@ -194,10 +198,17 @@
                                             headers: {
                                                 "Content-Type": "application/json"
                                             },
-                                            body: JSON.stringify({ page1, page2 })
+                                            body: JSON.stringify({ page1, page2, keyword })
                                         });
                                         //객체로 파싱까지
                                         const ResultMap = await response.json();
+
+                                        // 로그인 만료 체크
+                                        if (ResultMap.error === "not_login") {
+                                            alert(ResultMap.message);
+                                            location.href = '${pageContext.request.contextPath}/user/login.me';
+                                            return;
+                                        }
 
                                         // 1. 내가 등록한 입양 내역 (myAdoptions) 처리
                                         const tbody1 = document.querySelector("#myadoption2 table:nth-of-type(1) tbody");
@@ -210,6 +221,7 @@
                                                 html += "<tr onclick='location.href=\"${pageContext.request.contextPath}/adoption.detailpage?anino=" + item.animalNo + "\"'>";
                                                 html += "<td>" + item.animalNo + "</td>";
                                                 html += "<td><img src='${pageContext.request.contextPath}/resources/download/adoption/" + item.photoUrl + "' style='width:50px; height:50px; object-fit:cover;'></td>";
+                                                html += "<td>" + (item.animalName ? item.animalName : "-") + "</td>";
                                                 // const formattedDate = item.postUpdateDate ? new Date(item.postUpdateDate).toLocaleDateString() : "-";
                                                 // 등록일 (String으로 받아옴)
                                                 const regDate = item.postRegDate ? item.postRegDate : "-";
@@ -260,6 +272,7 @@
                                                 html += "<tr onclick= 'location.href=\"${pageContext.request.contextPath}/adoption.detailpage?anino=" + item.animalNo + "\"' >";
                                                 html += "<td>" + item.adoptionAppId + "</td>";
                                                 html += "<td><img src='${pageContext.request.contextPath}/resources/download/adoption/" + item.photoUrl + "' style='width:50px; height:50px; object-fit:cover;'></td>";
+                                                html += "<td>" + (item.animalName ? item.animalName : "-") + "</td>";
                                                 html += "<td>" + (item.applyDateStr || "-") + "</td>";
                                                 // 상태 코드(int)를 문자열로 변환
                                                 let statusStr = "";
@@ -481,11 +494,21 @@
 
                                     <div class="card-body p-4" style="display: none;" id="myadoption2">
                                         <h4> 입양 등록 내역 </h4>
+
+                                        <!-- 검색 패널 추가 -->
+                                        <div class="input-group mb-3" style="max-width: 300px;">
+                                            <input type="text" id="searchKeyword" class="form-control"
+                                                placeholder="동물 이름 검색">
+                                            <button class="btn btn-outline-secondary" type="button"
+                                                onclick="getAdoptionData(1, currPage2)">검색</button>
+                                        </div>
+
                                         <table class="table table-bordered text-center">
                                             <thead class="table-light">
                                                 <tr>
                                                     <th>등록번호</th>
                                                     <th>사진</th>
+                                                    <th>동물 이름</th>
                                                     <th>등록일</th>
                                                     <th>상태</th>
                                                     <th>설정</th>
@@ -503,6 +526,7 @@
                                                 <tr>
                                                     <th>신청번호</th>
                                                     <th>사진</th>
+                                                    <th>동물 이름</th>
                                                     <th>신청일</th>
                                                     <th>신청 상태</th>
                                                     <th>설정</th>
@@ -696,7 +720,7 @@
 
                         // 4. 회원 탈퇴 함수
                         function deleteMember() {
-                        	return confirm("정말로 탈퇴하시겠습니까? 탈퇴 시 복구할 수 없습니다.");
+                            return confirm("정말로 탈퇴하시겠습니까? 탈퇴 시 복구할 수 없습니다.");
                         }
                     </script>
             </body>

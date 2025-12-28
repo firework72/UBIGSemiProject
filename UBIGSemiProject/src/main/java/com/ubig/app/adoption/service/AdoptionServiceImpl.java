@@ -12,9 +12,13 @@ import org.springframework.stereotype.Service;
 import com.ubig.app.adoption.dao.AdoptionDao;
 import com.ubig.app.vo.adoption.AdoptionApplicationVO;
 import com.ubig.app.vo.adoption.AdoptionMainListVO;
+
+import org.springframework.transaction.annotation.Transactional;
 import com.ubig.app.vo.adoption.AdoptionPageInfoVO;
 import com.ubig.app.vo.adoption.AdoptionPostVO;
 import com.ubig.app.vo.adoption.AnimalDetailVO;
+
+import com.ubig.app.vo.adoption.AdoptionSearchFilterVO;
 
 @Service
 public class AdoptionServiceImpl implements AdoptionService {
@@ -36,22 +40,22 @@ public class AdoptionServiceImpl implements AdoptionService {
 		return dao.updateAnimal(sqlSession, animal);
 	}
 
-	// 게시글 전체 갯수 가져오기
+	// 게시글 전체 갯수 가져오기 (필터 적용)
 	@Override
-	public int listCount() {
-		return dao.listCount(sqlSession);
+	public int listCount(AdoptionSearchFilterVO filter) {
+		return dao.listCount(sqlSession, filter);
 	}
 
-	// PageInfo를 가지고 메인 페이지 게시글 목록 가져오기
+	// PageInfo를 가지고 메인 페이지 게시글 목록 가져오기 (필터 적용)
 	@Override
-	public List<AdoptionMainListVO> selectAdoptionMainList(AdoptionPageInfoVO pi) {
+	public List<AdoptionMainListVO> selectAdoptionMainList(AdoptionPageInfoVO pi, AdoptionSearchFilterVO filter) {
 
 		int limit = pi.getBoardLimit();
 		int offset = (pi.getCurrentPage() - 1) * limit;
 
 		RowBounds rowBounds = new RowBounds(offset, limit);
 
-		return dao.selectAdoptionMainList(sqlSession, pi, rowBounds);
+		return dao.selectAdoptionMainList(sqlSession, pi, filter, rowBounds);
 	}
 
 	// AdoptionPostVO를 가지고 게시글 등록하기
@@ -91,6 +95,20 @@ public class AdoptionServiceImpl implements AdoptionService {
 		return dao.deleteAnimal(sqlSession, anino);
 	}
 
+	// anino를 가지고 동물 정보 및 관련 데이터(게시글, 신청내역) 일괄 삭제하기 (트랜잭션 적용)
+	@Override
+	@Transactional
+	public int deleteAnimalFull(int anino) {
+		// 1. 신청내역 삭제
+		dao.deleteApplicationsByAnimalNo(sqlSession, anino);
+
+		// 2. 게시글 삭제
+		dao.deletePost(sqlSession, anino);
+
+		// 3. 동물 정보 삭제 (이 결과가 최종 성공 여부)
+		return dao.deleteAnimal(sqlSession, anino);
+	}
+
 	// anino를 가지고 게시글 존재 여부(갯수) 가져오기
 	@Override
 	public int checkpost(int anino) {
@@ -99,26 +117,26 @@ public class AdoptionServiceImpl implements AdoptionService {
 
 	// 관리자용 동물/게시글 전체 목록 가져오기 (페이징)
 	@Override
-	public List<AnimalDetailVO> managepost(AdoptionPageInfoVO pi) {
+	public List<AnimalDetailVO> managepost(AdoptionPageInfoVO pi, Map<String, Object> map) {
 		int limit = pi.getBoardLimit();
 		int offset = (pi.getCurrentPage() - 1) * limit;
 		RowBounds rowBounds = new RowBounds(offset, limit);
-		return dao.managepost(sqlSession, rowBounds);
+		return dao.managepost(sqlSession, rowBounds, map);
 	}
 
-	// userId를 가지고 등록한 동물 목록 가져오기 (페이징)
+	// userId를 가지고 등록한 동물 목록 가져오기 (페이징, 검색)
 	@Override
-	public List<AdoptionMainListVO> selectAnimalList1(String userId, AdoptionPageInfoVO pi) {
+	public List<AdoptionMainListVO> selectAnimalList1(String userId, AdoptionPageInfoVO pi, String keyword) {
 		int limit = pi.getBoardLimit();
 		int offset = (pi.getCurrentPage() - 1) * limit;
 		RowBounds rowBounds = new RowBounds(offset, limit);
-		return dao.selectAnimalList1(sqlSession, userId, rowBounds);
+		return dao.selectAnimalList1(sqlSession, userId, rowBounds, keyword);
 	}
 
-	// userId를 가지고 등록한 동물 수 세기
+	// userId를 가지고 등록한 동물 수 세기 (검색)
 	@Override
-	public int myList1Count(String userId) {
-		return dao.myList1Count(sqlSession, userId);
+	public int myList1Count(String userId, String keyword) {
+		return dao.myList1Count(sqlSession, userId, keyword);
 	}
 
 	// userId를 가지고 신청한 입양 목록 가져오기 (페이징)
@@ -183,7 +201,7 @@ public class AdoptionServiceImpl implements AdoptionService {
 
 	// 관리자용 동물/게시글 전체 목록 갯수
 	@Override
-	public int managepostCount() {
-		return dao.managepostCount(sqlSession);
+	public int managepostCount(Map<String, Object> map) {
+		return dao.managepostCount(sqlSession, map);
 	}
 }

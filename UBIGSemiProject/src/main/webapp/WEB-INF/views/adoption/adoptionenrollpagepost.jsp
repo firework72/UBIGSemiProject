@@ -27,11 +27,12 @@
 				<form action="adoption.insert.board" method="POST" class="adoption-form">
 					<h3>[게시글 등록]</h3>
 
-					<label>게시물 제목</label>
-					<input type="text" name="postTitle" placeholder="제목을 입력하세요">
+					<label>게시물 제목 (자동 입력)</label>
+					<input type="hidden" name="postTitle" value="더미">
+					<input type="text" value="더미" disabled>
 
-					<label>관리자 아이디</label>
-					<input type="text" name="userId" placeholder="ID 입력">
+					<label>작성자 아이디 (동물 원래 주인)</label>
+					<input type="text" name="userId" value="${ownerId}" readonly>
 
 					<label>동물 고유 번호</label>
 					<input type="number" name="animalNo" placeholder="숫자만 입력" value="${anino}" ${not empty anino

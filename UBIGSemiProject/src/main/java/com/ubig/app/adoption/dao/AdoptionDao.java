@@ -14,6 +14,8 @@ import com.ubig.app.vo.adoption.AdoptionPageInfoVO;
 import com.ubig.app.vo.adoption.AdoptionPostVO;
 import com.ubig.app.vo.adoption.AnimalDetailVO;
 
+import com.ubig.app.vo.adoption.AdoptionSearchFilterVO;
+
 @Repository
 public class AdoptionDao {
 
@@ -27,15 +29,15 @@ public class AdoptionDao {
 		return sqlSession.update("adoptionMapper.updateAnimal", animal);
 	}
 
-	// 게시글 전체 갯수 가져오기
-	public int listCount(SqlSessionTemplate sqlSession) {
-		return sqlSession.selectOne("adoptionMapper.listCount");
+	// 게시글 전체 갯수 가져오기 (필터 적용)
+	public int listCount(SqlSessionTemplate sqlSession, AdoptionSearchFilterVO filter) {
+		return sqlSession.selectOne("adoptionMapper.listCount", filter);
 	}
 
-	// PageInfo를 가지고 메인 페이지 게시글 목록 가져오기
+	// PageInfo를 가지고 메인 페이지 게시글 목록 가져오기 (필터 적용)
 	public List<AdoptionMainListVO> selectAdoptionMainList(SqlSessionTemplate sqlSession,
-			AdoptionPageInfoVO pi, RowBounds rowBounds) {
-		return sqlSession.selectList("adoptionMapper.selectAdoptionMainList", null, rowBounds);
+			AdoptionPageInfoVO pi, AdoptionSearchFilterVO filter, RowBounds rowBounds) {
+		return sqlSession.selectList("adoptionMapper.selectAdoptionMainList", filter, rowBounds);
 	}
 
 	// AdoptionPostVO를 가지고 게시글 등록하기
@@ -77,19 +79,26 @@ public class AdoptionDao {
 	}
 
 	// 관리자용 동물/게시글 전체 목록 가져오기
-	public List<AnimalDetailVO> managepost(SqlSessionTemplate sqlSession, RowBounds rowBounds) {
-		return sqlSession.selectList("adoptionMapper.allList", null, rowBounds);
+	public List<AnimalDetailVO> managepost(SqlSessionTemplate sqlSession, RowBounds rowBounds,
+			Map<String, Object> map) {
+		return sqlSession.selectList("adoptionMapper.allList", map, rowBounds);
 	}
 
-	// userId를 가지고 등록한 동물 목록 가져오기 (페이징)
+	// userId를 가지고 등록한 동물 목록 가져오기 (페이징, 검색)
 	public List<AdoptionMainListVO> selectAnimalList1(SqlSessionTemplate sqlSession, String userId,
-			RowBounds rowBounds) {
-		return sqlSession.selectList("adoptionMapper.selectAnimalList1", userId, rowBounds);
+			RowBounds rowBounds, String keyword) {
+		Map<String, Object> map = new HashMap<>();
+		map.put("userId", userId);
+		map.put("keyword", keyword);
+		return sqlSession.selectList("adoptionMapper.selectAnimalList1", map, rowBounds);
 	}
 
-	// userId를 가지고 등록한 동물 수 세기
-	public int myList1Count(SqlSessionTemplate sqlSession, String userId) {
-		return sqlSession.selectOne("adoptionMapper.selectAnimalList1Count", userId);
+	// userId를 가지고 등록한 동물 수 세기 (검색)
+	public int myList1Count(SqlSessionTemplate sqlSession, String userId, String keyword) {
+		Map<String, Object> map = new HashMap<>();
+		map.put("userId", userId);
+		map.put("keyword", keyword);
+		return sqlSession.selectOne("adoptionMapper.selectAnimalList1Count", map);
 	}
 
 	// userId를 가지고 신청한 입양 목록 가져오기 (페이징)
@@ -139,8 +148,8 @@ public class AdoptionDao {
 	}
 
 	// 관리자용 동물/게시글 전체 목록 갯수
-	public int managepostCount(SqlSessionTemplate sqlSession) {
-		return sqlSession.selectOne("adoptionMapper.managepostCount");
+	public int managepostCount(SqlSessionTemplate sqlSession, Map<String, Object> map) {
+		return sqlSession.selectOne("adoptionMapper.managepostCount", map);
 	}
 
 }

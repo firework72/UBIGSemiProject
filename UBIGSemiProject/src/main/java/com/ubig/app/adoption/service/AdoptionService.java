@@ -8,6 +8,7 @@ import com.ubig.app.vo.adoption.AdoptionMainListVO;
 import com.ubig.app.vo.adoption.AdoptionPageInfoVO;
 import com.ubig.app.vo.adoption.AdoptionPostVO;
 import com.ubig.app.vo.adoption.AnimalDetailVO;
+import com.ubig.app.vo.adoption.AdoptionSearchFilterVO;
 
 public interface AdoptionService {
 
@@ -17,11 +18,11 @@ public interface AdoptionService {
 	// AnimalDetailVO를 가지고 동물 정보 수정하기
 	int updateAnimal(AnimalDetailVO animal);
 
-	// 게시글 전체 갯수 가져오기
-	int listCount();
+	// 게시글 전체 갯수 가져오기 (필터 적용)
+	int listCount(AdoptionSearchFilterVO filter);
 
-	// PageInfo를 가지고 메인 페이지 게시글 목록 가져오기
-	List<AdoptionMainListVO> selectAdoptionMainList(AdoptionPageInfoVO pi);
+	// PageInfo를 가지고 메인 페이지 게시글 목록 가져오기 (필터 적용)
+	List<AdoptionMainListVO> selectAdoptionMainList(AdoptionPageInfoVO pi, AdoptionSearchFilterVO filter);
 
 	// AdoptionPostVO를 가지고 게시글 등록하기
 	int insertBoard(AdoptionPostVO post);
@@ -38,17 +39,20 @@ public interface AdoptionService {
 	// anino를 가지고 동물 정보 삭제하기
 	int deleteAnimal(int anino);
 
+	// anino를 가지고 동물 정보 및 관련 데이터(게시글, 신청내역) 일괄 삭제하기 (트랜잭션 적용)
+	int deleteAnimalFull(int anino);
+
 	// anino를 가지고 게시글 존재 여부(갯수) 가져오기
 	int checkpost(int anino);
 
 	// 관리자용 동물/게시글 전체 목록 가져오기
-	List<AnimalDetailVO> managepost(AdoptionPageInfoVO pi);
+	List<AnimalDetailVO> managepost(AdoptionPageInfoVO pi, Map<String, Object> map);
 
-	// userId를 가지고 등록한 동물 목록 가져오기 (페이징)
-	List<AdoptionMainListVO> selectAnimalList1(String userId, AdoptionPageInfoVO pi);
+	// userId를 가지고 등록한 동물 목록 가져오기 (페이징, 검색)
+	List<AdoptionMainListVO> selectAnimalList1(String userId, AdoptionPageInfoVO pi, String keyword);
 
-	// userId를 가지고 등록한 동물 수 세기
-	int myList1Count(String userId);
+	// userId를 가지고 등록한 동물 수 세기 (검색)
+	int myList1Count(String userId, String keyword);
 
 	// userId를 가지고 신청한 입양 목록 가져오기
 	List<AdoptionApplicationVO> selectAnimalList2(String userId, AdoptionPageInfoVO pi);
@@ -78,6 +82,6 @@ public interface AdoptionService {
 	int checkApplication(int animalNo, String userId);
 
 	// 관리자용 동물/게시글 전체 목록 갯수
-	int managepostCount();
+	int managepostCount(Map<String, Object> map);
 
 }
