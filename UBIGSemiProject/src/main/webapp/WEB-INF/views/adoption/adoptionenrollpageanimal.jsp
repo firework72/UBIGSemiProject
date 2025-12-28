@@ -67,7 +67,7 @@
                     <input type="number" name="weight" id="weight" step="0.1" placeholder="예: 5.2" required min="0"
                         max="100">
 
-                    <label>7. 크기 (Size)</label>
+                    <label>7. 크기 (Size / cm)</label>
                     <input type="number" name="petSize" id="petSize" step="0.1" placeholder="크기 수치 입력" required min="0">
 
                     <label>8. 중성화 여부 (Neutered)</label>
@@ -80,11 +80,11 @@
 
                     <label>9. 접종 상태 (Vaccination Status)_선택</label>
                     <input type="text" name="vaccinationStatus" id="vaccinationStatus" placeholder="예: 3차 완료"
-                        defaultValue="미접종">
+                        value="미접종">
 
                     <label>10. 특이사항 (Health Notes)_선택</label>
-                    <textarea name="healthNotes" id="healthNotes" rows="3" placeholder="건강 상태 및 특징 작성"
-                        defaultValue="건강 상태 정상"></textarea>
+                    <textarea name="healthNotes" id="healthNotes" rows="3"
+                        placeholder="건강 상태 및 특징 작성">건강 상태 정상</textarea>
 
                     <label>11. 입양 상태 (Status)_선택</label>
                     <select name="adoptionStatus" id="adoptionStatus">
@@ -94,8 +94,8 @@
                     </select>
 
                     <label>12. 입양 조건 (Conditions)_선택</label>
-                    <textarea name="adoptionConditions" id="adoptionConditions" rows="3" placeholder="필수 입양 조건 작성"
-                        defaultValue="조건 없음"></textarea>
+                    <textarea name="adoptionConditions" id="adoptionConditions" rows="3"
+                        placeholder="필수 입양 조건 작성">조건 없음</textarea>
 
                     <label>13. 입양 희망 지역 (Hope Region)</label>
                     <div style="display: flex; gap: 10px; margin-bottom: 10px;">
