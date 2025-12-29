@@ -102,25 +102,60 @@ h2 {
 
 <h2>펀딩 목록</h2>
 
-<h2>펀딩 목록</h2>
+<!-- 검색 영역 -->
+<div style="display: flex; justify-content: space-between; align-items: center; margin: 20px 0;">
 
-<!-- 펀딩 추가 버튼 -->
-<div style="text-align: right; margin-bottom: 20px;">
+    <!-- 검색 폼 -->
+    <form action="${pageContext.request.contextPath}/funding/searchKeyword" method="get"
+          style="display: flex; gap: 10px;">
+
+        <input type="text"
+               name="searchKeyword"
+               value="${param.keyword}"
+               placeholder="작성자 또는 제목 검색"
+               style="
+                   padding: 10px 15px;
+                   border-radius: 30px;
+                   border: 1px solid #ccc;
+                   width: 280px;
+               ">
+
+        <button type="submit"
+                style="
+                    padding: 10px 20px;
+                    border-radius: 30px;
+                    border: none;
+                    background: #FFC107;
+                    color: white;
+                    font-weight: bold;
+                    cursor: pointer;
+                "
+                onmouseover="this.style.background='#FFA000';"
+                onmouseout="this.style.background='#FFC107';">
+            검색
+        </button>
+    </form>
+
+    <!-- 펀딩 추가 버튼 -->
     <form action="${pageContext.request.contextPath}/funding/insertPage" method="get">
-        <button type="submit" style="
-            padding: 12px 25px;
-            border-radius: 30px;
-            border: none;
-            background: #FFC107;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.2s;
-        " onmouseover="this.style.background='#FFA000';" onmouseout="this.style.background='#FFC107';">
+        <button type="submit"
+                style="
+                    padding: 12px 25px;
+                    border-radius: 30px;
+                    border: none;
+                    background: #FFC107;
+                    color: white;
+                    font-weight: bold;
+                    cursor: pointer;
+                "
+                onmouseover="this.style.background='#FFA000';"
+                onmouseout="this.style.background='#FFC107';">
             펀딩 추가
         </button>
     </form>
+
 </div>
+
 
 
 <div class="container">
