@@ -191,7 +191,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">내용</label>
-                        <textarea class="form-control" name="messageContent" id="inputMessageContent" rows="5" placeholder="내용을 입력하세요 (최대 200자)" maxlength="200" required></textarea>
+                        <textarea class="form-control" name="messageContent" id="inputMessageContent" rows="5" placeholder="내용을 입력하세요 (최대 60자)" maxlength="60" required></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
