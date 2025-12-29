@@ -26,10 +26,10 @@ import com.ubig.app.vo.adoption.AdoptionApplicationVO;
 import com.ubig.app.vo.adoption.AdoptionMainListVO;
 import com.ubig.app.vo.adoption.AdoptionPageInfoVO;
 import com.ubig.app.vo.adoption.AdoptionPostVO;
+import com.ubig.app.vo.adoption.AdoptionSearchFilterVO;
 import com.ubig.app.vo.adoption.AnimalDetailVO;
 import com.ubig.app.vo.member.MemberVO;
 import com.ubig.app.member.service.MessageService;
-import com.ubig.app.vo.member.MessageVO;
 
 @Controller
 public class AdoptionController {
@@ -82,7 +82,7 @@ public class AdoptionController {
 		} else {
 			session.setAttribute("alertMsgAd", "등록 실패");
 		}
-		return "redirect:/adoption.mainpage";
+		return "redirect:/adoption.postmanage";
 	}
 
 	// anino를 가지고 게시글 즉시 등록하기 (제목 없음, 기본값 설정)
@@ -90,19 +90,42 @@ public class AdoptionController {
 	public String insertBoardDirect(int anino, HttpSession session) {
 		MemberVO user = (MemberVO) session.getAttribute("loginMember");
 
-		AdoptionPostVO post = new AdoptionPostVO();
-		post.setAnimalNo(anino);
-		post.setUserId(user.getUserId());
-		post.setPostTitle("입양을 기다려요"); // 기본 제목 설정
-		post.setViews(0);
+		try {
+			// 1. 동물 정보를 조회하여 실제 소유자(등록자)의 ID를 가져옴
+			AnimalDetailVO animal = service.goAdoptionDetail(anino);
+			System.out.println("[AdoptionController] insertBoardDirect 요청 - 동물: " + anino);
 
-		int result = service.insertBoard(post);
+			if (animal == null) {
+				session.setAttribute("alertMsgAd", "존재하지 않는 동물입니다.");
+				return "redirect:/adoption.postmanage";
+			}
 
-		if (result > 0) {
-			session.setAttribute("alertMsgAd", "게시글이 등록되었습니다.");
-		} else {
-			session.setAttribute("alertMsgAd", "게시글 등록 실패");
+			// 2. 이미 게시글이 등록되어 있는지 중복 체크
+			int check = service.checkpost(anino);
+			if (check > 0) {
+				session.setAttribute("alertMsgAd", "이미 게시글이 등록된 동물입니다.");
+				return "redirect:/adoption.postmanage";
+			}
+
+			// 3. 게시글 등록 진행
+			AdoptionPostVO post = new AdoptionPostVO();
+			post.setAnimalNo(anino);
+			post.setUserId(animal.getUserId()); // 관리자가 아닌 동물 등록자의 ID로 설정
+			post.setPostTitle("입양을 기다려요"); // 기본 제목 설정
+			post.setViews(0);
+
+			int result = service.insertBoard(post);
+
+			if (result > 0) {
+				session.setAttribute("alertMsgAd", "게시글이 등록되었습니다.");
+			} else {
+				session.setAttribute("alertMsgAd", "게시글 등록 실패");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			session.setAttribute("alertMsgAd", "서버 오류로 인해 실패했습니다.");
 		}
+
 		return "redirect:/adoption.postmanage";
 	}
 
@@ -115,6 +138,13 @@ public class AdoptionController {
 
 		// 0.같은 동물에 대한 신청이 있는지 확인
 		int check = service.checkApplication(application.getAnimalNo(), application.getUserId());
+
+		// 0.내가 등록한 동물을 입양 신청하고 있지 않는지 확인
+		AnimalDetailVO animal = service.goAdoptionDetail(application.getAnimalNo());
+		if (animal != null && animal.getUserId().equals(user.getUserId())) {
+			session.setAttribute("alertMsgAd", "본인이 등록한 동물에는 입양 신청을 할 수 없습니다.");
+			return "redirect:/adoption.detailpage?anino=" + application.getAnimalNo();
+		}
 
 		if (check > 0) {
 			session.setAttribute("alertMsgAd", "이미 입양 신청을 하셨습니다.");
@@ -195,11 +225,15 @@ public class AdoptionController {
 		}
 	}
 
-	// page를 가지고 메인 페이지 목록 조회하기
+	// page를 가지고 메인 페이지 목록 조회하기 (필터 적용)
 	@RequestMapping("/adoption.mainpage")
-	public String AdoptionList(@RequestParam(value = "page", defaultValue = "1") int currentPage, Model model) {
-		// 전체 게시글 수 조회
-		int listCount = service.listCount();
+	public String AdoptionList(@RequestParam(value = "page", defaultValue = "1") int currentPage,
+			AdoptionSearchFilterVO filter, Model model) {
+
+		System.out.println("Search Filter: " + filter);
+
+		// 전체 게시글 수 조회 (필터 적용)
+		int listCount = service.listCount(filter);
 
 		int boardLimit = 9; // 한 페이지당 게시글 수
 		int pageLimit = 5; // 페이지 번호 표시 수
@@ -207,11 +241,12 @@ public class AdoptionController {
 		// 페이징 정보 생성
 		AdoptionPageInfoVO pi = AdoptionPagination.getPageInfo(listCount, currentPage, boardLimit, pageLimit);
 
-		// 페이징된 목록 조회
-		List<AdoptionMainListVO> adoptionList = service.selectAdoptionMainList(pi);
+		// 페이징된 목록 조회 (필터 적용)
+		List<AdoptionMainListVO> adoptionList = service.selectAdoptionMainList(pi, filter);
 
 		model.addAttribute("pi", pi);
 		model.addAttribute("adoptionList", adoptionList);
+		model.addAttribute("filter", filter); // 필터 상태 유지
 
 		return "/adoption/adoptionmainpage";
 	}
@@ -274,11 +309,9 @@ public class AdoptionController {
 		String userRole = user.getUserRole();
 		String userId = user.getUserId();
 
-		// 관리자: 강제 삭제 (신청내역, 게시글 포함)
+		// 관리자: 강제 삭제 (트랜잭션 적용)
 		if ("ADMIN".equals(userRole)) {
-			service.deleteApplicationsByAnimalNo(anino); // 신청내역 삭제
-			service.deletePost(anino); // 게시글 삭제
-			int result = service.deleteAnimal(anino); // 동물 정보 삭제
+			int result = service.deleteAnimalFull(anino);
 
 			if (result > 0) {
 				session.setAttribute("alertMsgAd", "관리자 권한으로 동물(및 관련 데이터) 삭제 성공");
@@ -286,21 +319,17 @@ public class AdoptionController {
 				session.setAttribute("alertMsgAd", "동물 삭제 실패");
 			}
 		}
-		// 일반 유저: 본인 확인 및 게시글 존재 여부 체크
-		else if ("USER".equals(userRole)) {
+		// 일반 유저: 본인 확인 (트랜잭션 적용)
+		else if ("MEMBER".equals(userRole)) {
 			AnimalDetailVO animal = service.goAdoptionDetail(anino);
 
 			if (animal != null && userId.equals(animal.getUserId())) {
-				int postCount = service.checkpost(anino); // 게시글 존재 여부 확인
-				if (postCount > 0) {
-					session.setAttribute("alertMsgAd", "게시글이 등록된 동물은 삭제할 수 없습니다. 관리자에게 문의하세요.");
+				int result = service.deleteAnimalFull(anino);
+
+				if (result > 0) {
+					session.setAttribute("alertMsgAd", "동물 삭제 성공");
 				} else {
-					int result = service.deleteAnimal(anino);
-					if (result > 0) {
-						session.setAttribute("alertMsgAd", "동물 삭제 성공");
-					} else {
-						session.setAttribute("alertMsgAd", "동물 삭제 실패");
-					}
+					session.setAttribute("alertMsgAd", "동물 삭제 실패");
 				}
 			} else {
 				session.setAttribute("alertMsgAd", "본인이 등록한 동물만 삭제할 수 있습니다.");
@@ -348,10 +377,35 @@ public class AdoptionController {
 
 	// 게시글 관리 페이지로 이동하기
 	@RequestMapping("/adoption.postmanage")
-	public String postManage(Model model) {
-		// 관리용 동물 전체 리스트 조회
-		List<AnimalDetailVO> list = service.managepost();
+	public String postManage(Model model,
+			@RequestParam(value = "currentPage", defaultValue = "1") int currentPage,
+			@RequestParam(value = "animalNo", required = false) String animalNo,
+			@RequestParam(value = "onlyPending", required = false) String onlyPending) {
+
+		Map<String, Object> map = new HashMap<>();
+		if (animalNo != null && !animalNo.isEmpty()) {
+			map.put("animalNo", animalNo);
+		}
+		if ("true".equals(onlyPending)) {
+			map.put("onlyPending", "true");
+		}
+
+		// 1. 전체 관리 항목 수 조회
+		int listCount = service.managepostCount(map);
+
+		// 2. 페이징 처리 (pageLimit=5, boardLimit=10)
+		int pageLimit = 5;
+		int boardLimit = 10;
+		AdoptionPageInfoVO pi = AdoptionPagination.getPageInfo(listCount, currentPage, boardLimit, pageLimit);
+
+		// 3. 관리용 동물 전체 리스트 조회 (페이징 적용)
+		List<AnimalDetailVO> list = service.managepost(pi, map);
+
 		model.addAttribute("list", list);
+		model.addAttribute("pi", pi);
+		model.addAttribute("animalNo", animalNo);
+		model.addAttribute("onlyPending", onlyPending);
+
 		return "/adoption/adoptionpostmanage";
 	}
 
@@ -364,22 +418,33 @@ public class AdoptionController {
 		int page1 = 1;
 		int page2 = 1;
 
+		String keyword = "";
 		if (body != null) {
 			if (body.get("page1") != null)
 				page1 = Integer.parseInt(body.get("page1"));
 			if (body.get("page2") != null)
 				page2 = Integer.parseInt(body.get("page2"));
+			if (body.get("keyword") != null) // keyword 추가
+				keyword = body.get("keyword");
 		}
 
 		MemberVO user = (MemberVO) session.getAttribute("loginMember");
 
+		// 세션 만료 시 처리
+		if (user == null) {
+			Map<String, Object> errorMap = new HashMap<>();
+			errorMap.put("error", "not_login");
+			errorMap.put("message", "로그인이 필요한 서비스입니다.");
+			return new Gson().toJson(errorMap);
+		}
+
 		int boardLimit = 5; // 한 페이지당 게시글 수
 		int pageLimit = 5; // 페이지 번호 표시 수
 
-		// 1. 유저가 등록한 동물 내역 (페이징 1)
-		int listCount1 = service.myList1Count(user.getUserId());
+		// 1. 유저가 등록한 동물 내역 (페이징 1) + 검색어 전달
+		int listCount1 = service.myList1Count(user.getUserId(), keyword);
 		AdoptionPageInfoVO pi1 = AdoptionPagination.getPageInfo(listCount1, page1, boardLimit, pageLimit);
-		List<AdoptionMainListVO> list1 = service.selectAnimalList1(user.getUserId(), pi1);
+		List<AdoptionMainListVO> list1 = service.selectAnimalList1(user.getUserId(), pi1, keyword);
 
 		// 2. 유저가 신청한 입양 내역 (페이징 2)
 		int listCount2 = service.myList2Count(user.getUserId());

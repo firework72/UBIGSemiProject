@@ -75,14 +75,33 @@
     	WHERE ANIMAL_NO = #{animalNo}
     </update>
     
-    <!-- 리스트 갯수 세오기 (게시글 기준) -->
-    <select id="listCount" resultType="_int">
+    <!-- 리스트 갯수 세기 (게시글 기준, 검색 필터 적용) -->
+    <select id="listCount" resultType="_int" parameterType="com.ubig.app.vo.adoption.AdoptionSearchFilterVO">
     	SELECT count(*)
-    	FROM ADOPTION_POSTS
+    	FROM ADOPTION_POSTS P
+    	JOIN ANIMAL_DETAILS A ON P.ANIMAL_NO = A.ANIMAL_NO
+    	<where>
+    		<if test="species != null">
+    			AND A.SPECIES = #{species}
+    		</if>
+    		<if test="gender != null">
+    			AND A.GENDER = #{gender}
+    		</if>
+    		<if test="neutered != null">
+    			AND A.NEUTERED = #{neutered}
+    		</if>
+    		<if test="ageMin != null">AND A.AGE &gt;= #{ageMin}</if>
+    		<if test="ageMax != null">AND A.AGE &lt;= #{ageMax}</if>
+    		<if test="weightMin != null">AND A.WEIGHT &gt;= #{weightMin}</if>
+    		<if test="weightMax != null">AND A.WEIGHT &lt;= #{weightMax}</if>
+    		<if test="breed != null and breed != ''">AND A.BREED LIKE '%' || #{breed} || '%'</if>
+    		<if test="hopeRegion != null and hopeRegion != ''">AND A.HOPE_REGION LIKE '%' || #{hopeRegion} || '%'</if>
+    		<if test="keyword != null and keyword != ''">AND A.ANIMAL_NAME LIKE '%' || #{keyword} || '%'</if>
+    	</where>
     </select>
     
-    <!-- 페이징 처리용 게시글 (JOIN) -->
-    <select id="selectAdoptionMainList" resultType="com.ubig.app.vo.adoption.AdoptionMainListVO">
+    <!-- 페이징 처리용 게시글 (JOIN, 검색 필터 적용) -->
+    <select id="selectAdoptionMainList" resultType="com.ubig.app.vo.adoption.AdoptionMainListVO" parameterType="com.ubig.app.vo.adoption.AdoptionSearchFilterVO">
         SELECT 
             P.POST_NO,
             P.POST_TITLE,
@@ -98,7 +117,32 @@
             A.HOPE_REGION
         FROM ADOPTION_POSTS P
         JOIN ANIMAL_DETAILS A ON P.ANIMAL_NO = A.ANIMAL_NO
-        ORDER BY P.POST_REG_DATE DESC
+    	<where>
+    		<if test="species != null">
+    			AND A.SPECIES = #{species}
+    		</if>
+    		<if test="gender != null">
+    			AND A.GENDER = #{gender}
+    		</if>
+    		<if test="neutered != null">
+    			AND A.NEUTERED = #{neutered}
+    		</if>
+    		<if test="ageMin != null">AND A.AGE &gt;= #{ageMin}</if>
+    		<if test="ageMax != null">AND A.AGE &lt;= #{ageMax}</if>
+    		<if test="weightMin != null">AND A.WEIGHT &gt;= #{weightMin}</if>
+    		<if test="weightMax != null">AND A.WEIGHT &lt;= #{weightMax}</if>
+    		<if test="breed != null and breed != ''">AND A.BREED LIKE '%' || #{breed} || '%'</if>
+    		<if test="hopeRegion != null and hopeRegion != ''">AND A.HOPE_REGION LIKE '%' || #{hopeRegion} || '%'</if>
+    		<if test="keyword != null and keyword != ''">AND A.ANIMAL_NAME LIKE '%' || #{keyword} || '%'</if>
+    	</where>
+        ORDER BY 
+			CASE
+				WHEN A.ADOPTION_STATUS = '대기중' THEN 1
+				WHEN A.ADOPTION_STATUS = '신청중' THEN 2
+				WHEN A.ADOPTION_STATUS = '입양완료' THEN 3
+				ELSE 4
+			END ASC,
+			P.POST_REG_DATE DESC
     </select>
     
     <!-- 페이징 처리용 동물 -->
@@ -112,7 +156,7 @@
 	</select>
 	
 	<!-- 보드 등록 -->
-	<insert id="insertBoard" parameterType="AdoptionBoard">
+	<insert id="insertBoard" parameterType="AdoptionPostVO">
 		INSERT INTO ADOPTION_POSTS(
 									POST_NO,
 									ANIMAL_NO,
@@ -180,7 +224,7 @@
 	</update>
 	
 	<!-- 동물 삭제 -->
-	<delete id= "deleteanimal" parameterType="int">
+	<delete id="deleteanimal" parameterType="int">
 		DELETE
 		FROM ANIMAL_DETAILS
 		WHERE ANIMAL_NO = #{anino}
@@ -193,13 +237,7 @@
 		WHERE ANIMAL_NO = #{anino}
 	</select>
 	
-	<!-- 모든 동물 리스트 가져오기 (Post유무 확인 위해 Join) -->
-	<select id="allList" resultType="AnimalDetail">
-        SELECT A.*, P.POST_NO
-        FROM ANIMAL_DETAILS A
-        LEFT JOIN ADOPTION_POSTS P ON A.ANIMAL_NO = P.ANIMAL_NO
-        ORDER BY A.ANIMAL_NO DESC
-	</select>
+
 	
 	<!-- 유저가 등록한 입양 정보 가지고오기 -->
 	<select id="selectAnimalList1" resultType="com.ubig.app.vo.adoption.AdoptionMainListVO">
@@ -216,7 +254,17 @@
         FROM ANIMAL_DETAILS A
         LEFT JOIN ADOPTION_POSTS P ON A.ANIMAL_NO = P.ANIMAL_NO
 		WHERE A.USER_ID = #{userId}
-		ORDER BY A.ANIMAL_NO DESC
+		<if test="keyword != null and keyword != ''">
+			AND A.ANIMAL_NAME LIKE '%' || #{keyword} || '%'
+		</if>
+		ORDER BY
+			CASE
+				WHEN A.ADOPTION_STATUS = '대기중' THEN 1
+				WHEN A.ADOPTION_STATUS = '신청중' THEN 2
+				WHEN A.ADOPTION_STATUS = '입양완료' THEN 3
+				ELSE 4
+			END ASC,
+			A.ANIMAL_NO DESC
 	</select>
 	
 	<!-- 유저가 등록한 동물 수 세기 -->
@@ -224,6 +272,9 @@
 		SELECT COUNT(*)
 		FROM ANIMAL_DETAILS
 		WHERE USER_ID = #{userId}
+		<if test="keyword != null and keyword != ''">
+			AND ANIMAL_NAME LIKE '%' || #{keyword} || '%'
+		</if>
 	</select>
 	
 	<!-- 유저가 신청한 입양 정보 가지고 오기 -->
@@ -235,11 +286,18 @@
             AP.ADOPT_STATUS,
             AP.APPLY_DT,
             TO_CHAR(AP.APPLY_DT, 'YYYY-MM-DD') AS APPLY_DATE_STR,
-            A.PHOTO_URL
+            A.PHOTO_URL,
+            A.ANIMAL_NAME
 		FROM ADOPTION_APPLICATIONS AP
         LEFT JOIN ANIMAL_DETAILS A ON AP.ANIMAL_NO = A.ANIMAL_NO
 		WHERE AP.USER_ID = #{userId}
-		ORDER BY AP.APPLY_DT DESC
+		ORDER BY 
+			CASE
+				WHEN AP.ADOPT_STATUS = 1 THEN 1
+				WHEN AP.ADOPT_STATUS = 2 THEN 2
+				ELSE 3
+			END ASC,
+			AP.APPLY_DT DESC
 	</select>
 	
 	<!-- 유저가 신청한 입양 수 세기 -->
@@ -283,6 +341,38 @@
 		WHERE ANIMAL_NO = #{animalNo}
 		AND USER_ID = #{userId}
 	</select>
+
+	<!-- 관리자용 동물/게시글 전체 목록 가저오기 (검색/필터 적용) -->
+	<select id="allList" resultType="AnimalDetail" parameterType="hashmap">
+        SELECT A.*, P.POST_NO
+        FROM ANIMAL_DETAILS A
+        LEFT JOIN ADOPTION_POSTS P ON A.ANIMAL_NO = P.ANIMAL_NO
+        <where>
+        	<if test="animalNo != null and animalNo != ''">
+        		AND A.ANIMAL_NO = #{animalNo}
+        	</if>
+        	<if test="onlyPending != null and onlyPending == 'true'">
+        		AND P.POST_NO IS NULL
+        		AND A.ADOPTION_STATUS != '반려'
+        	</if>
+        </where>
+        ORDER BY A.ANIMAL_NO DESC
+	</select>
 	
+	<!-- 관리자용 동물/게시글 전체 목록 갯수 (검색/필터 적용) -->
+	<select id="managepostCount" resultType="_int" parameterType="hashmap">
+		SELECT COUNT(*)
+		FROM ANIMAL_DETAILS A
+		LEFT JOIN ADOPTION_POSTS P ON A.ANIMAL_NO = P.ANIMAL_NO
+		<where>
+        	<if test="animalNo != null and animalNo != ''">
+        		AND A.ANIMAL_NO = #{animalNo}
+        	</if>
+        	<if test="onlyPending != null and onlyPending == 'true'">
+        		AND P.POST_NO IS NULL
+        		AND A.ADOPTION_STATUS != '반려'
+        	</if>
+        </where>
+	</select>
 
 </mapper>

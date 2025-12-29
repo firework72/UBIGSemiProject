@@ -113,9 +113,13 @@
 
 				<!-- 입양 수정, 삭제는 관리자 또는 작성자만 가능 -->
 				<div class="btn-group">
-					<button id="updatepost" class="btn-secondary" style="display: hidden;">(게시자 전용)수정</button>
-					<button id="deletepost" class="btn-secondary" style="display: hidden;">(게시자 전용)삭제</button>
-					<button id="application" class="btn-primary">입양 신청 페이지로 이동</button>
+					<c:if test="${loginMember.userId eq animal.userId or loginMember.userRole eq 'ADMIN'}">
+						<button id="updatepost" class="btn-secondary" style="display: block;">수정</button>
+						<button id="deletepost" class="btn-secondary" style="display: block;">삭제</button>
+					</c:if>
+					<c:if test="${not empty loginMember.userId && loginMember.userId ne animal.userId}">
+						<button id="application" class="btn-primary">입양 신청 페이지로 이동</button>
+					</c:if>
 				</div>
 			</div>
 		</body>
@@ -133,14 +137,6 @@
 						location.href = '${pageContext.request.contextPath}/adoption.applicationpage?anino=${animal.animalNo}';
 					});
 				}
-
-				// 구현중- 다른거로 대체할수도?
-				// 	//로그인 멤버와 게시자가 동일할때만 버튼 보이기
-				// 	if (${ loginMember.userId } == ${ animal.userId }) {
-				// 	updatepost.style.display = 'block';
-				// 	deletepost.style.display = 'block';
-				// }
-
 
 				// (게시자가)수정
 				if (updatepost) {

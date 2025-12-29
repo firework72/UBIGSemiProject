@@ -17,11 +17,26 @@
             <div class="adoption-container">
                 <h1 class="adoption-header">동물 관리</h1>
 
+                <!-- 검색 필터 영역 -->
+                <div class="search-area"
+                    style="margin-bottom: 20px; display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
+                    <form action="adoption.postmanage" method="get"
+                        style="display: flex; align-items: center; gap: 10px;">
+                        <input type="number" name="animalNo" placeholder="동물 번호 검색" value="${animalNo}"
+                            style="padding: 5px; border: 1px solid #ccc; border-radius: 4px;">
+                        <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                            <input type="checkbox" name="onlyPending" value="true" ${onlyPending eq 'true' ? 'checked'
+                                : '' } onchange="this.form.submit()">
+                            대기 중인 게시글만 보기
+                        </label>
+                        <button type="submit" class="btn-primary" style="padding: 5px 15px;">검색</button>
+                    </form>
+                </div>
+
                 <div style="overflow-x: auto;">
                     <table class="adoption-table">
                         <thead>
                             <tr>
-                                <th><input type="checkbox" id="allCheck"></th>
                                 <th>번호</th>
                                 <th>이름</th>
                                 <th>종류</th>
@@ -38,13 +53,12 @@
                             <c:choose>
                                 <c:when test="${empty list}">
                                     <tr>
-                                        <td colspan="11" align="center">등록된 동물이 없습니다.</td>
+                                        <td colspan="10" align="center">등록된 동물이 없습니다.</td>
                                     </tr>
                                 </c:when>
                                 <c:otherwise>
                                     <c:forEach var="item" items="${list}">
-                                        <tr>
-                                            <td><input type="checkbox" name="animalNo" value="${item.animalNo}"></td>
+                                        <tr onclick="location.href='adoption.detailpage?anino=${item.animalNo}'">
                                             <td>${item.animalNo}</td>
                                             <td>${item.animalName}</td>
                                             <td>
@@ -65,21 +79,26 @@
                                                 <div style="display: flex; gap: 5px; flex-direction: column;">
                                                     <button type="button" class="btn-secondary"
                                                         style="padding: 5px 10px; font-size: 0.8rem;"
-                                                        onclick="location.href='adoption.updateanimal?anino=${item.animalNo}'">수정</button>
+                                                        onclick="event.stopPropagation(); location.href='adoption.updateanimal?anino=${item.animalNo}'">수정</button>
                                                     <button type="button" class="btn-secondary"
                                                         style="padding: 5px 10px; font-size: 0.8rem;"
-                                                        onclick="if(confirm('정말 삭제하시겠습니까?')) location.href='adoption.deleteanimal?anino=${item.animalNo}'">삭제</button>
+                                                        onclick="event.stopPropagation(); if(confirm('정말 삭제하시겠습니까?')) location.href='adoption.deleteanimal?anino=${item.animalNo}'">삭제</button>
 
                                                     <c:if test="${item.postNo eq 0 && item.adoptionStatus ne '반려'}">
                                                         <button type="button" class="btn-primary"
                                                             style="padding: 5px 10px; font-size: 0.8rem;"
-                                                            onclick="if(confirm('게시글을 등록하시겠습니까?')) location.href='adoption.insert.board.direct?anino=${item.animalNo}'">게시글
+                                                            onclick="event.stopPropagation(); if(confirm('게시글을 등록하시겠습니까?')) location.href='adoption.insert.board.direct?anino=${item.animalNo}'">게시글
                                                             등록</button>
-                                                        <button type="button" class="btn-primary"
-                                                            style="padding: 5px 10px; font-size: 0.8rem;"
-                                                            onclick="if(confirm('게시글을 반려하시겠습니까?')) location.href='adoption.deny.board.direct?anino=${item.animalNo}'">등록
-                                                            반려</button>
                                                     </c:if>
+
+                                                    <c:if test="${item.adoptionStatus ne '반려'}">
+                                                        <button type="button" class="btn-primary"
+                                                            style="padding: 5px 10px; font-size: 0.8rem; background-color: #ff4444; border-color: #ff4444;"
+                                                            onclick="event.stopPropagation(); if(confirm('게시글을 반려하시겠습니까?')) location.href='adoption.deny.board.direct?anino=${item.animalNo}'">
+                                                            ${item.postNo eq 0 ? '등록 반려' : '게시글 반려'}
+                                                        </button>
+                                                    </c:if>
+
                                                     <c:if test="${item.postNo ne 0 && item.adoptionStatus ne '반려'}">
                                                         <span
                                                             style="font-size: 0.8rem; color: green; text-align: center;">등록됨</span>
@@ -98,15 +117,35 @@
                         </tbody>
                     </table>
                 </div>
+
+                <!-- 페이징 처리 -->
+                <div align="center" style="margin-top: 20px;">
+                    <c:if test="${pi.currentPage ne 1}">
+                        <button class="btn-secondary"
+                            onclick="location.href='adoption.postmanage?currentPage=${pi.currentPage-1}&animalNo=${animalNo}&onlyPending=${onlyPending}'">&lt;</button>
+                    </c:if>
+
+                    <c:forEach var="p" begin="${pi.startPage}" end="${pi.endPage}">
+                        <c:choose>
+                            <c:when test="${p eq pi.currentPage}">
+                                <button class="btn-primary" disabled>${p}</button>
+                            </c:when>
+                            <c:otherwise>
+                                <button class="btn-secondary"
+                                    onclick="location.href='adoption.postmanage?currentPage=${p}&animalNo=${animalNo}&onlyPending=${onlyPending}'">${p}</button>
+                            </c:otherwise>
+                        </c:choose>
+                    </c:forEach>
+
+                    <c:if test="${pi.currentPage ne pi.maxPage}">
+                        <button class="btn-secondary"
+                            onclick="location.href='adoption.postmanage?currentPage=${pi.currentPage+1}&animalNo=${animalNo}&onlyPending=${onlyPending}'">&gt;</button>
+                    </c:if>
+                </div>
             </div>
 
             <script>
-                document.getElementById('allCheck').addEventListener('click', function () {
-                    var checks = document.getElementsByName('animalNo');
-                    for (var i = 0; i < checks.length; i++) {
-                        checks[i].checked = this.checked;
-                    }
-                });
+
             </script>
         </body>
 
