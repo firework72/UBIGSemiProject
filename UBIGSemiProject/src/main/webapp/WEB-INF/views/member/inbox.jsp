@@ -343,6 +343,12 @@
     		return false;
     	}
     	
+    	// 내용이 비어 있으면 쪽지를 보낼 수 없다.
+    	if (content === "") {
+    		alert("쪽지 내용을 입력하세요.");
+    		return false;
+    	}
+    	
 		// 쪽지 보내기 요청
 		return confirm("쪽지를 보내시겠습니까?");
     }
