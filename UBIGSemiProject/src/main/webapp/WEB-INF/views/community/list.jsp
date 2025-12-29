@@ -364,7 +364,11 @@
                                                             <span class="badge-notice">공지</span>
                                                         </c:if>
                                                         ${b.title}
-                                                        <!-- 댓글 수 표시 (추후 구현) -->
+                                                        <!-- 댓글 수 표시 (0보다 클 때만) -->
+                                                        <c:if test="${b.commentCount > 0}">
+                                                            <span
+                                                                style="color: #ff9f43; font-weight: bold; margin-left: 5px;">(${b.commentCount})</span>
+                                                        </c:if>
                                                     </a>
                                                     <!-- [Step 14: 태그 표시 (봉사후기 전용)] -->
                                                     <c:if test="${b.category == 'REVIEW' && not empty b.hashtags}">
@@ -379,7 +383,13 @@
                                                 <td>
                                                     <fmt:formatDate value="${b.createDate}" pattern="yyyy.MM.dd" />
                                                 </td>
-                                                <td>${b.viewCount}</td>
+                                                <td style="white-space: nowrap;">
+                                                    <i class="fas fa-eye" style="margin-right: 3px; color: #aaa;"></i>
+                                                    ${b.viewCount}
+                                                    <span style="margin: 0 5px; color: #ddd;">|</span>
+                                                    <i class="fas fa-heart"
+                                                        style="margin-right: 3px; color: #ff6b6b;"></i> ${b.likeCount}
+                                                </td>
                                             </tr>
                                         </c:forEach>
                                     </c:otherwise>
