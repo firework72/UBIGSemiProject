@@ -271,6 +271,32 @@
     		return false;
     	}
     	
+    	// 자신이 차단한 회원에게 쪽지를 보낼 수 없다.
+    	let isKicked = true;
+        $.ajax({
+        	url :  "${pageContext.request.contextPath}/kick/isKicked.ki",
+        	type: "POST",
+        	async : false,
+        	data : {
+        		messageSendUserId : receiveId,
+        		messageReceiveUserId : '${loginMember.userId}'
+        	},
+        	success : function(data) {
+        		console.log(data);
+        		if (data == "notkicked") {
+        			isKicked = false;
+        		}
+        	},
+        	error : function() {
+        		alert("알 수 없는 오류가 발생했습니다.");
+        	}
+        });
+        
+        if (isKicked) {
+        	alert("차단한 회원입니다. 차단 해제 후 다시 시도해주세요.");
+        	return false;
+        }
+    	
 		// 쪽지 보내기 요청
 		return confirm("쪽지를 보내시겠습니까?");
     }
