@@ -210,8 +210,8 @@
     function openMessageDetail(msgNo, sender, content, date, isCheck) {
         // 모달 내용 채우기
         $("#modalSender").text(sender);
-        $("#modalContent").text(content); // text()로 넣어야 XSS 방지
-        $("#modalDate").text(date); // 포맷팅된 문자열이 들어온다고 가정
+        $("#modalContent").text(content); 
+        $("#modalDate").text(date);
         $("#btnKick").text(sender + " 차단하기");
         
         // 답장하기 버튼 클릭 시 -> 쓰기 모달의 받는 사람에 세팅하고 쓰기 모달 띄우기
@@ -219,7 +219,7 @@
              // 상세 모달 닫고
              $("#detailModal").modal("hide");
              // 쓰기 모달 열기 + ID 세팅
-             $("#receiveIdInput").val(sender); // 일단 초기화 (ID를 넘겨받았다면 .val(senderId))
+             $("#inputMessageReceiveUserId").val(sender)
              $("#writeModal").modal("show");
         });
         
@@ -257,7 +257,7 @@
         	}
         });
         
-        // 차단 버튼은 차단 테이블에 등록이 되어 있지 않은 경우에만 뜨도록 설정
+        // 만약 이미 차단되어있는 상태라면 차단 버튼을 disable한다.
         $.ajax({
         	url :  "${pageContext.request.contextPath}/kick/isKicked.ki",
         	type: "POST",

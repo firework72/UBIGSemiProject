@@ -609,7 +609,7 @@
                             var fullAddr = "${loginMember.userAddress}";
                             if (fullAddr) {
                                 var addrParts = fullAddr.split(", ");
-                                // 콤마로 단순 분리 (실제 데이터에 콤마가 더 있으면 로직 보강 필요)
+                                // 콤마로 분리 (상세주소 입력 시 )
                                 if (addrParts.length >= 1) $("#roadAddress").val(addrParts[0]);
                                 if (addrParts.length >= 2) $("#detailAddress").val(addrParts[1]);
                             }

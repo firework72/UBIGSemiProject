@@ -210,8 +210,8 @@
     function openMessageDetail(msgNo, sender, content, date, isCheck) {
         // 모달 내용 채우기
         $("#modalSender").text(sender);
-        $("#modalContent").text(content); // text()로 넣어야 XSS 방지
-        $("#modalDate").text(date); // 포맷팅된 문자열이 들어온다고 가정
+        $("#modalContent").text(content);
+        $("#modalDate").text(date);
 
         // 모달 띄우기
         $("#detailModal").modal("show");
