@@ -1,11 +1,12 @@
 package com.ubig.app.volunteer.service;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.HashMap;
 
+import com.ubig.app.common.model.vo.PageInfo;
 import com.ubig.app.vo.volunteer.ActivityVO;
 import com.ubig.app.vo.volunteer.SignVO;
 import com.ubig.app.vo.volunteer.VolunteerCommentVO;
@@ -21,9 +22,14 @@ public class VolunteerServiceImpl implements VolunteerService {
 	
 	
 	@Override
-    public List<ActivityVO> selectActivityList(HashMap<String, String> map) {
-        // [수정] 검색 조건(map)을 DAO로 전달
-        return volunteerDao.selectActivityList(map);
+    public int selectActivityCount(HashMap<String, String> map) {
+        return volunteerDao.selectActivityCount(map);
+    }
+
+    @Override
+    public List<ActivityVO> selectActivityList(HashMap<String, String> map, PageInfo pi) {
+        // DAO에게 PageInfo도 같이 넘겨줌
+        return volunteerDao.selectActivityList(map, pi);
     }
   
 	
@@ -137,8 +143,14 @@ public class VolunteerServiceImpl implements VolunteerService {
     }
     
     @Override
-    public List<VolunteerReviewVO> selectReviewListAll(HashMap<String, String> map) {
-        return volunteerDao.selectReviewListAll(map);
+    public int selectReviewCount(HashMap<String, String> map) {
+        return volunteerDao.selectReviewCount(map);
+    }
+
+    @Override
+    public List<VolunteerReviewVO> selectReviewListAll(HashMap<String, String> map, PageInfo pi) {
+        // DAO로 PageInfo 전달
+        return volunteerDao.selectReviewListAll(map, pi);
     }
     
     @Override
@@ -213,7 +225,7 @@ public class VolunteerServiceImpl implements VolunteerService {
     
 
 
-    // [관리자] 승인/반려 프로세스 구현
+ // [관리자] 승인/반려 및 완료 프로세스 구현
     @Override
     public int updateSignStatusAdmin(int signsNo, String status) {
         // 1. 어떤 신청인지 정보 조회
@@ -225,17 +237,16 @@ public class VolunteerServiceImpl implements VolunteerService {
 
         // A. '승인(approve)' 요청일 때
         if ("approve".equals(status)) {
-            // 정원 체크: 활동 정보를 가져와서 꽉 찼는지 확인
+            // 정원 체크
             ActivityVO activity = volunteerDao.selectActivityOne(sign.getActId());
             if (activity.getActCur() >= activity.getActMax()) {
-                return -1; // 정원 초과! 승인 불가
+                return -1; // 정원 초과!
             }
-
             // 상태를 '1(승인)'로 변경
             updateVO.setSignsStatus(1);
             int result = volunteerDao.updateSignStatus(updateVO);
 
-            // 변경 성공 시, 활동 인원수 +1 증가
+            // 활동 인원수 +1 증가
             if (result > 0) {
                 volunteerDao.increaseActivityCur(sign.getActId());
             }
@@ -244,9 +255,21 @@ public class VolunteerServiceImpl implements VolunteerService {
         
         // B. '반려(reject)' 요청일 때
         else if ("reject".equals(status)) {
-            // 상태를 '2(반려)'로 변경 (인원수 변동 없음)
             updateVO.setSignsStatus(2);
             return volunteerDao.updateSignStatus(updateVO);
+        }
+        
+        // C. [추가됨] '참여 완료(complete)' 요청일 때 (봉사 끝난 후)
+        else if ("complete".equals(status)) {
+            // 상태를 '4(참여 완료)'로 정의 (DB 약속 필요)
+            updateVO.setSignsStatus(4); 
+            int result = volunteerDao.updateSignStatus(updateVO);
+            
+            // 상태 변경 성공 시, 유저의 봉사 횟수 +1
+            if (result > 0) {
+                volunteerDao.increaseUserAttendanceCount(sign.getSignsId());
+            }
+            return result;
         }
 
         return 0; // status 값이 이상할 때

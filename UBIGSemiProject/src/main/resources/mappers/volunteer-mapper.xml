@@ -5,6 +5,18 @@
 
 <mapper namespace="volunteerMapper">
 
+	<select id="selectActivityCount" parameterType="hashmap" resultType="_int">
+		SELECT COUNT(*)
+		FROM ACTIVITIES
+		WHERE 1=1
+		<if test="condition == 'title'">
+			AND ACT_TITLE LIKE '%' || #{keyword} || '%'
+		</if>
+		<if test="condition == 'address'">
+			AND ACT_ADDRESS LIKE '%' || #{keyword} || '%'
+		</if>
+	</select>
+
 	<select id="selectActivityList" parameterType="hashmap" resultType="activity">
 		SELECT
 			ACT_ID,
@@ -41,6 +53,23 @@
 			AND R.R_REVIEW LIKE '%' || #{keyword} || '%'
 		</if>
 		ORDER BY R.REVIEW_NO DESC
+	</select>
+	
+	<!-- 페이징바 추가 -->
+	<select id="selectReviewCount" parameterType="hashmap" resultType="_int">
+		SELECT COUNT(*)
+		FROM VOLUNTEER_REVIEWS R
+		JOIN ACTIVITIES A ON R.ACT_ID = A.ACT_ID
+		WHERE R.R_REMOVE = 0
+		<if test="condition == 'title'">
+			AND A.ACT_TITLE LIKE '%' || #{keyword} || '%'
+		</if>
+		<if test="condition == 'writer'">
+			AND R.R_ID LIKE '%' || #{keyword} || '%'
+		</if>
+		<if test="condition == 'content'">
+			AND R.R_REVIEW LIKE '%' || #{keyword} || '%'
+		</if>
 	</select>
 
 	<insert id="insertActivity" parameterType="activity">
@@ -277,6 +306,12 @@
 	<select id="selectSignOne" parameterType="_int" resultType="com.ubig.app.vo.volunteer.SignVO">
 		SELECT * FROM SIGNS WHERE SIGNS_NO = #{signsNo}
 	</select>
+	
+	<update id="increaseUserAttendanceCount" parameterType="string">
+		UPDATE MEMBERS
+	    SET USER_ATTENDED_COUNT = USER_ATTENDED_COUNT + 1
+	    WHERE USER_ID = #{userId}
+	</update>
 	
 	
 

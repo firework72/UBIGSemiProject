@@ -20,6 +20,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.ubig.app.common.model.vo.PageInfo;
+import com.ubig.app.common.util.Pagination;
 import com.ubig.app.vo.member.MemberVO;
 import com.ubig.app.vo.volunteer.ActivityVO;
 import com.ubig.app.vo.volunteer.SignVO;
@@ -33,37 +35,38 @@ public class VolunteerController {
 	@Autowired
 	private VolunteerService volunteerService;
 	
-	//value로 정확하게 명시
-	@RequestMapping("volunteerList.vo")
-	public String volunteerList(@RequestParam(value="condition", required=false) String condition, 
-	                            @RequestParam(value="keyword", required=false) String keyword, 
-	                            Model model) {
-		// [진단 1] 서비스 객체 확인
-		if (volunteerService == null) {
-			System.out.println("🚨 비상! volunteerService가 null입니다.");
-			return "redirect:/";
+	// ... 기존 volunteerList 메소드를 아래와 같이 통째로 교체 ...
+
+		@RequestMapping("volunteerList.vo")
+		public String volunteerList(@RequestParam(value="cpage", defaultValue="1") int currentPage, 
+		                            @RequestParam(value="condition", required=false) String condition, 
+		                            @RequestParam(value="keyword", required=false) String keyword, 
+		                            Model model) {
+
+			// 1. 검색 조건 설정
+			java.util.HashMap<String, String> map = new java.util.HashMap<>();
+			map.put("condition", condition);
+			map.put("keyword", keyword);
+
+			// 2. [페이징 처리]
+			// 2-1. 전체 게시글 수 구하기
+			int listCount = volunteerService.selectActivityCount(map);
+			
+			// 2-2. PageInfo 객체 생성 (Pagination 클래스 활용)
+			// boardLimit: 10 (한 페이지에 10개씩), pageLimit: 5 (하단바에 5개씩)
+			PageInfo pi = Pagination.getPageInfo(listCount, currentPage, 5, 10);
+			
+			// 3. 목록 조회 (pi 객체 전달)
+			List<ActivityVO> list = volunteerService.selectActivityList(map, pi);
+
+			// 4. 화면 전송
+			model.addAttribute("list", list);
+			model.addAttribute("pi", pi); // [중요] 페이징 정보 보냄
+	        model.addAttribute("condition", condition);
+	        model.addAttribute("keyword", keyword);
+	        
+			return "volunteer/volunteer";
 		}
-
-        // 1. 검색 조건 설정
-        java.util.HashMap<String, String> map = new java.util.HashMap<>();
-        map.put("condition", condition);
-        map.put("keyword", keyword);
-
-		// 2. 서비스 호출 (검색 조건 전달)
-		List<ActivityVO> list = volunteerService.selectActivityList(map);
-
-		// [진단 2] 리스트 확인
-		if (list == null) {
-			System.out.println("🚨 비상! DB에서 가져온 list가 null입니다.");
-		} else {
-			System.out.println("3. 조회된 활동 개수 : " + list.size());
-		}
-
-		model.addAttribute("list", list);
-        model.addAttribute("condition", condition); // 검색 조건 유지
-        model.addAttribute("keyword", keyword);     // 검색어 유지
-		return "volunteer/volunteer";
-	}
 
    
 	
@@ -295,17 +298,34 @@ public class VolunteerController {
 		// ==========================================================
 
 		// 1. 전체 후기 목록 조회 (누구나 가능)
+	// 1. 전체 후기 목록 조회 (페이징 적용)
 		@RequestMapping("reviewList.vo")
-		public String reviewList(@RequestParam(value="condition", required=false) String condition, 
-								 @RequestParam(value="keyword", required=false) String keyword, 
-								 Model model) {
+		public String reviewList(@RequestParam(value="cpage", defaultValue="1") int currentPage,
+		                         @RequestParam(value="condition", required=false) String condition, 
+		                         @RequestParam(value="keyword", required=false) String keyword, 
+		                         Model model) {
+			
+			// 1. 검색 조건 설정
 			java.util.HashMap<String, String> map = new java.util.HashMap<>();
 			map.put("condition", condition);
 			map.put("keyword", keyword);
-			List<VolunteerReviewVO> list = volunteerService.selectReviewListAll(map);
+			
+			// 2. [페이징 처리]
+			// 2-1. 전체 후기 갯수 구하기
+			int listCount = volunteerService.selectReviewCount(map);
+			
+			// 2-2. PageInfo 객체 생성 (10개씩 보기, 하단바 5개)
+			PageInfo pi = Pagination.getPageInfo(listCount, currentPage, 5, 10);
+			
+			// 3. 목록 조회 (pi 전달)
+			List<VolunteerReviewVO> list = volunteerService.selectReviewListAll(map, pi);
+			
+			// 4. 데이터 전달
 			model.addAttribute("list", list);
+			model.addAttribute("pi", pi); // 페이징 정보
 			model.addAttribute("condition", condition); 
 			model.addAttribute("keyword", keyword); 
+			
 			return "volunteer/reviewList";
 		}
 
