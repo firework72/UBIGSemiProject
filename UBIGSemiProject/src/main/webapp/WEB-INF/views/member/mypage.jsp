@@ -545,7 +545,7 @@
                                                         placeholder="기본 주소" readonly>
                                                     <input type="text" class="form-control" id="detailAddress"
                                                         maxlength="20" placeholder="상세 주소를 입력해주세요">
-                                                    <div class="error-msg" id="detailAddressError">1~20자의 한글, 숫자, 공백으로
+                                                    <div class="error-msg" id="detailAddressError">20자 이하의 한글, 숫자, 공백으로
                                                         작성해주세요.</div>
 
                                                     <input type="hidden" id="userAddress" name="userAddress"
@@ -727,7 +727,7 @@
                         let nameRegExr = /^[가-힣]{1,10}$/;
                         let nicknameRegExr = /^[a-zA-Z0-9가-힣]{1,10}$/;
                         let contactRegExr = /^[0-9]{11}$/;
-                        let addressRegExr = /^[가-힣0-9\s]+$/;
+                        let addressRegExr = /^[가-힣0-9\s]{0,20}$/;
 
                         // 0. 초기 로딩 시 남성/여성 체크
                         $(document).ready(function () {
@@ -838,7 +838,7 @@
                             }
 
                             if (!addressRegExr.test(detailAddress)) {
-                                alert("상세주소는 한글, 숫자, 공백만 포함 가능합니다.");
+                                alert("상세주소는 20자 이하의 한글, 숫자, 공백만 포함 가능합니다.");
                                 return false;
                             }
 

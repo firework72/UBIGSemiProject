@@ -114,7 +114,7 @@
                 </div>
                 <input type="text" class="form-control mb-2" id="roadAddress" placeholder="도로명 주소" readonly>
                 <input type="text" class="form-control" id="detailAddress" placeholder="상세 주소를 입력하세요" maxlength="20">
-                <div class="error-msg" id="detailAddressError">1~20자의 한글, 숫자, 공백으로 작성해주세요.</div>
+                <div class="error-msg" id="detailAddressError">20자 이하의 한글, 숫자, 공백으로 작성해주세요.</div>
                 <input type="hidden" id="userAddress" name="userAddress">
             </div>
 
@@ -133,7 +133,7 @@
 	let nameRegExp = /^[가-힣]{1,10}$/;
 	let nicknameRegExp = /^[a-zA-Z0-9가-힣]{1,10}$/;
 	let contactRegExp = /^[0-9]{11}$/;
-	let addressRegExp = /^[가-힣0-9\s]+$/;
+	let addressRegExp = /^[가-힣0-9\s]{0,20}$/;
 	let idRegExp = /^[a-zA-Z0-9]{6,20}$/;
 	
 	
@@ -355,7 +355,7 @@
            	}
            	
            	if (!addressRegExp.test(detailAddress)) {
-           		alert("상세주소는 한글, 숫자, 공백만 포함 가능합니다.");
+           		alert("상세주소는 20자 이하의 한글, 숫자, 공백만 포함 가능합니다.");
            		return false;
            	}
 
@@ -370,8 +370,9 @@
             if(fullAddr === "") {
                 alert("주소를 검색해주세요.");
                 e.preventDefault();
-                return;
+                return false;
             }
+            return true;
         });
     });
 </script>
