@@ -8,10 +8,10 @@
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <link rel="stylesheet" href="">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css?v=3">
     
     <style>
-        body { background-color: #f8f9fa; }
+        body { background-color: #f8f9fa; padding-top: 50px;}
         .signup-card {
             max-width: 600px;
             margin: 50px auto;
@@ -38,6 +38,7 @@
     </style>
 </head>
 <body>
+<jsp:include page="/WEB-INF/views/common/menubar.jsp" />
 <div class="card signup-card">
     <div class="signup-header">
         유봉일공 회원가입
@@ -68,18 +69,20 @@
 
             <div class="mb-3">
                 <label for="userName" class="form-label">이름</label>
-                <input type="text" class="form-control" id="userName" name="userName" required>
+                <input type="text" class="form-control" id="userName" name="userName" maxlength="10" required>
+                <div class="error-msg" id="userNameError">1~10자의 한글로 작성해주세요.</div>
             </div>
 
             <div class="mb-3">
                 <label for="userNickname" class="form-label">닉네임</label>
-                <input type="text" class="form-control" id="userNickname" name="userNickname" required>
+                <input type="text" class="form-control" id="userNickname" name="userNickname" maxlength="10" required>
+                <div class="error-msg" id="userNicknameError">1~10자의 영문, 한글, 숫자로 작성해주세요.</div>
             </div>
 
             <div class="mb-3">
                 <label for="userContact" class="form-label">연락처</label>
-                <input type="text" class="form-control" id="userContact" name="userContact" placeholder="01012345678" required>
-                <div class="error-msg" id="contactError">숫자로만 11자리 입력해주세요.</div>
+                <input type="text" class="form-control" id="userContact" name="userContact" placeholder="01012345678" maxlength="11" required>
+                <div class="error-msg" id="userContactError">숫자로만 11자리 작성해주세요.</div>
             </div>
 
             <div class="row mb-3">
@@ -110,8 +113,8 @@
                     <button class="btn btn-outline-secondary" type="button" onclick="execDaumPostcode()">주소 검색</button>
                 </div>
                 <input type="text" class="form-control mb-2" id="roadAddress" placeholder="도로명 주소" readonly>
-                <input type="text" class="form-control" id="detailAddress" placeholder="상세 주소를 입력하세요">
-                
+                <input type="text" class="form-control" id="detailAddress" placeholder="상세 주소를 입력하세요" maxlength="20">
+                <div class="error-msg" id="detailAddressError">1~20자의 한글, 숫자, 공백으로 작성해주세요.</div>
                 <input type="hidden" id="userAddress" name="userAddress">
             </div>
 
@@ -125,6 +128,14 @@
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 
 <script>
+
+	// 정규표현식
+	let nameRegExr = /^[가-힣]{1,10}$/;
+	let nicknameRegExr = /^[a-zA-Z0-9가-힣]{1,10}$/;
+	let contactRegExr = /^[0-9]{11}$/;
+	let addressRegExr = /^[가-힣0-9\s]+$/;
+	
+	
     // 1. Daum 주소 API 함수
     function execDaumPostcode() {
         new daum.Postcode({
@@ -200,6 +211,56 @@
         		$("#ageError").hide();
         	}
         });
+        
+        // 정규식 표현에 안 맞으면 차단
+        
+        // 이름
+        
+        $("#userName").on("keyup", function() {
+            var userName = $("#userName").val();
+            
+            if(!nameRegExr.test(userName)) {
+                $("#userNameError").show();
+            } else {
+                $("#userNameError").hide();
+            }
+        });
+        
+        // 닉네임
+        
+        $("#userNickname").on("keyup", function() {
+            var userNickname = $("#userNickname").val();
+            
+            if(!nicknameRegExr.test(userNickname)) {
+                $("#userNicknameError").show();
+            } else {
+                $("#userNicknameError").hide();
+            }
+        });
+        
+        // 연락처
+        
+        $("#userContact").on("keyup", function() {
+            var userContact = $("#userContact").val();
+            
+            if(!contactRegExr.test(userContact)) {
+                $("#userContactError").show();
+            } else {
+                $("#userContactError").hide();
+            }
+        });
+        
+       	// 상세주소
+       	
+        $("#detailAddress").on("keyup", function() {
+            var detailAddress = $("#detailAddress").val();
+            
+            if(!addressRegExr.test(detailAddress)) {
+                $("#detailAddressError").show();
+            } else {
+                $("#detailAddressError").hide();
+            }
+        });
 
         // 폼 제출 시 실행
         $("#signupForm").on("submit", function(e) {
@@ -221,6 +282,33 @@
         		e.preventDefault();
         		return;
         	}
+        	
+        	let userName = $("#userName").val();
+        	let userNickname = $("#userNickname").val();
+        	let userContact = $("#userContact").val();
+        	let detailAddress = $("#detailAddress").val();
+        	
+        	// 정규식 표현에 안 맞으면 차단
+           	
+           	if (!nameRegExr.test(userName)) {
+           		alert("이름은 1~10글자 사이의 한글만 가능합니다.");
+           		return false;
+           	}
+           	
+           	if (!nicknameRegExr.test(userNickname)) {
+           		alert("닉네임은 1~10글자 사이의 영문, 한글, 숫자만 가능합니다.");
+           		return false;
+           	}
+           	
+           	if (!contactRegExr.test(userContact)) {
+           		alert("연락처는 11자리의 숫자만 가능합니다.");
+           		return false;
+           	}
+           	
+           	if (!addressRegExr.test(detailAddress)) {
+           		alert("상세주소는 한글, 숫자, 공백만 포함 가능합니다.");
+           		return false;
+           	}
 
             // 주소 합치기 (도로명 주소 + 상세 주소) -> hidden input에 저장
             var fullAddr = $("#roadAddress").val();

@@ -9,8 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import com.ubig.app.common.model.vo.PageInfo;
 import com.ubig.app.member.service.AdminChatService;
+import com.ubig.app.member.service.MemberService;
+import com.ubig.app.member.template.Pagination;
 import com.ubig.app.vo.member.AdminChatHistoryVO;
 import com.ubig.app.vo.member.MemberVO;
 
@@ -20,7 +24,10 @@ import com.ubig.app.vo.member.MemberVO;
 public class AdminChatController {
 	
 	@Autowired
-	private AdminChatService service;
+	private AdminChatService adminChatService;
+	
+	@Autowired
+	private MemberService memberService;
 	
 	/*
 	 * 어드민 페이지에서는 모든 일반 회원과 의사소통할 수 있어야한다.
@@ -35,13 +42,21 @@ public class AdminChatController {
 	 */
 	
 	@RequestMapping("/chatList.ch")
-	public String chatList(Model model) {
+	public String chatList(Model model, @RequestParam(value="curPage", defaultValue="1") int curPage) {
 		// 가장 최근 채팅이 올라온 유저부터 순서대로 표시한다.
 		// ...구현이 힘들어질 것 같으니 일단 MEMBERS에서 리스트 뽑아서 채팅 버튼 만들기
 		
-		ArrayList<MemberVO> list = service.chatList();
+		int listCount = memberService.listCount();
+		int boardLimit = 15;
+		int pageLimit = 10;
+		
+		PageInfo pi = Pagination.getPageInfo(listCount, curPage, boardLimit, pageLimit);
+		System.out.println(pi);
+		
+		ArrayList<MemberVO> list = memberService.selectListByUserIdAsc(pi);
 		
 		model.addAttribute("list", list);
+		model.addAttribute("pi", pi);
 		
 		return "admin/chatlist";
 	}
@@ -50,7 +65,7 @@ public class AdminChatController {
 	public String chat(HttpSession session, String userId, Model model) {
 		
 		// 최근 100개의 메시지 가져오기
-		ArrayList<AdminChatHistoryVO> list = service.selectChat(userId);
+		ArrayList<AdminChatHistoryVO> list = adminChatService.selectChat(userId);
 		
 		// 표시될 때는 먼저 보내진 메시지부터 가져와야하므로 reverse
 		Collections.reverse(list);

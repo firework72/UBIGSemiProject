@@ -32,11 +32,12 @@ public class VolunteerController {
 
 	@Autowired
 	private VolunteerService volunteerService;
-
+	
+	//value로 정확하게 명시
 	@RequestMapping("volunteerList.vo")
-	public String volunteerList(@RequestParam(required=false) String condition, 
-                                @RequestParam(required=false) String keyword, 
-                                Model model) {
+	public String volunteerList(@RequestParam(value="condition", required=false) String condition, 
+	                            @RequestParam(value="keyword", required=false) String keyword, 
+	                            Model model) {
 		// [진단 1] 서비스 객체 확인
 		if (volunteerService == null) {
 			System.out.println("🚨 비상! volunteerService가 null입니다.");
@@ -308,40 +309,28 @@ public class VolunteerController {
 			return "volunteer/reviewList";
 		}
 
+		// VolunteerController.java
+
 		// 2. 후기 작성 페이지 이동 (관리자 전용)
 		@RequestMapping("reviewWriteForm.vo")
 		public String reviewWriteForm(HttpSession session, Model model) {
-			// [수정] 정확한 패키지 경로와 userRole 체크 적용
-			MemberVO loginUser = (MemberVO)session.getAttribute("loginMember");
-			
-			// 로그인 안했거나, ROLE이 ADMIN이 아니면 차단
-			if(loginUser == null || !"ADMIN".equals(loginUser.getUserRole())) {
-				session.setAttribute("alertMsg", "관리자만 이용 가능한 메뉴입니다. ⛔");
-				return "redirect:reviewList.vo";
-			}
+		    MemberVO loginUser = (MemberVO)session.getAttribute("loginMember");
+		    
+		    // 로그인 안했거나, ROLE이 ADMIN이 아니면 차단
+		    if(loginUser == null || !"ADMIN".equals(loginUser.getUserRole())) {
+		        session.setAttribute("alertMsg", "관리자만 이용 가능한 메뉴입니다. ⛔");
+		        return "redirect:reviewList.vo";
+		    }
 
-			List<ActivityVO> actList = volunteerService.selectActivityList(new java.util.HashMap<>());
-			model.addAttribute("actList", actList);
-			return "volunteer/reviewWriteForm";
+		    // [수정] 기존 selectActivityList 대신 -> selectActivityNoReview 호출!
+		    // 이렇게 하면 이미 후기를 쓴 활동은 목록에서 아예 안 나옵니다.
+		    List<ActivityVO> actList = volunteerService.selectActivityNoReview();
+		    
+		    model.addAttribute("actList", actList);
+		    return "volunteer/reviewWriteForm";
 		}
 
-		// 3. 후기 등록 처리 (관리자 전용)
-		@RequestMapping("insertReview.vo")
-		public String insertReview(VolunteerReviewVO r, HttpSession session) {
-			MemberVO loginUser = (MemberVO)session.getAttribute("loginMember");
-			if(loginUser == null || !"ADMIN".equals(loginUser.getUserRole())) {
-				session.setAttribute("alertMsg", "권한이 없습니다.");
-				return "redirect:reviewList.vo";
-			}
-
-			int result = volunteerService.insertReview(r);
-			if (result > 0) {
-				session.setAttribute("alertMsg", "✅ 소중한 후기 등록이 완료되었습니다!");
-			} else {
-				session.setAttribute("alertMsg", "❌ 후기 등록에 실패했습니다.");
-			}
-			return "redirect:reviewList.vo";
-		}
+	
 		
 		// 4. 후기 상세 페이지 이동 (누구나 가능)
 		@RequestMapping("reviewDetail.vo")
@@ -403,4 +392,62 @@ public class VolunteerController {
 		    }
 		    return "redirect:reviewList.vo";
 		}
+		
+		
+		@RequestMapping("insertReview.vo")
+		public String insertReview(VolunteerReviewVO r, HttpSession session) {
+		    MemberVO loginUser = (MemberVO)session.getAttribute("loginMember");
+		    
+		    // 1. 관리자 권한 체크
+		    if(loginUser == null || !"ADMIN".equals(loginUser.getUserRole())) {
+		        session.setAttribute("alertMsg", "권한이 없습니다.");
+		        return "redirect:reviewList.vo";
+		    }
+
+		    // 2. 서비스 호출 (위에서 수정한 Service 메서드가 실행됨)
+		    int result = volunteerService.insertReview(r);
+
+		    // 3. 결과에 따른 메시지 처리
+		    if (result == -2) {
+		        // ★ [핵심] 중복일 때 뜨는 알림
+		        session.setAttribute("alertMsg", "⚠️ 이미 후기가 등록된 봉사활동입니다.");
+		        // 실패했으므로 작성 폼이나 목록으로 돌려보냄
+		        return "redirect:reviewWriteForm.vo"; 
+		    } else if (result > 0) {
+		        session.setAttribute("alertMsg", "✅ 소중한 후기 등록이 완료되었습니다!");
+		        return "redirect:reviewList.vo";
+		    } else {
+		        session.setAttribute("alertMsg", "❌ 후기 등록에 실패했습니다.");
+		        return "redirect:reviewList.vo";
+		    }
+		}
+		
+	    // ==========================================================
+	    // ▼ 관리자 승인/반려 & 사용자 취소 (AJAX) ▼
+	    // ==========================================================
+
+	    // 1. [관리자] 승인/반려 처리
+	    @ResponseBody
+	    @RequestMapping("updateSignStatusAdmin.vo")
+	    public String updateSignStatusAdmin(int signsNo, String status) {
+	        // 서비스 호출 (결과값: 1 성공, -1 정원초과, 0 실패)
+	        int result = volunteerService.updateSignStatusAdmin(signsNo, status);
+	        
+	        if (result == 1) return "success";
+	        else if (result == -1) return "full"; // 정원초과 메시지용
+	        else return "fail";
+	    }
+
+	    // 2. [사용자] 봉사 취소 처리
+	    @ResponseBody
+	    @RequestMapping("updateSignStatusUser.vo")
+	    public String updateSignStatusUser(int signsNo) {
+	        int result = volunteerService.updateSignStatusUser(signsNo);
+	        return result > 0 ? "success" : "fail";
+	    }
+		
+		
+		
+		
+		
 }

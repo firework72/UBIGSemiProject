@@ -32,7 +32,7 @@ public class DonationServiceImpl implements DonationService{
 	}
 	
 	@Override
-	public ArrayList<DonationVO> selectDetailView(String userId) {
+	public int selectDetailView(String userId) {
 		
 		return dao.selectDetailView(sqlSession,userId);
 	}
@@ -41,6 +41,12 @@ public class DonationServiceImpl implements DonationService{
 	public int donation(DonationVO donationVO) {
 		
 		return dao.donation(sqlSession,donationVO);
+	}
+	
+	@Override
+	public int cancelDonation(String userId) {
+		
+		return dao.cancelDonation(sqlSession,userId);
 	}
 	
 	@Override

@@ -64,6 +64,12 @@
                         background-color: #e9ecef;
                         cursor: not-allowed;
                     }
+
+                    .error-msg {
+                        color: red;
+                        font-size: 0.8rem;
+                        display: none;
+                    }
                 </style>
             </head>
 
@@ -108,8 +114,13 @@
                                         <!-- sun: 내가 쓴 글 버튼 클릭 시 AJAX로 데이터 요청 -->
                                         <button id="myboard" class="list-group-item list-group-item-action">내가 쓴
                                             글</button>
-                                        <button id="delete" class="list-group-item list-group-item-action text-danger"
-                                            onclick="deleteMember()">회원 탈퇴</button>
+                                        <!-- Dong : 회원 탈퇴 처리 -->
+                                        <form action="${pageContext.request.contextPath}/user/delete.me" method="post">
+                                            <button id="delete"
+                                                class="list-group-item list-group-item-action text-danger"
+                                                onclick="return deleteMember();">회원 탈퇴</button>
+                                        </form>
+
                                     </div>
                                 </div>
                             </div>
@@ -152,7 +163,7 @@
                                             const targetContent = document.querySelector("#" + targetId);
                                             if (targetContent) {
                                                 targetContent.style.display = "block";
-                                                getAdoptionData(); // sun: 기존처럼 무조건 호출 (수정 없음)
+                                                getAdoptionData(currPage1, currPage2);
                                             }
                                         }
 
@@ -164,85 +175,148 @@
                                         e.target.classList.add('active');
                                     });
 
-
-
-
                                 });
-                                //입양 관련 내용 비동기 통신
-                                async function getAdoptionData(url = '${pageContext.request.contextPath}/adoption.mypage', data = {}, method = 'POST') {
+                                // 전역 변수로 현재 페이지 상태 관리
+                                let currPage1 = 1;
+                                let currPage2 = 1;
 
-                                    const response = await fetch(url, {
-                                        method: 'POST',
-                                        headers: {
-                                            "Content-type": "application/json"
-                                        },
-                                        body: JSON.stringify(data)
-                                    });
-                                    //객체로 파싱까지
-                                    const ResultMap = await response.json();
+                                //입양 관련 내용 비동기통신
+                                async function getAdoptionData(page1 = currPage1, page2 = currPage2) {
 
-                                    // 1. 내가 등록한 입양 내역 (myAdoptions) 처리
-                                    const tbody1 = document.querySelector("#myadoption2 table:nth-of-type(1) tbody");
-                                    tbody1.innerHTML = ""; // 기존 내용 초기화
+                                    // 상태 업데이트 (중요)
+                                    currPage1 = page1;
+                                    currPage2 = page2;
 
-                                    const myAdoptions = ResultMap.myAdoptions;
-                                    if (myAdoptions && myAdoptions.length > 0) {
-                                        let html = "";
-                                        myAdoptions.forEach(item => {
-                                            html += "<tr>";
-                                            html += "<td>" + item.animalNo + "</td>";
-                                            html += "<td><img src='${pageContext.request.contextPath}/resources/download/adoption/" + item.photoUrl + "' style='width:50px; height:50px; object-fit:cover;'></td>";
-                                            // const formattedDate = item.postUpdateDate ? new Date(item.postUpdateDate).toLocaleDateString() : "-";
-                                            // 등록일 (String으로 받아옴)
-                                            const regDate = item.postRegDate ? item.postRegDate : "-";
-                                            html += "<td>" + regDate + "</td>";
-                                            // 게시글(post) 정보가 없으면 미승인, 있으면 승인/상태
-                                            // postRegDate가 유효하면 게시글이 있는 것
-                                            if (!item.postRegDate) {
-                                                html += "<td>미승인</td>";
-                                            } else {
-                                                html += "<td>승인/" + item.adoptionStatus + "</td>";
-                                            }
-                                            html += "<td><button type='button' class='btn btn-danger btn-sm' onclick='updateAdoption(" + item.animalNo + ")'>정보수정</button>  ";
-                                            html += "<button type='button' class='btn btn-danger btn-sm' onclick='cancelAdoption(" + item.animalNo + ")'>등록취소</button></td>";
-                                            html += "</tr>";
+                                    // 검색어 가져오기
+                                    const keyword = document.querySelector("#searchKeyword") ? document.querySelector("#searchKeyword").value : "";
+
+                                    const url = '${pageContext.request.contextPath}/adoption.mypage';
+
+                                    try {
+                                        const response = await fetch(url, {
+                                            method: 'POST', // 컨트롤러 설정에 따름
+                                            headers: {
+                                                "Content-Type": "application/json"
+                                            },
+                                            body: JSON.stringify({ page1, page2, keyword })
                                         });
-                                        tbody1.innerHTML = html;
-                                    } else {
-                                        tbody1.innerHTML = "<tr><td colspan='4'>등록한 내역이 없습니다.</td></tr>";
-                                    }
+                                        //객체로 파싱까지
+                                        const ResultMap = await response.json();
 
-                                    // 2. 내가 신청한 입양 내역 (myApplications) 처리
-                                    const tbody2 = document.querySelector("#myadoption2 table:nth-of-type(2) tbody");
-                                    tbody2.innerHTML = ""; // 기존 내용 초기화
+                                        // 로그인 만료 체크
+                                        if (ResultMap.error === "not_login") {
+                                            alert(ResultMap.message);
+                                            location.href = '${pageContext.request.contextPath}/user/login.me';
+                                            return;
+                                        }
 
-                                    const myApplications = ResultMap.myApplications;
-                                    if (myApplications && myApplications.length > 0) {
-                                        let html = "";
-                                        myApplications.forEach(item => {
-                                            html += "<tr>";
-                                            html += "<td>" + item.adoptionAppId + "</td>";
-                                            html += "<td><img src='${pageContext.request.contextPath}/resources/download/adoption/" + item.photoUrl + "' style='width:50px; height:50px; object-fit:cover;'></td>";
-                                            html += "<td>" + (item.applyDateStr || "-") + "</td>";
-                                            // 상태 코드(int)를 문자열로 변환
-                                            let statusStr = "";
-                                            switch (item.adoptStatus) {
-                                                case 1: statusStr = "신청완료"; break;
-                                                case 2: statusStr = "심사중"; break;
-                                                case 3: statusStr = "승인"; break;
-                                                case 4: statusStr = "거절"; break;
-                                                default: statusStr = "접수중";
+                                        // 1. 내가 등록한 입양 내역 (myAdoptions) 처리
+                                        const tbody1 = document.querySelector("#myadoption2 table:nth-of-type(1) tbody");
+                                        tbody1.innerHTML = ""; // 기존 내용 초기화
+
+                                        const myAdoptions = ResultMap.myAdoptions;
+                                        if (myAdoptions && myAdoptions.length > 0) {
+                                            let html = "";
+                                            myAdoptions.forEach(item => {
+                                                html += "<tr onclick='location.href=\"${pageContext.request.contextPath}/adoption.detailpage?anino=" + item.animalNo + "\"'>";
+                                                html += "<td>" + item.animalNo + "</td>";
+                                                html += "<td><img src='${pageContext.request.contextPath}/resources/download/adoption/" + item.photoUrl + "' style='width:50px; height:50px; object-fit:cover;'></td>";
+                                                html += "<td>" + (item.animalName ? item.animalName : "-") + "</td>";
+                                                // const formattedDate = item.postUpdateDate ? new Date(item.postUpdateDate).toLocaleDateString() : "-";
+                                                // 등록일 (String으로 받아옴)
+                                                const regDate = item.postRegDate ? item.postRegDate : "-";
+                                                html += "<td>" + regDate + "</td>";
+                                                // 게시글(post) 정보가 없으면 미승인, 있으면 승인/상태
+                                                // postRegDate가 유효하면 게시글이 있는 것
+                                                if (!item.postRegDate) {
+                                                    html += "<td>미승인</td>";
+                                                } else {
+                                                    html += "<td>승인/" + item.adoptionStatus + "</td>";
+                                                }
+                                                html += "<td><button type='button' class='btn btn-danger btn-sm' onclick='event.stopPropagation(); updateAdoption(" + item.animalNo + ")'>정보수정</button>  ";
+                                                html += "<button type='button' class='btn btn-danger btn-sm' onclick='event.stopPropagation(); cancelAdoption(" + item.animalNo + ")'>등록취소</button></td>";
+                                                html += "</tr>";
+                                            });
+
+                                            tbody1.innerHTML = html;
+
+                                            // 페이징 1 (등록 동물)
+                                            const pi1 = ResultMap.pi1;
+                                            let p1Html = "";
+                                            if (pi1) {
+                                                if (pi1.currentPage > 1) {
+                                                    p1Html += '<button type="button" class="btn btn-sm btn-outline-secondary mx-1" onclick="getAdoptionData(' + (pi1.currentPage - 1) + ', currPage2)">&lt;</button>';
+                                                }
+                                                for (let i = pi1.startPage; i <= pi1.endPage; i++) {
+                                                    let active = (pi1.currentPage == i) ? "btn-secondary" : "btn-outline-secondary";
+                                                    p1Html += '<button type="button" class="btn btn-sm ' + active + ' mx-1" onclick="getAdoptionData(' + i + ', currPage2)">' + i + '</button>';
+                                                }
+                                                if (pi1.currentPage < pi1.maxPage) {
+                                                    p1Html += '<button type="button" class="btn btn-sm btn-outline-secondary mx-1" onclick="getAdoptionData(' + (pi1.currentPage + 1) + ', currPage2)">&gt;</button>';
+                                                }
                                             }
-                                            html += "<td>" + statusStr + "</td>";
-                                            html += "<td><button type='button' class='btn btn-danger btn-sm' onclick='cancelAdoptionApp(" + item.adoptionAppId + ")'>신청취소</button></td>";
-                                            html += "</tr>";
-                                        });
-                                        tbody2.innerHTML = html;
-                                    } else {
-                                        tbody2.innerHTML = "<tr><td colspan='4'>신청한 내역이 없습니다.</td></tr>";
-                                    }
+                                            const area1 = document.querySelector("#pagingArea1");
+                                            if (area1) area1.innerHTML = p1Html;
+                                        } else {
+                                            tbody1.innerHTML = "<tr><td colspan='4'>등록한 내역이 없습니다.</td></tr>";
+                                        }
 
-                                    return ResultMap;
+                                        // 2. 내가 신청한 입양 내역 (myApplications) 처리
+                                        const tbody2 = document.querySelector("#myadoption2 table:nth-of-type(2) tbody");
+                                        tbody2.innerHTML = ""; // 기존 내용 초기화
+
+                                        const myApplications = ResultMap.myApplications;
+                                        if (myApplications && myApplications.length > 0) {
+                                            let html = "";
+                                            myApplications.forEach(item => {
+                                                html += "<tr onclick= 'location.href=\"${pageContext.request.contextPath}/adoption.detailpage?anino=" + item.animalNo + "\"' >";
+                                                html += "<td>" + item.adoptionAppId + "</td>";
+                                                html += "<td><img src='${pageContext.request.contextPath}/resources/download/adoption/" + item.photoUrl + "' style='width:50px; height:50px; object-fit:cover;'></td>";
+                                                html += "<td>" + (item.animalName ? item.animalName : "-") + "</td>";
+                                                html += "<td>" + (item.applyDateStr || "-") + "</td>";
+                                                // 상태 코드(int)를 문자열로 변환
+                                                let statusStr = "";
+                                                switch (item.adoptStatus) {
+                                                    case 1: statusStr = "신청완료"; break;
+                                                    case 2: statusStr = "입양완료"; break;
+                                                    case 3: statusStr = "반려"; break;
+                                                    default: statusStr = "접수중";
+                                                }
+                                                html += "<td>" + statusStr + "</td>";
+                                                html += "<td><button type='button' class='btn btn-danger btn-sm' onclick='cancelAdoptionApp(" + item.adoptionAppId + ")'>신청취소</button></td>";
+                                                html += "</tr>";
+                                            });
+                                            tbody2.innerHTML = html;
+
+                                            // 페이징 2 (입양 신청)
+                                            const pi2 = ResultMap.pi2;
+                                            let p2Html = "";
+                                            if (pi2) {
+                                                if (pi2.currentPage > 1) {
+                                                    p2Html += '<button type="button" class="btn btn-sm btn-outline-secondary mx-1" onclick="getAdoptionData(currPage1, ' + (pi2.currentPage - 1) + ')">&lt;</button>';
+                                                }
+                                                for (let i = pi2.startPage; i <= pi2.endPage; i++) {
+                                                    let active = (pi2.currentPage == i) ? "btn-secondary" : "btn-outline-secondary";
+                                                    p2Html += '<button type="button" class="btn btn-sm ' + active + ' mx-1" onclick="getAdoptionData(currPage1, ' + i + ')">' + i + '</button>';
+                                                }
+                                                if (pi2.currentPage < pi2.maxPage) {
+                                                    p2Html += '<button type="button" class="btn btn-sm btn-outline-secondary mx-1" onclick="getAdoptionData(currPage1, ' + (pi2.currentPage + 1) + ')">&gt;</button>';
+                                                }
+                                            }
+                                            const area2 = document.querySelector("#pagingArea2");
+                                            if (area2) area2.innerHTML = p2Html;
+                                        } else {
+                                            tbody2.innerHTML = "<tr><td colspan='4'>신청한 내역이 없습니다.</td></tr>";
+                                            const area2 = document.querySelector("#pagingArea2");
+                                            if (area2) area2.innerHTML = "";
+                                        }
+
+                                        return ResultMap;
+
+                                    } catch (error) {
+                                        console.error("Error:", error);
+                                        alert("데이터를 불러오는 중 오류가 발생했습니다.\n" + error);
+                                    }
                                 }
 
                                 //입양 관련 수정+삭제 링크 함수들
@@ -312,7 +386,8 @@
 
                                     <div class="card-body p-4" id="myupdate2">
                                         <h4 class="mb-4 fw-bold border-bottom pb-2">내 정보 수정</h4>
-                                        <form action="/member/update" method="post" id="updateForm">
+                                        <form action="${pageContext.request.contextPath}/user/update.me" method="post"
+                                            id="updateForm">
                                             <input type="hidden" name="userId" value="${loginMember.userId}">
 
                                             <div class="row mb-3">
@@ -326,8 +401,9 @@
                                             <div class="row mb-3">
                                                 <label class="col-sm-3 col-form-label fw-bold">이름</label>
                                                 <div class="col-sm-9">
-                                                    <input type="text" class="form-control readonly-input"
-                                                        value="${loginMember.userName}" readonly>
+                                                    <input type="text" class="form-control" name="userName"
+                                                        id="userName" maxlength="10" value="${loginMember.userName}">
+                                                    <div class="error-msg" id="userNameError">1~10자의 한글로 작성해주세요.</div>
                                                 </div>
                                             </div>
 
@@ -335,7 +411,10 @@
                                                 <label class="col-sm-3 col-form-label fw-bold">닉네임</label>
                                                 <div class="col-sm-9">
                                                     <input type="text" class="form-control" name="userNickname"
+                                                        id="userNickname" maxlength="10"
                                                         value="${loginMember.userNickname}" required>
+                                                    <div class="error-msg" id="userNicknameError">1~10자의 영문, 한글, 숫자로
+                                                        작성해주세요.</div>
                                                 </div>
                                             </div>
 
@@ -343,7 +422,9 @@
                                                 <label class="col-sm-3 col-form-label fw-bold">연락처</label>
                                                 <div class="col-sm-9">
                                                     <input type="text" class="form-control" name="userContact"
+                                                        id="userContact" maxlength="11"
                                                         value="${loginMember.userContact}" required>
+                                                    <div class="error-msg" id="userContactError">숫자로만 11자리 작성해주세요.</div>
                                                 </div>
                                             </div>
 
@@ -359,10 +440,29 @@
                                                     <input type="text" class="form-control mb-2" id="roadAddress"
                                                         placeholder="기본 주소" readonly>
                                                     <input type="text" class="form-control" id="detailAddress"
-                                                        placeholder="상세 주소를 입력해주세요">
+                                                        maxlength="20" placeholder="상세 주소를 입력해주세요">
+                                                    <div class="error-msg" id="detailAddressError">1~20자의 한글, 숫자, 공백으로
+                                                        작성해주세요.</div>
 
                                                     <input type="hidden" id="userAddress" name="userAddress"
                                                         value="${loginMember.userAddress}">
+
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-3">
+                                                <label class="col-sm-3 col-form-label fw-bold">성별</label>
+                                                <div class="col-sm-9">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="radio" name="userGender"
+                                                            id="genderM" value="M" checked>
+                                                        <label class="form-check-label" for="genderM">남성</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="radio" name="userGender"
+                                                            id="genderF" value="F">
+                                                        <label class="form-check-label" for="genderF">여성</label>
+                                                    </div>
                                                 </div>
                                             </div>
 
@@ -394,11 +494,21 @@
 
                                     <div class="card-body p-4" style="display: none;" id="myadoption2">
                                         <h4> 입양 등록 내역 </h4>
+
+                                        <!-- 검색 패널 추가 -->
+                                        <div class="input-group mb-3" style="max-width: 300px;">
+                                            <input type="text" id="searchKeyword" class="form-control"
+                                                placeholder="동물 이름 검색">
+                                            <button class="btn btn-outline-secondary" type="button"
+                                                onclick="getAdoptionData(1, currPage2)">검색</button>
+                                        </div>
+
                                         <table class="table table-bordered text-center">
                                             <thead class="table-light">
                                                 <tr>
                                                     <th>등록번호</th>
                                                     <th>사진</th>
+                                                    <th>동물 이름</th>
                                                     <th>등록일</th>
                                                     <th>상태</th>
                                                     <th>설정</th>
@@ -408,6 +518,7 @@
                                                 <!-- 정보 들어오는 곳 -->
                                             </tbody>
                                         </table>
+                                        <div id="pagingArea1" class="d-flex justify-content-center mt-3 gap-1"></div>
 
                                         <h4 class="mt-4"> 입양 신청 내역 </h4>
                                         <table class="table table-bordered text-center">
@@ -415,6 +526,7 @@
                                                 <tr>
                                                     <th>신청번호</th>
                                                     <th>사진</th>
+                                                    <th>동물 이름</th>
                                                     <th>신청일</th>
                                                     <th>신청 상태</th>
                                                     <th>설정</th>
@@ -424,6 +536,7 @@
                                                 <!-- 정보 들어오는 곳 -->
                                             </tbody>
                                         </table>
+                                        <div id="pagingArea2" class="d-flex justify-content-center mt-3 gap-1"></div>
 
 
                                     </div>
@@ -474,8 +587,24 @@
                     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
                     <script>
-                        // 1. 초기 로딩 시 주소 분리 (단순 예시)
-                        // DB에 "도로명주소, 상세주소"로 저장되어 있다고 가정
+                        // 정규표현식
+                        let nameRegExr = /^[가-힣]{1,10}$/;
+                        let nicknameRegExr = /^[a-zA-Z0-9가-힣]{1,10}$/;
+                        let contactRegExr = /^[0-9]{11}$/;
+                        let addressRegExr = /^[가-힣0-9\s]+$/;
+
+                        // 0. 초기 로딩 시 남성/여성 체크
+                        $(document).ready(function () {
+                            let gender = '${loginMember.userGender}';
+                            if (gender == 'M') {
+                                $("#genderM").prop("check", true);
+                            }
+                            else {
+                                $("#genderF").prop("check", true);
+                            }
+                        });
+
+                        // 1. 초기 로딩 시 주소 분리
                         $(document).ready(function () {
                             var fullAddr = "${loginMember.userAddress}";
                             if (fullAddr) {
@@ -498,8 +627,86 @@
                             }).open();
                         }
 
-                        // 3. 폼 제출 전 주소 합치기
+                        // 정규식 표현에 안 맞으면 차단
+
+                        // 이름
+
+                        $("#userName").on("keyup", function () {
+                            var userName = $("#userName").val();
+
+                            if (!nameRegExr.test(userName)) {
+                                $("#userNameError").show();
+                            } else {
+                                $("#userNameError").hide();
+                            }
+                        });
+
+                        // 닉네임
+
+                        $("#userNickname").on("keyup", function () {
+                            var userNickname = $("#userNickname").val();
+
+                            if (!nicknameRegExr.test(userNickname)) {
+                                $("#userNicknameError").show();
+                            } else {
+                                $("#userNicknameError").hide();
+                            }
+                        });
+
+                        // 연락처
+
+                        $("#userContact").on("keyup", function () {
+                            var userContact = $("#userContact").val();
+
+                            if (!contactRegExr.test(userContact)) {
+                                $("#userContactError").show();
+                            } else {
+                                $("#userContactError").hide();
+                            }
+                        });
+
+                        // 상세주소
+
+                        $("#detailAddress").on("keyup", function () {
+                            var detailAddress = $("#detailAddress").val();
+
+                            if (!addressRegExr.test(detailAddress)) {
+                                $("#detailAddressError").show();
+                            } else {
+                                $("#detailAddressError").hide();
+                            }
+                        });
+
+                        // 3. 폼 제출 전 조건 확인
                         $("#updateForm").on("submit", function () {
+
+                            let userName = $("#userName").val();
+                            let userNickname = $("#userNickname").val();
+                            let userContact = $("#userContact").val();
+                            let detailAddress = $("#detailAddress").val();
+
+
+                            if (!nameRegExr.test(userName)) {
+                                alert("이름은 1~10글자 사이의 한글만 가능합니다.");
+                                return false;
+                            }
+
+                            if (!nicknameRegExr.test(userNickname)) {
+                                alert("닉네임은 1~10글자 사이의 영문, 한글, 숫자만 가능합니다.");
+                                return false;
+                            }
+
+                            if (!contactRegExr.test(userContact)) {
+                                alert("연락처는 11자리의 숫자만 가능합니다.");
+                                return false;
+                            }
+
+                            if (!addressRegExr.test(detailAddress)) {
+                                alert("상세주소는 한글, 숫자, 공백만 포함 가능합니다.");
+                                return false;
+                            }
+
+
                             var road = $("#roadAddress").val();
                             var detail = $("#detailAddress").val();
 
@@ -513,9 +720,7 @@
 
                         // 4. 회원 탈퇴 함수
                         function deleteMember() {
-                            if (confirm("정말로 탈퇴하시겠습니까? 탈퇴 시 복구할 수 없습니다.")) {
-                                location.href = "/member/delete"; // Controller에 매핑 필요
-                            }
+                            return confirm("정말로 탈퇴하시겠습니까? 탈퇴 시 복구할 수 없습니다.");
                         }
                     </script>
             </body>

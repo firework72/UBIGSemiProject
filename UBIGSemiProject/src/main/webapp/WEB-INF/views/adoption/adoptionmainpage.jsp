@@ -25,6 +25,152 @@
 			<div class="adoption-container">
 				<h1 class="adoption-header">입양 친구들을 소개합니다</h1>
 
+				<!-- CSS 스타일 추가 -->
+				<style>
+					.search-filter-container {
+						background-color: #f8f9fa;
+						border-radius: 15px;
+						box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+						padding: 25px;
+						margin-bottom: 30px;
+					}
+
+					.filter-label {
+						color: #495057;
+						font-weight: 700;
+						margin-bottom: 10px;
+						display: block;
+						font-size: 0.95rem;
+					}
+
+					.form-check-inline {
+						margin-right: 1.5rem;
+					}
+
+					.form-check-input:checked {
+						background-color: #0d6efd;
+						border-color: #0d6efd;
+					}
+
+					.custom-input-group {
+						box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+					}
+
+					.btn-search {
+						padding: 10px 40px;
+						font-weight: 600;
+						border-radius: 8px;
+						transition: all 0.2s;
+					}
+
+					.btn-search:hover {
+						transform: translateY(-2px);
+						box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+					}
+				</style>
+
+				<!-- 검색 필터 섹션 -->
+				<div class="search-filter-container">
+					<form action="adoption.mainpage" method="get">
+						<div class="row g-4">
+							<!-- 1. 축종 -->
+							<div class="col-md-4">
+								<span class="filter-label">축종</span>
+								<div class="bg-white p-2 rounded border">
+									<div class="form-check form-check-inline">
+										<input class="form-check-input" type="radio" name="species" value="1" id="dog"
+											${filter.species==1 ? 'checked' : '' }>
+										<label class="form-check-label" for="dog">강아지</label>
+									</div>
+									<div class="form-check form-check-inline">
+										<input class="form-check-input" type="radio" name="species" value="2" id="cat"
+											${filter.species==2 ? 'checked' : '' }>
+										<label class="form-check-label" for="cat">고양이</label>
+									</div>
+								</div>
+							</div>
+
+							<!-- 2. 성별 -->
+							<div class="col-md-4">
+								<span class="filter-label">성별</span>
+								<div class="bg-white p-2 rounded border">
+									<div class="form-check form-check-inline">
+										<input class="form-check-input" type="radio" name="gender" value="1" id="male"
+											${filter.gender==1 ? 'checked' : '' }>
+										<label class="form-check-label" for="male">수컷</label>
+									</div>
+									<div class="form-check form-check-inline">
+										<input class="form-check-input" type="radio" name="gender" value="2" id="female"
+											${filter.gender==2 ? 'checked' : '' }>
+										<label class="form-check-label" for="female">암컷</label>
+									</div>
+								</div>
+							</div>
+
+							<!-- 3. 중성화 -->
+							<div class="col-md-4">
+								<span class="filter-label">중성화 여부</span>
+								<div class="bg-white p-2 rounded border">
+									<div class="form-check form-check-inline">
+										<input class="form-check-input" type="radio" name="neutered" value="1"
+											id="neuteredY" ${filter.neutered==1 ? 'checked' : '' }>
+										<label class="form-check-label" for="neuteredY">완료</label>
+									</div>
+									<div class="form-check form-check-inline">
+										<input class="form-check-input" type="radio" name="neutered" value="0"
+											id="neuteredN" ${filter.neutered==0 ? 'checked' : '' }>
+										<label class="form-check-label" for="neuteredN">미완료</label>
+									</div>
+								</div>
+							</div>
+
+							<!-- 4. 나이 범위 -->
+							<div class="col-md-3">
+								<label class="filter-label">나이 (살)</label>
+								<div class="input-group input-group-sm custom-input-group">
+									<input type="number" class="form-control" name="ageMin" placeholder="최소"
+										value="${filter.ageMin}" step="0.1">
+									<span class="input-group-text bg-light">~</span>
+									<input type="number" class="form-control" name="ageMax" placeholder="최대"
+										value="${filter.ageMax}" step="0.1">
+								</div>
+							</div>
+
+							<!-- 5. 몸무게 범위 -->
+							<div class="col-md-3">
+								<label class="filter-label">몸무게 (kg)</label>
+								<div class="input-group input-group-sm custom-input-group">
+									<input type="number" class="form-control" name="weightMin" placeholder="최소"
+										value="${filter.weightMin}" step="0.1">
+									<span class="input-group-text bg-light">~</span>
+									<input type="number" class="form-control" name="weightMax" placeholder="최대"
+										value="${filter.weightMax}" step="0.1">
+								</div>
+							</div>
+
+							<!-- 6. 지역 -->
+							<div class="col-md-3">
+								<label class="filter-label">희망 지역</label>
+								<input type="text" class="form-control form-control-sm" name="hopeRegion"
+									placeholder="예: 서울, 경기" value="${filter.hopeRegion}">
+							</div>
+
+							<!-- 7. 검색어 (이름) -->
+							<div class="col-md-3">
+								<label class="filter-label">이름 검색</label>
+								<input type="text" class="form-control form-control-sm" name="keyword"
+									placeholder="동물 이름 입력" value="${filter.keyword}">
+							</div>
+
+							<!-- 검색 버튼 -->
+							<div class="col-12 text-center mt-4">
+								<button type="submit" class="btn btn-primary btn-search mx-2">조건 검색</button>
+								<a href="adoption.mainpage" class="btn btn-outline-secondary btn-search mx-2">초기화</a>
+							</div>
+						</div>
+					</form>
+				</div>
+
 				<div class="adoption-grid" id="adoptionGrid">
 					<c:choose>
 						<c:when test="${adoptionList.size() eq 0}">
@@ -91,8 +237,12 @@
 				</div>
 
 				<div class="btn-group">
-					<button id="enroll" class="btn-primary">입양 글 등록하기</button>
-					<button id="postManage" class="btn-secondary">입양 글 관리하기(관리자 전용)</button>
+					<c:if test="${not empty loginMember}">
+						<button id="enroll" class="btn-primary">입양 글 등록하기</button>
+					</c:if>
+					<c:if test="${not empty loginMember && loginMember.userRole eq 'ADMIN'}">
+						<button id="postManage" class="btn-secondary">입양 글 관리하기(관리자 전용)</button>
+					</c:if>
 				</div>
 			</div>
 
@@ -104,7 +254,7 @@
 				const paging = document.querySelector("#paging");
 				const postManage = document.querySelector("#postManage"); // Added this line
 
-				// 입양 디테일 페이지 이동 (이벤트 위임) - Using closer to pure JS or keeping existing logic
+				// 입양 디테일 페이지 이동 (이벤트 위임)
 				const adoptionGrid = document.querySelector("#adoptionGrid");
 				if (adoptionGrid) {
 					adoptionGrid.addEventListener('click', function (e) {
@@ -148,7 +298,10 @@
 							}
 
 							if (!isNaN(page)) {
-								location.href = 'adoption.mainpage?page=' + page;
+								// 기존 URL 파라미터 유지
+								const urlParams = new URLSearchParams(window.location.search);
+								urlParams.set('page', page);
+								location.href = 'adoption.mainpage?' + urlParams.toString();
 							}
 						}
 					});

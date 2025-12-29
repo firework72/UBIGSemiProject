@@ -27,9 +27,9 @@ public class FundingDao {
 		return sqlSession.insert("fundingMapper.insertMoney",fundingHistoryVO);
 	}
 
-	public FundingVO selectFunding2(SqlSessionTemplate sqlSession,int fundingNo) {
+	public FundingVO fundingDetailView(SqlSessionTemplate sqlSession,int fundingNo) {
 		
-		return sqlSession.selectOne("fundingMapper.selectFunding2",fundingNo);
+		return sqlSession.selectOne("fundingMapper.fundingDetailView",fundingNo);
 	}
 
 	public ArrayList<FundingVO> searchKeyword(SqlSessionTemplate sqlSession, String searchKeyword) {

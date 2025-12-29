@@ -1,6 +1,6 @@
 package com.ubig.app.adoption.dao;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,6 +13,8 @@ import com.ubig.app.vo.adoption.AdoptionMainListVO;
 import com.ubig.app.vo.adoption.AdoptionPageInfoVO;
 import com.ubig.app.vo.adoption.AdoptionPostVO;
 import com.ubig.app.vo.adoption.AnimalDetailVO;
+
+import com.ubig.app.vo.adoption.AdoptionSearchFilterVO;
 
 @Repository
 public class AdoptionDao {
@@ -27,22 +29,15 @@ public class AdoptionDao {
 		return sqlSession.update("adoptionMapper.updateAnimal", animal);
 	}
 
-	// 게시글 전체 갯수 가져오기
-	public int listCount(SqlSessionTemplate sqlSession) {
-		return sqlSession.selectOne("adoptionMapper.listCount");
+	// 게시글 전체 갯수 가져오기 (필터 적용)
+	public int listCount(SqlSessionTemplate sqlSession, AdoptionSearchFilterVO filter) {
+		return sqlSession.selectOne("adoptionMapper.listCount", filter);
 	}
 
-	// PageInfo를 가지고 메인 페이지 게시글 목록 가져오기
-	public ArrayList<AdoptionMainListVO> selectAdoptionMainList(SqlSessionTemplate sqlSession,
-			AdoptionPageInfoVO pi) {
-
-		int limit = pi.getBoardLimit();
-		int offset = (pi.getCurrentPage() - 1) * limit;
-
-		RowBounds rowBounds = new RowBounds(offset, limit);
-
-		return (ArrayList) sqlSession.selectList("adoptionMapper.selectAdoptionMainList", null,
-				rowBounds);
+	// PageInfo를 가지고 메인 페이지 게시글 목록 가져오기 (필터 적용)
+	public List<AdoptionMainListVO> selectAdoptionMainList(SqlSessionTemplate sqlSession,
+			AdoptionPageInfoVO pi, AdoptionSearchFilterVO filter, RowBounds rowBounds) {
+		return sqlSession.selectList("adoptionMapper.selectAdoptionMainList", filter, rowBounds);
 	}
 
 	// AdoptionPostVO를 가지고 게시글 등록하기
@@ -84,18 +79,37 @@ public class AdoptionDao {
 	}
 
 	// 관리자용 동물/게시글 전체 목록 가져오기
-	public ArrayList<AnimalDetailVO> managepost(SqlSessionTemplate sqlSession) {
-		return (ArrayList) sqlSession.selectList("adoptionMapper.allList");
+	public List<AnimalDetailVO> managepost(SqlSessionTemplate sqlSession, RowBounds rowBounds,
+			Map<String, Object> map) {
+		return sqlSession.selectList("adoptionMapper.allList", map, rowBounds);
 	}
 
-	// userId를 가지고 등록한 동물 목록 가져오기
-	public ArrayList<AdoptionMainListVO> selectAnimalList1(SqlSessionTemplate sqlSession, String userId) {
-		return (ArrayList) sqlSession.selectList("adoptionMapper.selectAnimalList1", userId);
+	// userId를 가지고 등록한 동물 목록 가져오기 (페이징, 검색)
+	public List<AdoptionMainListVO> selectAnimalList1(SqlSessionTemplate sqlSession, String userId,
+			RowBounds rowBounds, String keyword) {
+		Map<String, Object> map = new HashMap<>();
+		map.put("userId", userId);
+		map.put("keyword", keyword);
+		return sqlSession.selectList("adoptionMapper.selectAnimalList1", map, rowBounds);
 	}
 
-	// userId를 가지고 신청한 입양 목록 가져오기
-	public ArrayList<AdoptionApplicationVO> selectAnimalList2(SqlSessionTemplate sqlSession, String userId) {
-		return (ArrayList) sqlSession.selectList("adoptionMapper.selectAnimalList2", userId);
+	// userId를 가지고 등록한 동물 수 세기 (검색)
+	public int myList1Count(SqlSessionTemplate sqlSession, String userId, String keyword) {
+		Map<String, Object> map = new HashMap<>();
+		map.put("userId", userId);
+		map.put("keyword", keyword);
+		return sqlSession.selectOne("adoptionMapper.selectAnimalList1Count", map);
+	}
+
+	// userId를 가지고 신청한 입양 목록 가져오기 (페이징)
+	public List<AdoptionApplicationVO> selectAnimalList2(SqlSessionTemplate sqlSession, String userId,
+			RowBounds rowBounds) {
+		return sqlSession.selectList("adoptionMapper.selectAnimalList2", userId, rowBounds);
+	}
+
+	// userId를 가지고 신청한 입양 수 세기
+	public int myList2Count(SqlSessionTemplate sqlSession, String userId) {
+		return sqlSession.selectOne("adoptionMapper.selectAnimalList2Count", userId);
 	}
 
 	// anino를 가지고 게시글 삭제하기
@@ -121,6 +135,21 @@ public class AdoptionDao {
 	// adoptionAppId를 가지고 신청서 삭제하기
 	public int deleteapp(SqlSessionTemplate sqlSession, int adoptionAppId) {
 		return sqlSession.delete("adoptionMapper.deleteapp", adoptionAppId);
+	}
+
+	// anino를 가지고 해당 동물 정보상태 반려하기
+	public int denyBoard(SqlSessionTemplate sqlSession, int anino) {
+		return sqlSession.update("adoptionMapper.denyBoard", anino);
+	}
+
+	// 신청서 중복 체크 로직
+	public int checkApplication(SqlSessionTemplate sqlSession, Map<String, Object> map) {
+		return sqlSession.selectOne("adoptionMapper.checkApplication", map);
+	}
+
+	// 관리자용 동물/게시글 전체 목록 갯수
+	public int managepostCount(SqlSessionTemplate sqlSession, Map<String, Object> map) {
+		return sqlSession.selectOne("adoptionMapper.managepostCount", map);
 	}
 
 }

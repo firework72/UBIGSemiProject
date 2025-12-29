@@ -46,9 +46,6 @@
     
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold">📬 나의 쪽지함</h2>
-        <button class="btn btn-write px-4 py-2" data-bs-toggle="modal" data-bs-target="#writeModal">
-            + 쪽지 쓰기
-        </button>
     </div>
 
     <ul class="nav nav-tabs mb-3">

@@ -9,9 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ubig.app.admin.service.AdminService;
 import com.ubig.app.vo.community.BoardVO;
+import com.ubig.app.vo.funding.DonationVO;
 import com.ubig.app.vo.member.MemberVO;
 import com.ubig.app.vo.volunteer.ActivityVO;
 
@@ -31,7 +33,7 @@ public class AdminController {
 	
 	//회원 관리 페이지
 	@RequestMapping("/userStatus")
-	public String selectUser(Model model) {
+	public String selectUser(Model model,String userId) {
 		
 		ArrayList<MemberVO> list = service.selectUser();
 		
@@ -40,8 +42,21 @@ public class AdminController {
 		return "admin/userStatusView";
 	}
 	
+	//검색 기능
+	@RequestMapping("/searchKeyword")
+	public String searchKeyword(Model model,String searchKeyword) {
+				
+		ArrayList<MemberVO> list = service.searchKeyword(searchKeyword);
+			
+		model.addAttribute("list",list);
+				
+		return "admin/userStatusView";
+				
+	}
+	
 	//회원 정지
 	@RequestMapping("/stopUser")
+	@ResponseBody
 	public String updateStatus(HttpSession session,String userId,String days) {
 		
 		HashMap<String,String> map = new HashMap<>();
@@ -52,11 +67,13 @@ public class AdminController {
 		
 		if(result>0) {
 			session.setAttribute("alertMsg", "회원 정지 성공");
+			return "success";
 		}else {
 			session.setAttribute("alertMsg", "회원 정지 실패");
+			return "fail";
 		}
 		
-		return "redirect:userStatus";
+		
 	}
 	
 	//회원 정지 해제
@@ -75,7 +92,7 @@ public class AdminController {
 			session.setAttribute("alertMsg", "회원 정지 해제 실패");
 		}
 		
-		return "redirect:userSta	tus";
+		return "redirect:userStatus";
 	}
 	
 	//회원 추방

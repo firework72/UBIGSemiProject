@@ -13,4 +13,6 @@ public interface AdminChatService {
 
 	ArrayList<AdminChatHistoryVO> selectChat(String userId);
 
+	int listCount();
+
 }

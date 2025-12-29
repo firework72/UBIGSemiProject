@@ -8,6 +8,7 @@
 	<select id="selectDonation" resultType="DonationVO">
 		SELECT *
 		FROM DONATIONS
+		ORDER BY DONATION_NO DESC
 	</select>
 	
 	<select id="searchKeyword" resultType="DonationVO" parameterType="string">
@@ -17,10 +18,11 @@
 	    OR DONATION_TYPE LIKE '%' || #{searchKeyword} || '%'
 	</select>
 	
-	<select id="selectDetailView" resultType="DonationVO" parameterType="string">
-		SELECT *
+	<select id="selectDetailView" resultType="int" parameterType="string">
+		SELECT COUNT(*)
 		FROM DONATIONS
 		WHERE USER_ID = #{userId}
+		AND DONATION_TYPE = 1
 	</select>
 	
 	<!-- 정기 후원 -->
@@ -41,6 +43,13 @@
 							    SYSDATE)
 	</insert>
 	
+	<!-- 정기 후원 해제 -->
+	<delete id="cancelDonation" parameterType="string">
+		DELETE FROM DONATIONS
+		WHERE DONATION_TYPE = 1
+		AND USER_ID = #{userId}
+	</delete>
+	
 	<!-- 일시 후원 -->
 	<insert id="donation2" parameterType="DonationVO">
 		INSERT INTO DONATIONS(DONATION_NO
@@ -53,7 +62,7 @@
 			  ,#{userId}
 			  ,#{donationType}
 			  ,#{donationMoney}
-			  ,2
+			  ,1
 			  ,SYSDATE)
 	</insert>
 	

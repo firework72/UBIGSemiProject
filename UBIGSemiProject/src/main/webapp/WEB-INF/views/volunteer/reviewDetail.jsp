@@ -231,18 +231,19 @@
                                         <span>${loginMember.userId}</span>
                                         <div class="rating-group">
                                             <span style="font-size: 14px; color: #666; margin-right: 5px;">평점 선택:</span>
+                                            
+                                            <label class="rating-item"> 5  <input type="radio" name="cmtRate"
+                                                    value="5"></label>
+                                            <label class="rating-item"> 4  <input type="radio" name="cmtRate"
+                                                    value="4"></label>
+                                            <label class="rating-item"> 3  <input type="radio" name="cmtRate"
+                                                    value="3"></label>
+                                            <label class="rating-item"> 2  <input type="radio" name="cmtRate"
+                                                    value="2"></label>
+                                            <label class="rating-item"> 1  <input type="radio" name="cmtRate"
+                                                    value="1"></label>
                                             <label class="rating-item">선택안함 <input type="radio" name="cmtRate" value=""
                                                     checked></label>
-                                            <label class="rating-item">5 ⭐ <input type="radio" name="cmtRate"
-                                                    value="5"></label>
-                                            <label class="rating-item">4 ⭐ <input type="radio" name="cmtRate"
-                                                    value="4"></label>
-                                            <label class="rating-item">3 ⭐ <input type="radio" name="cmtRate"
-                                                    value="3"></label>
-                                            <label class="rating-item">2 ⭐ <input type="radio" name="cmtRate"
-                                                    value="2"></label>
-                                            <label class="rating-item">1 ⭐ <input type="radio" name="cmtRate"
-                                                    value="1"></label>
                                         </div>
                                     </div>
 

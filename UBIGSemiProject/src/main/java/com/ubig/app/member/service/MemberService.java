@@ -1,5 +1,8 @@
 package com.ubig.app.member.service;
 
+import java.util.ArrayList;
+
+import com.ubig.app.common.model.vo.PageInfo;
 import com.ubig.app.vo.member.MemberVO;
 
 public interface MemberService {
@@ -13,5 +16,13 @@ public interface MemberService {
 	int messageCheckId(String userId);
 
 	int deleteMember(String userId);
+
+	int updateMember(MemberVO m);
+
+	int addAge();
+	
+	ArrayList<MemberVO> selectListByUserIdAsc(PageInfo pi);
+
+	int listCount();
 
 }

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.ubig.app.admin.dao.AdminDao;
 import com.ubig.app.vo.community.BoardVO;
+import com.ubig.app.vo.funding.DonationVO;
 import com.ubig.app.vo.member.MemberVO;
 import com.ubig.app.vo.volunteer.ActivityVO;
 
@@ -25,6 +26,12 @@ public class AdminServiceImpl implements AdminService{
 	public ArrayList<MemberVO> selectUser() {
 		
 		return dao.selectUser(sqlSession);
+	}
+	
+	@Override
+	public ArrayList<MemberVO> searchKeyword(String searchKeyword) {
+		
+		return dao.searchKeyword(sqlSession,searchKeyword);
 	}
 	
 	@Override

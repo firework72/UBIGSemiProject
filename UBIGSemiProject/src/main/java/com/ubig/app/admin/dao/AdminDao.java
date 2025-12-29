@@ -7,6 +7,7 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.ubig.app.vo.community.BoardVO;
+import com.ubig.app.vo.funding.DonationVO;
 import com.ubig.app.vo.member.MemberVO;
 import com.ubig.app.vo.volunteer.ActivityVO;
 
@@ -16,6 +17,11 @@ public class AdminDao {
 	public ArrayList<MemberVO> selectUser(SqlSessionTemplate sqlSession) {
 		
 		return (ArrayList)sqlSession.selectList("adminMapper.selectUser");
+	}
+	
+	public ArrayList<MemberVO> searchKeyword(SqlSessionTemplate sqlSession, String searchKeyword) {
+		
+		return (ArrayList)sqlSession.selectList("adminMapper.searchKeyword",searchKeyword);
 	}
 
 	public int updateStatus(SqlSessionTemplate sqlSession, HashMap<String,String> map) {
@@ -55,6 +61,5 @@ public class AdminDao {
 
 	
 
-	
 
 }

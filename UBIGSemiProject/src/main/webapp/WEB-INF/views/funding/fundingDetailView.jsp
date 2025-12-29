@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <!DOCTYPE html>
 <html lang="ko">
@@ -8,14 +9,14 @@
 <meta charset="UTF-8">
 <title>펀딩 상세보기</title>
 
-<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css?v=3">
 
 <style>
 body {
     font-family: 'Noto Sans KR', sans-serif;
     background-color: #f8f9fa;
     margin: 0;
-    padding: 0;
+    padding: 50px;
 }
 .container {
     max-width: 800px;
@@ -81,6 +82,8 @@ body {
 </head>
 <body>
 
+<jsp:include page="/WEB-INF/views/common/menubar.jsp"></jsp:include>
+
 <div class="container">
 
     <!-- 펀딩 정보 -->
@@ -90,21 +93,25 @@ body {
         <p><strong>내용:</strong> ${list.fundingContent}</p>
         <p><strong>목표 금액:</strong> ${list.fundingMaxMoney}원</p>
         <p><strong>현재 금액:</strong> ${list.fundingCurrentMoney}원</p>
+
+        <!-- 달성률 계산 -->
         <c:choose>
-		    <c:when test="${list.fundingMaxMoney > 0}">
-		        <p><strong>달성률:</strong> 
-		            ${list.fundingCurrentMoney / list.fundingMaxMoney * 100}%
-		        </p>
-		    </c:when>
-		    <c:otherwise>
-		        <p><strong>달성률:</strong> 0%</p>
-		    </c:otherwise>
-		</c:choose>
+            <c:when test="${list.fundingMaxMoney > 0}">
+                <c:set var="fundingRate" value="${list.fundingCurrentMoney * 100.0 / list.fundingMaxMoney}" />
+            </c:when>
+            <c:otherwise>
+                <c:set var="fundingRate" value="0" />
+            </c:otherwise>
+        </c:choose>
+
+        <p><strong>달성률:</strong>
+            <fmt:formatNumber value="${fundingRate}" type="number" maxFractionDigits="2" />%
+        </p>
     </div>
 
     <!-- 진행률 표시 -->
     <div class="progress-bar">
-        <div class="progress" style="width:${list.fundingCurrentMoney / list.fundingMaxMoney * 100}%;"></div>
+        <div class="progress" style="width:<c:out value='${fundingRate}' />%; min-width:1%;"></div>
     </div>
 
     <!-- 후원 참여 -->

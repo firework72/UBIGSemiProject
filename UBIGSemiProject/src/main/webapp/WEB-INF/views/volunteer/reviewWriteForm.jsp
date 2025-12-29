@@ -123,17 +123,8 @@
                                 <label>후기 제목</label>
                                 <input type="text" name="rTitle" placeholder="제목을 입력해주세요" required>
                             </div>
-
-                            <div class="form-group">
-                                <label>평점</label>
-                                <select name="rRate">
-                                    <option value="5">⭐⭐⭐⭐⭐ (5점 - 최고예요)</option>
-                                    <option value="4">⭐⭐⭐⭐ (4점 - 좋아요)</option>
-                                    <option value="3">⭐⭐⭐ (3점 - 보통이에요)</option>
-                                    <option value="2">⭐⭐ (2점 - 아쉬워요)</option>
-                                    <option value="1">⭐ (1점 - 별로예요)</option>
-                                </select>
-                            </div>
+							<!-- 관리자 개인 의견 반영인 평점 제거 -->
+                            <input type="hidden" name="rRate" value="0">
 
                             <div class="form-group">
                                 <label>후기 내용</label>

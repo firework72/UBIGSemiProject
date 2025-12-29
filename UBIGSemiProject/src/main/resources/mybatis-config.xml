@@ -28,5 +28,6 @@
 	  	<typeAlias type="com.ubig.app.vo.funding.FundingHistoryVO" alias="FundingHistoryVO"/>
 	  	<typeAlias type="com.ubig.app.vo.member.AdminChatHistoryVO" alias="AdminChatHistoryVO"/>
 	  	<typeAlias type="com.ubig.app.vo.member.KickVO" alias="KickVO"/>
+		<typeAlias type="com.ubig.app.vo.adoption.AdoptionPostVO" alias="AdoptionPostVO"/>
 	</typeAliases>
 </configuration>

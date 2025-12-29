@@ -15,7 +15,9 @@ public interface DonationService {
 
 	ArrayList<DonationVO> searchKeyword(String searchKeyword);
 
-	ArrayList<DonationVO> selectDetailView(String userId);
+	int selectDetailView(String userId);
+
+	int cancelDonation(String userId);
 	
 	
 }
