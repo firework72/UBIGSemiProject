@@ -152,4 +152,38 @@ public class AdoptionDao {
 		return sqlSession.selectOne("adoptionMapper.managepostCount", map);
 	}
 
+	// anino를 가지고 입양 신청을 수락하기
+	public int acceptAdoption(SqlSessionTemplate sqlSession, int anino) {
+		return sqlSession.update("adoptionMapper.acceptAdoption", anino);
+	}
+
+	// 입양 신청 수락 (상태 변경)
+	public int acceptAdoptionApp(SqlSessionTemplate sqlSession, int anino) {
+		return sqlSession.update("adoptionMapper.acceptAdoptionApp", anino);
+	}
+
+	// anino를 가지고 입양 신청을 거절하기
+	public int denyAdoption(SqlSessionTemplate sqlSession, int anino) {
+		return sqlSession.update("adoptionMapper.denyAdoption", anino);
+	}
+
+	// 입양 신청 거절 (상태 변경)
+	public int denyAdoptionApp(SqlSessionTemplate sqlSession, int anino) {
+		return sqlSession.update("adoptionMapper.denyAdoptionApp", anino);
+	}
+
+	// 특정 동물의 신청자 목록 조회
+	public List<AdoptionApplicationVO> selectApplicantsByAnimalNo(SqlSessionTemplate sqlSession, int anino) {
+		return sqlSession.selectList("adoptionMapper.selectApplicantsByAnimalNo", anino);
+	}
+
+	// 입양 확정 시 특정 신청자 수락
+	public int confirmApplication(SqlSessionTemplate sqlSession, int adoptionAppId) {
+		return sqlSession.update("adoptionMapper.confirmApplication", adoptionAppId);
+	}
+
+	// 입양 확정 시 나머지 신청자 반려
+	public int rejectOtherApplications(SqlSessionTemplate sqlSession, Map<String, Object> map) {
+		return sqlSession.update("adoptionMapper.rejectOtherApplications", map);
+	}
 }

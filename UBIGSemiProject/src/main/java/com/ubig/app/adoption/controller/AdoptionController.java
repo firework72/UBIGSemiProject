@@ -13,6 +13,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -469,5 +470,92 @@ public class AdoptionController {
 
 	// 쪽지를 보내는 메서드
 	// "**되었습니다." 하는 메시지와 USERID를 파라미터로 받아서 유저에게 쪽지 보내주기
+
+	// 입양 신청을 수락하기
+	@GetMapping("/adoption.acceptadoptionapp")
+	public String acceptAdoption(int anino, HttpSession session) {
+
+		MemberVO user = (MemberVO) session.getAttribute("loginMember");
+		AnimalDetailVO animal = service.goAdoptionDetail(anino);
+
+		// 본인 동물인지 확인
+		if (animal == null || !animal.getUserId().equals(user.getUserId())) {
+			session.setAttribute("alertMsgAd", "권한이 없습니다.");
+			return "redirect:/user/mypage.me";
+		}
+
+		int result1 = service.acceptAdoption(anino);
+
+		// 신청자의 신청 정보도 변경해주기
+		int result2 = service.acceptAdoptionApp(anino);
+
+		if (result1 > 0 && result2 > 0) {
+			session.setAttribute("alertMsgAd", "입양 수락하였습니다");
+		} else {
+			session.setAttribute("alertMsgAd", "입양 수락 실패");
+		}
+
+		return "redirect:/user/mypage.me";
+	}
+
+	// 입양 신청 거절하기 (개별 반려)
+	@GetMapping("/adoption.denyadoptionapp")
+	public String denyAdoption(int anino, HttpSession session) {
+
+		MemberVO user = (MemberVO) session.getAttribute("loginMember");
+		AnimalDetailVO animal = service.goAdoptionDetail(anino);
+
+		// 본인 동물인지 확인
+		if (animal == null || !animal.getUserId().equals(user.getUserId())) {
+			session.setAttribute("alertMsgAd", "권한이 없습니다.");
+			return "redirect:/user/mypage.me";
+		}
+
+		int result1 = service.denyAdoption(anino);
+
+		// 신청자의 신청 정보도 변경해주기
+		int result2 = service.denyAdoptionApp(anino);
+
+		if (result1 > 0 && result2 > 0) {
+			session.setAttribute("alertMsgAd", "입양 거절하였습니다");
+		} else {
+			session.setAttribute("alertMsgAd", "입양 거절 실패");
+		}
+
+		return "redirect:/user/mypage.me";
+	}
+
+	// [AJAX] 특정 동물의 신청자 목록 조회
+	@ResponseBody
+	@RequestMapping(value = "/adoption.applicants", produces = "application/json; charset=UTF-8")
+	public String getApplicants(int anino, HttpSession session) {
+		MemberVO user = (MemberVO) session.getAttribute("loginMember");
+		AnimalDetailVO animal = service.goAdoptionDetail(anino);
+
+		// 권한 체크
+		if (animal == null || !animal.getUserId().equals(user.getUserId())) {
+			return new Gson().toJson("error");
+		}
+
+		List<AdoptionApplicationVO> list = service.getApplicantsList(anino);
+		return new Gson().toJson(list);
+	}
+
+	// [AJAX] 최종 입양 확정 (특정 신청자 선택)
+	@ResponseBody
+	@RequestMapping(value = "/adoption.confirm", produces = "application/json; charset=UTF-8")
+	public String confirmAdoption(int adoptionAppId, int anino, HttpSession session) {
+		MemberVO user = (MemberVO) session.getAttribute("loginMember");
+		AnimalDetailVO animal = service.goAdoptionDetail(anino);
+
+		// 권한 체크
+		if (animal == null || !animal.getUserId().equals(user.getUserId())) {
+			return new Gson().toJson("error");
+		}
+
+		int result = service.confirmAdoption(adoptionAppId, anino);
+
+		return new Gson().toJson(result > 0 ? "success" : "fail");
+	}
 
 }

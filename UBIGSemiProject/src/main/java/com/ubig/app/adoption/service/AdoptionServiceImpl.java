@@ -204,4 +204,50 @@ public class AdoptionServiceImpl implements AdoptionService {
 	public int managepostCount(Map<String, Object> map) {
 		return dao.managepostCount(sqlSession, map);
 	}
+
+	// anino를 가지고 입양 신청을 수락하기(동물 디테일)
+	@Override
+	public int acceptAdoption(int anino) {
+		return dao.acceptAdoption(sqlSession, anino);
+	}
+
+	// anino를 가지고 입양 신청을 수락하기(신청자 상태)
+	@Override
+	public int acceptAdoptionApp(int anino) {
+		return dao.acceptAdoptionApp(sqlSession, anino);
+	}
+
+	// anino를 가지고 입양 신청을 거절하기
+	@Override
+	public int denyAdoption(int anino) {
+		return dao.denyAdoption(sqlSession, anino);
+	}
+
+	// anino를 가지고 입양 신청을 거절하기(신청자 상태)
+	@Override
+	public int denyAdoptionApp(int anino) {
+		return dao.denyAdoptionApp(sqlSession, anino);
+	}
+
+	@Override
+	public List<AdoptionApplicationVO> getApplicantsList(int anino) {
+		return dao.selectApplicantsByAnimalNo(sqlSession, anino);
+	}
+
+	@Override
+	public int confirmAdoption(int adoptionAppId, int animalNo) {
+		// 1. 해당 신청자 '입양완료(2)' 처리
+		int result1 = dao.confirmApplication(sqlSession, adoptionAppId);
+
+		// 2. 나머지 신청자 '반려(3)' 처리
+		Map<String, Object> map = new HashMap<>();
+		map.put("animalNo", animalNo);
+		map.put("adoptionAppId", adoptionAppId);
+		dao.rejectOtherApplications(sqlSession, map);
+
+		// 3. 동물 상태 '입양완료' 처리
+		int result3 = dao.acceptAdoption(sqlSession, animalNo);
+
+		return (result1 > 0 && result3 > 0) ? 1 : 0;
+	}
 }
