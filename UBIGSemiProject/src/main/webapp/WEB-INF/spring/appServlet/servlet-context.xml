@@ -37,6 +37,12 @@
 			<mapping path="/adoption.deleteanimal"/>
 			<mapping path="/adoption.acceptadoptionapp"/>
 			<mapping path="/adoption.denyadoptionapp"/>
+			<mapping path="/adoption.applicants"/>
+			<mapping path="/adoption.confirm"/>
+			<mapping path="/adoption.insert.board"/>
+			<mapping path="/adoption.insert.board.direct"/>
+			<mapping path="/adoption.insert.animal"/>
+			<mapping path="/adoption.deleteadoptionapp"/>
 			<!-- Dong : /message, /kick 모든 주소, /user 일부 주소 로그인 시에만 접근 가능하게 -->
 			<mapping path="/message"/>
 			<mapping path="/message/**"/>

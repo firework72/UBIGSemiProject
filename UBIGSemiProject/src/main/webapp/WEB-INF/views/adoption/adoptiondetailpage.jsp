@@ -35,6 +35,11 @@
 					</tr>
 
 					<tr>
+						<th>작성자</th>
+						<td>${animal.userId}</td>
+					</tr>
+
+					<tr>
 						<th>종류</th>
 						<td>
 							<c:choose>
@@ -117,8 +122,21 @@
 						<button id="updatepost" class="btn-secondary" style="display: block;">수정</button>
 						<button id="deletepost" class="btn-secondary" style="display: block;">삭제</button>
 					</c:if>
-					<c:if test="${not empty loginMember.userId && loginMember.userId ne animal.userId}">
-						<button id="application" class="btn-primary">입양 신청 페이지로 이동</button>
+					<!-- [개선] 본인이 등록한 동물이면 입양 신청 버튼을 아예 숨김 -->
+					<c:if test="${not empty loginMember.userId}">
+						<c:choose>
+							<c:when test="${loginMember.userId eq animal.userId}">
+								<!-- 본인 동물일 경우: 버튼 숨김-->
+							</c:when>
+							<c:when test="${animal.adoptionStatus eq '마감'}">
+								<!-- 마감된 경우: 버튼 비활성화 -->
+								<button class="btn-secondary" disabled>마감되었습니다</button>
+							</c:when>
+							<c:otherwise>
+								<!-- 본인 동물이 아닐 경우: 신청 버튼 노출 -->
+								<button id="application" class="btn-primary">입양 신청 페이지로 이동</button>
+							</c:otherwise>
+						</c:choose>
 					</c:if>
 				</div>
 			</div>

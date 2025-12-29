@@ -102,7 +102,6 @@ public interface AdoptionService {
 	// 최종 입양 확정 (트랜잭션)
 	int confirmAdoption(int adoptionAppId, int animalNo);
 
-	// anino를 가지고 입양 신청을 거절하기(신청자 상태)
-	// int denyAdoptionApp(int anino);
-
+	// 마감 기한 지난 동물 일괄 '마감' 처리
+	int expireOverdueAdoptions();
 }

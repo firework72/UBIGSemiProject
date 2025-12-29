@@ -63,6 +63,11 @@ public class AdoptionDao {
 		return sqlSession.update("adoptionMapper.updateAdoptionStatus", map);
 	}
 
+	// 마감 기한 지난 동물 상태 일괄 변경
+	public int updateExpiredAdoptionStatus(SqlSessionTemplate sqlSession) {
+		return sqlSession.update("adoptionMapper.updateExpiredAdoptionStatus");
+	}
+
 	// animalNo를 가지고 조회수 증가시키기
 	public int updateViewCount(SqlSessionTemplate sqlSession, int animalNo) {
 		return sqlSession.update("adoptionMapper.updateViewCount", animalNo);
