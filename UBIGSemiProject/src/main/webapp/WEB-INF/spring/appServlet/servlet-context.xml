@@ -48,6 +48,14 @@
 			<mapping path="/donation/**"/>
 			<mapping path="/funding"/>
 			<mapping path="/funding/**"/>
+			<!-- chan -->
+			<mapping path="/volunteerDetail.vo"/>
+			<mapping path="/volunteerSign.vo"/>
+			<mapping path="/reviewDetail.vo"/>
+			<mapping path="/reviewInsertReply.vo"/>
+			<mapping path="/deleteReply.vo"/>
+			<mapping path="/updateSignStatusUser.vo"/>
+			
 			<!-- 제외하고싶은 매핑 주소 <exclude-mapping path=""/> -->
 			<beans:bean class="com.ubig.app.common.interceptor.LoginInterceptor"/>
 		</interceptor>
@@ -58,6 +66,19 @@
 			<!-- Dong : /admin 모든 주소 관리자만 접근 가능하게 -->
 			<mapping path="/admin/**"/>
 			<mapping path="/admin"/>
+			<!-- chan -->
+			<mapping path="/volunteerWriteForm.vo"/>
+			<mapping path="/volunteerInsert.vo"/>
+			<mapping path="/volunteerUpdateForm.vo"/>
+			<mapping path="/volunteerUpdate.vo"/>
+			<mapping path="/volunteerDelete.vo"/>
+			<mapping path="/signList.vo"/>
+			<mapping path="/updateSignStatusAdmin.vo"/>
+			<mapping path="/reviewWriteForm.vo"/>
+			<mapping path="/insertReview.vo"/>
+			<mapping path="/reviewUpdateForm.vo"/>
+			<mapping path="/updateReview.vo"/>
+			<mapping path="/deleteReview.vo"/>			
 			<!-- 제외하고싶은 매핑 주소 <exclude-mapping path=""/> -->
 			<beans:bean class="com.ubig.app.common.interceptor.AdminInterceptor"/>
 		</interceptor>

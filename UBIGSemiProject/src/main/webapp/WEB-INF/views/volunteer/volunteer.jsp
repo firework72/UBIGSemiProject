@@ -185,6 +185,66 @@
                 </c:choose>
             </tbody>
         </table>
+        <div style="text-align: center; margin-top: 30px;">
+            <c:if test="${not empty list}">
+                
+                <c:choose>
+                    <c:when test="${pi.currentPage eq 1}">
+                        <button disabled class="btn-page" style="color:#ccc;">&lt;</button>
+                    </c:when>
+                    <c:otherwise>
+                        <a href="volunteerList.vo?cpage=${pi.currentPage - 1}&condition=${condition}&keyword=${keyword}" class="btn-page">&lt;</a>
+                    </c:otherwise>
+                </c:choose>
+                
+                <c:forEach var="p" begin="${pi.startPage}" end="${pi.endPage}">
+                    <c:choose>
+                        <c:when test="${p eq pi.currentPage}">
+                            <button disabled class="btn-page active">${p}</button>
+                        </c:when>
+                        <c:otherwise>
+                            <a href="volunteerList.vo?cpage=${p}&condition=${condition}&keyword=${keyword}" class="btn-page">${p}</a>
+                        </c:otherwise>
+                    </c:choose>
+                </c:forEach>
+                
+                <c:choose>
+                    <c:when test="${pi.currentPage eq pi.maxPage}">
+                        <button disabled class="btn-page" style="color:#ccc;">&gt;</button>
+                    </c:when>
+                    <c:otherwise>
+                        <a href="volunteerList.vo?cpage=${pi.currentPage + 1}&condition=${condition}&keyword=${keyword}" class="btn-page">&gt;</a>
+                    </c:otherwise>
+                </c:choose>
+                
+            </c:if>
+        </div>
+
+        <style>
+            .btn-page {
+                display: inline-block;
+                padding: 8px 14px;
+                margin: 0 3px;
+                border: 1px solid #ddd;
+                background-color: white;
+                color: #333;
+                text-decoration: none;
+                border-radius: 4px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+            .btn-page:hover:not([disabled]) {
+                background-color: #f1f1f1;
+                border-color: #bbb;
+            }
+            .btn-page.active {
+                background-color: #007bff;
+                color: white;
+                border-color: #007bff;
+                cursor: default;
+            }
+        </style>
 
         <div class="btn-area">
             <c:if test="${loginMember.userRole eq 'ADMIN'}">

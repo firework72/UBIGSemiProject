@@ -145,7 +145,7 @@
                                 <option value="title" <c:if test="${condition eq 'title'}">selected</c:if>>활동명</option>
                                 <option value="writer" <c:if test="${condition eq 'writer'}">selected</c:if>>작성자
                                 </option>
-                                <option value="content" <c:if test="${condition eq 'content'}">selected</c:if>>내용
+                                <option value="content" <c:if test="${condition eq 'content'}">selected</c:if>>후기제목
                                 </option>
                             </select>
                             <input type="text" name="keyword" value="${keyword}" placeholder="검색어를 입력하세요"
@@ -204,7 +204,66 @@
                             </c:choose>
                         </tbody>
                     </table>
+						<div style="text-align: center; margin-top: 30px;">
+            <c:if test="${not empty list}">
+                
+                <c:choose>
+                    <c:when test="${pi.currentPage eq 1}">
+                        <button disabled class="btn-page" style="color:#ccc;">&lt;</button>
+                    </c:when>
+                    <c:otherwise>
+                        <a href="reviewList.vo?cpage=${pi.currentPage - 1}&condition=${condition}&keyword=${keyword}" class="btn-page">&lt;</a>
+                    </c:otherwise>
+                </c:choose>
+                
+                <c:forEach var="p" begin="${pi.startPage}" end="${pi.endPage}">
+                    <c:choose>
+                        <c:when test="${p eq pi.currentPage}">
+                            <button disabled class="btn-page active">${p}</button>
+                        </c:when>
+                        <c:otherwise>
+                            <a href="reviewList.vo?cpage=${p}&condition=${condition}&keyword=${keyword}" class="btn-page">${p}</a>
+                        </c:otherwise>
+                    </c:choose>
+                </c:forEach>
+                
+                <c:choose>
+                    <c:when test="${pi.currentPage eq pi.maxPage}">
+                        <button disabled class="btn-page" style="color:#ccc;">&gt;</button>
+                    </c:when>
+                    <c:otherwise>
+                        <a href="reviewList.vo?cpage=${pi.currentPage + 1}&condition=${condition}&keyword=${keyword}" class="btn-page">&gt;</a>
+                    </c:otherwise>
+                </c:choose>
+                
+            </c:if>
+        </div>
 
+        <style>
+            .btn-page {
+                display: inline-block;
+                padding: 8px 14px;
+                margin: 0 3px;
+                border: 1px solid #ddd;
+                background-color: white;
+                color: #333;
+                text-decoration: none;
+                border-radius: 4px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+            .btn-page:hover:not([disabled]) {
+                background-color: #f1f1f1;
+                border-color: #bbb;
+            }
+            .btn-page.active {
+                background-color: #007bff;
+                color: white;
+                border-color: #007bff;
+                cursor: default;
+            }
+        </style>
                     <div class="btn-area">
                         <a href="volunteerList.vo" class="btn-main">봉사 목록으로</a>
                     </div>

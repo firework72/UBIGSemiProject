@@ -76,6 +76,7 @@
                             </td>
                             
                             <td>
+                                <td>
                                 <c:choose>
                                     <c:when test="${sign.signsStatus == 0}">
                                         <span class="status-wait">대기중</span>
@@ -86,17 +87,35 @@
                                     <c:when test="${sign.signsStatus == 2}">
                                         <span class="status-no">반려됨</span>
                                     </c:when>
+                                    <c:when test="${sign.signsStatus == 3}">
+                                        <span class="status-no" style="color: gray;">취소됨</span>
+                                    </c:when>
+                                    <c:when test="${sign.signsStatus == 4}">
+                                        <span class="status-ok" style="color: blue;">🏅 활동완료</span>
+                                    </c:when>
                                     <c:otherwise>
-                                        <span class="status-no">취소됨</span>
+                                        <span class="status-no">상태미상(${sign.signsStatus})</span>
                                     </c:otherwise>
                                 </c:choose>
+                            </td>
                             </td>
 
                             <td>
                                 <%-- 1. 관리자(ADMIN)일 때: 대기중(0)인 건에만 승인/반려 버튼 노출 --%>
-                                <c:if test="${sessionScope.loginMember.userRole eq 'ADMIN' and sign.signsStatus == 0}">
-                                    <button type="button" class="btn-action btn-approve" onclick="updateAdmin(${sign.signsNo}, 'approve')">승인</button>
-                                    <button type="button" class="btn-action btn-reject" onclick="updateAdmin(${sign.signsNo}, 'reject')">반려</button>
+                                <%-- 1. 관리자(ADMIN)일 때 --%>
+                                <c:if test="${sessionScope.loginMember.userRole eq 'ADMIN'}">
+                                    
+                                    <%-- 대기중(0)일 때: 승인 / 반려 --%>
+                                    <c:if test="${sign.signsStatus == 0}">
+                                        <button type="button" class="btn-action btn-approve" onclick="updateAdmin(${sign.signsNo}, 'approve')">승인</button>
+                                        <button type="button" class="btn-action btn-reject" onclick="updateAdmin(${sign.signsNo}, 'reject')">반려</button>
+                                    </c:if>
+                                    
+                                    <%-- [추가] 승인됨(1) 상태일 때: 봉사 완료 처리 버튼 노출 --%>
+                                    <c:if test="${sign.signsStatus == 1}">
+                                        <button type="button" class="btn-action" style="background-color: #007bff;" onclick="updateAdmin(${sign.signsNo}, 'complete')">활동완료</button>
+                                    </c:if>
+                                    
                                 </c:if>
 
                                 <%-- 2. 신청자 본인(userId 일치)일 때: 대기(0)거나 승인(1) 상태면 취소 가능 --%>
@@ -116,35 +135,39 @@
     <a href="volunteerDetail.vo?actId=${param.actId}" class="btn-back">뒤로 가기</a>
 
     <script>
-        // 1. 관리자 승인/반려 AJAX
-        function updateAdmin(signsNo, statusType) {
-            var confirmMsg = (statusType === 'approve') ? "승인하시겠습니까?" : "반려하시겠습니까?";
-            
-            if(confirm(confirmMsg)) {
-                $.ajax({
-                    url: "updateSignStatusAdmin.vo",
-                    type: "post",
-                    data: {
-                        signsNo: signsNo,
-                        status: statusType
-                    },
-                    success: function(result) {
-                        if(result === "success") {
-                            alert("처리되었습니다.");
-                            location.reload(); // 새로고침해서 상태 반영
-                        } else if(result === "full") {
-                            alert("⚠️ 모집 인원이 꽉 차서 승인할 수 없습니다!");
-                        } else {
-                            alert("처리 실패. 관리자에게 문의하세요.");
-                        }
-                    },
-                    error: function() {
-                        alert("통신 오류가 발생했습니다.");
-                    }
-                });
-            }
-        }
+ // 1. 관리자 승인/반려/완료 AJAX
+    function updateAdmin(signsNo, statusType) {
+        
+        // 메시지 동적 설정
+        var msg = "";
+        if(statusType === 'approve') msg = "승인하시겠습니까?";
+        else if(statusType === 'reject') msg = "반려하시겠습니까?";
+        else if(statusType === 'complete') msg = "해당 회원의 봉사 활동을 완료 처리하시겠습니까?\n(회원의 봉사 횟수가 1 증가합니다)";
 
+        if(confirm(msg)) {
+            $.ajax({
+                url: "updateSignStatusAdmin.vo",
+                type: "post",
+                data: {
+                    signsNo: signsNo,
+                    status: statusType
+                },
+                success: function(result) {
+                    if(result === "success") {
+                        alert("처리되었습니다.");
+                        location.reload(); 
+                    } else if(result === "full") {
+                        alert("⚠️ 모집 인원이 꽉 차서 승인할 수 없습니다!");
+                    } else {
+                        alert("처리 실패. 관리자에게 문의하세요.");
+                    }
+                },
+                error: function() {
+                    alert("통신 오류가 발생했습니다.");
+                }
+            });
+        }
+    }
         // 2. 사용자 취소 AJAX
         function updateUser(signsNo) {
             if(confirm("정말 봉사 신청을 취소하시겠습니까?")) {

@@ -2,6 +2,7 @@ package com.ubig.app.volunteer.service;
 
 import java.util.List;
 
+import com.ubig.app.common.model.vo.PageInfo;
 import com.ubig.app.vo.volunteer.ActivityVO;
 import com.ubig.app.vo.volunteer.SignVO;
 import com.ubig.app.vo.volunteer.VolunteerCommentVO;
@@ -10,8 +11,11 @@ import com.ubig.app.vo.volunteer.VolunteerReviewVO;
 public interface VolunteerService {
 
 	
-	//1.활동 조회 (검색 기능 추가)
-	List<ActivityVO> selectActivityList(java.util.HashMap<String, String> map);
+	// [추가] 총 게시글 수 조회
+    int selectActivityCount(java.util.HashMap<String, String> map);
+
+    // [수정] 목록 조회 (PageInfo 추가)
+    List<ActivityVO> selectActivityList(java.util.HashMap<String, String> map, PageInfo pi);
 	
 	
 	//2.활동 등록
@@ -54,8 +58,11 @@ public interface VolunteerService {
     // [추가 사유] 봉사 후기 목록 조회 로직 수행
     List<VolunteerReviewVO> selectReviewList(int actId);
     
-    // [추가 사유] 전체 후기 목록 조회 로직 수행 (검색 기능 추가)
-    List<VolunteerReviewVO> selectReviewListAll(java.util.HashMap<String, String> map);
+ // [추가] 후기 총 갯수 조회
+    int selectReviewCount(java.util.HashMap<String, String> map);
+
+    // [수정] 후기 목록 조회 (PageInfo 매개변수 추가)
+    List<VolunteerReviewVO> selectReviewListAll(java.util.HashMap<String, String> map, com.ubig.app.common.model.vo.PageInfo pi);
     
     // [추가 사유] 후기 상세 조회 로직 수행
     VolunteerReviewVO selectReviewOne(int reviewNo);

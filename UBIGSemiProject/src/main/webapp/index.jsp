@@ -330,8 +330,9 @@
                 <div class="hero-content">
                     <h1 class="animate__animated animate__fadeInDown">작은 발걸음이 만드는<br>기적 같은 변화</h1>
                     <p class="animate__animated animate__fadeInUp animate__delay-1s">유기견 봉사활동 일등 공신, 유봉일공과 함께하세요.</p>
-                    <a href="volunteer/list" class="btn-main animate__animated animate__zoomIn animate__delay-1s">봉사활동
-                        신청하기</a>
+                   <a href="${pageContext.request.contextPath}/volunteerList.vo" class="btn-main animate__animated animate__zoomIn animate__delay-1s">
+					    봉사활동 신청하기
+					</a>
                 </div>
             </section>
 

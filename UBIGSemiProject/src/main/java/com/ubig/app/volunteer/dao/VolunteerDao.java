@@ -3,10 +3,12 @@ package com.ubig.app.volunteer.dao;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.ibatis.session.RowBounds;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.ubig.app.common.model.vo.PageInfo;
 import com.ubig.app.vo.volunteer.ActivityVO;
 import com.ubig.app.vo.volunteer.SignVO;
 import com.ubig.app.vo.volunteer.VolunteerCommentVO;
@@ -18,17 +20,42 @@ public class VolunteerDao {
 	@Autowired
 	private SqlSessionTemplate sqlSession;
 
-    // [추가 사유] 검색 기능을 위해 매개변수 추가 (HashMap)
-	public List<ActivityVO> selectActivityList(HashMap<String, String> map) {
-		// 매퍼의 namespace(volunteerMapper)와 id(selectActivityList)를 연결
-		return sqlSession.selectList("volunteerMapper.selectActivityList", map);
-	}
+	// [추가] 1. 전체 게시글 수 조회
+    public int selectActivityCount(HashMap<String, String> map) {
+        return sqlSession.selectOne("volunteerMapper.selectActivityCount", map);
+    }
+
+    // [수정] 2. 목록 조회 (PageInfo 매개변수 추가 및 RowBounds 적용)
+    public List<ActivityVO> selectActivityList(HashMap<String, String> map, PageInfo pi) {
+        
+        // MyBatis RowBounds: (건너뛸 개수, 가져올 개수)
+        int offset = (pi.getCurrentPage() - 1) * pi.getBoardLimit();
+        int limit = pi.getBoardLimit();
+        
+        RowBounds rowBounds = new RowBounds(offset, limit);
+        
+        // 3번째 인자에 rowBounds 전달
+        return sqlSession.selectList("volunteerMapper.selectActivityList", map, rowBounds);
+    }
 
     // ... (중략) ...
 
     // [추가 사유] 전체 후기 목록 조회 (검색 기능 추가)
-    public List<VolunteerReviewVO> selectReviewListAll(HashMap<String, String> map) {
-        return sqlSession.selectList("volunteerMapper.selectReviewListAll", map);
+    // [추가] 1. 전체 후기 갯수 조회
+    public int selectReviewCount(HashMap<String, String> map) {
+        return sqlSession.selectOne("volunteerMapper.selectReviewCount", map);
+    }
+
+    // [수정] 2. 후기 목록 조회 (PageInfo 추가 & RowBounds 적용)
+    public List<VolunteerReviewVO> selectReviewListAll(HashMap<String, String> map, PageInfo pi) {
+        
+        // 건너뛸 게시글 수 계산
+        int offset = (pi.getCurrentPage() - 1) * pi.getBoardLimit();
+        int limit = pi.getBoardLimit();
+        
+        RowBounds rowBounds = new RowBounds(offset, limit);
+        
+        return sqlSession.selectList("volunteerMapper.selectReviewListAll", map, rowBounds);
     }
 
 	public int insertActivity(ActivityVO a) {
@@ -159,7 +186,10 @@ public class VolunteerDao {
     public SignVO selectSignOne(int signsNo) {
         return sqlSession.selectOne("volunteerMapper.selectSignOne", signsNo);
     }
-	
+	//봉사 완료 시 회원 테이블의 참여 횟수 증가
+    public int increaseUserAttendanceCount(String userId) {
+        return sqlSession.update("volunteerMapper.increaseUserAttendanceCount", userId);
+    }
 	
 	
 	
