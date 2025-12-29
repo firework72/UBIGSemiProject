@@ -94,7 +94,6 @@ window.addEventListener('DOMContentLoaded', () => {
     <c:if test="${result eq 0}">
         <div id="regular" class="donation-content">
             <div class="donation-card">
-                <img src="${pageContext.request.contextPath}/resources/images/donation/regular1.jpg">
                 <form action="${pageContext.request.contextPath}/donation/donation" method="post">
                     <input type="hidden" name="donationType" value="1">
 
@@ -114,7 +113,6 @@ window.addEventListener('DOMContentLoaded', () => {
     <!-- 일시 후원 -->
     <div id="oneTime" class="donation-content">
         <div class="donation-card">
-            <img src="${pageContext.request.contextPath}/resources/images/donation/onetime1.jpg">
             <form action="${pageContext.request.contextPath}/donation/donation2" method="post">
                 <input type="hidden" name="donationType" value="2">
 

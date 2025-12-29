@@ -8,7 +8,21 @@
 	<select id="selectFunding" resultMap="FundingVOResultMap">
 		SELECT * 
 		FROM FUNDINGS
+		ORDER BY F_NO DESC
 	</select>
+	
+	<select id="fundingListCount" resultType="_int">
+		SELECT COUNT(*)
+		FROM FUNDINGS
+	</select>
+	
+	<select id="fundingListCount2" parameterType="string" resultType="int">
+	    SELECT COUNT(*)
+	    FROM FUNDINGS
+	    WHERE USER_ID LIKE '%' || #{searchKeyword} || '%'
+	    OR F_TITLE LIKE '%' || #{searchKeyword} || '%'
+	</select>
+	
 	
 	<select id="fundingDetailView" resultMap="FundingVOResultMap">
 		SELECT * 
@@ -21,6 +35,7 @@
 	    FROM FUNDINGS
 	    WHERE USER_ID LIKE '%' || #{searchKeyword} || '%'
 	    OR F_TITLE LIKE '%' || #{searchKeyword} || '%'
+	    ORDER BY F_NO DESC
 	</select>
 
 	

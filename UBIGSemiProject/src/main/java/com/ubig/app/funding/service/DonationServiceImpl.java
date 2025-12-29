@@ -6,9 +6,9 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ubig.app.common.model.vo.PageInfo;
 import com.ubig.app.funding.dao.DonationDao;
 import com.ubig.app.vo.funding.DonationVO;
-import com.ubig.app.vo.funding.FundingVO;
 
 @Service
 public class DonationServiceImpl implements DonationService{
@@ -20,15 +20,27 @@ public class DonationServiceImpl implements DonationService{
 	private SqlSessionTemplate sqlSession;
 	
 	@Override
-	public ArrayList<DonationVO> selectDonation() {
+	public ArrayList<DonationVO> selectDonation(PageInfo pi) {
 		
-		return dao.selectDonation(sqlSession);
+		return dao.selectDonation(sqlSession,pi);
 	}
 	
 	@Override
-	public ArrayList<DonationVO> searchKeyword(String searchKeyword) {
+	public int donationListCount() {
 		
-		return dao.searchKeyword(sqlSession,searchKeyword);
+		return dao.donationListCount(sqlSession);
+	}
+	
+	@Override
+	public int donationListCount2(String searchKeyword) {
+		
+		return dao.donationListCount2(sqlSession,searchKeyword);
+	}
+	
+	@Override
+	public ArrayList<DonationVO> searchKeyword(String searchKeyword,PageInfo pi) {
+		
+		return dao.searchKeyword(sqlSession,searchKeyword,pi);
 	}
 	
 	@Override

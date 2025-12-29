@@ -17,6 +17,7 @@ import com.ubig.app.funding.common.FundingException;
 import com.ubig.app.funding.service.FundingService;
 import com.ubig.app.vo.funding.FundingHistoryVO;
 import com.ubig.app.vo.funding.FundingVO;
+import com.ubig.app.vo.member.KickVO;
 
 @Controller
 @RequestMapping("/funding")
@@ -25,24 +26,47 @@ public class FundingController {
 	@Autowired
 	private FundingService service;
 	
-	//펀딩 페이지 이동
+	// 펀딩 목록 + 페이징
 	@RequestMapping("")
-	public String fundingPage(Model model) {
-		
-		ArrayList<FundingVO> list = service.selectFunding();
-		
-		model.addAttribute("list",list);
-		
-		return "funding/fundingPage";
+	public String fundingPage(
+	        @RequestParam(value = "curPage", defaultValue = "1") int curPage,
+	        Model model) {
+
+	    int listCount = service.fundingListCount();
+
+	    int boardLimit = 3; // 한 페이지에 보여줄 개수
+	    int pageLimit = 10;  // 페이징 바 개수
+
+	    PageInfo pi = Pagination.getPageInfo(listCount, curPage, pageLimit, boardLimit);
+	    
+	    System.out.println(pi);
+	    
+	    ArrayList<FundingVO> list = service.selectFunding(pi);
+
+	    model.addAttribute("list", list);
+	    model.addAttribute("pi", pi);
+
+	    return "funding/fundingPage";
 	}
+
 	
 	//검색 기능
 	@RequestMapping("/searchKeyword")
-	public String searchKeyword(Model model,String searchKeyword) {
+	public String searchKeyword(@RequestParam(value = "curPage", defaultValue = "1") int curPage,
+	        Model model,@RequestParam(value = "searchKeyword", required = false) String searchKeyword) {
 		
-		ArrayList<FundingVO> list = service.searchKeyword(searchKeyword);
-		
-		model.addAttribute("list",list);
+		int listCount = service.fundingListCount2(searchKeyword);
+
+	    int boardLimit = 3; // 한 페이지에 보여줄 개수
+	    int pageLimit = 10;  // 페이징 바 개수
+
+	    PageInfo pi = Pagination.getPageInfo(listCount, curPage, pageLimit, boardLimit);
+	    
+	    ArrayList<FundingVO> list = service.searchKeyword(searchKeyword,pi);
+
+	    model.addAttribute("list", list);
+	    model.addAttribute("pi", pi);
+	    model.addAttribute("keyword", searchKeyword); // 검색어 유지
 		
 		return "funding/fundingPage";
 		
@@ -63,7 +87,7 @@ public class FundingController {
 	@RequestMapping("/insertPage")
 	public String insertPage() {
 		
-		return "funding/insertPage";
+		return "funding/insertFunding";
 	}
 	
 	//펀딩 등록
