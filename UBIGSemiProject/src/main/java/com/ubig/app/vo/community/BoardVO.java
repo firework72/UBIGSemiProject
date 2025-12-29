@@ -22,4 +22,6 @@ public class BoardVO {
     private String isDeleted;
     private String isPinned; // 'Y' or 'N'
     private String hashtags; // [Step 14] 태그 (콤마로 구분)
+    private int likeCount; // [Step 41] 좋아요 수
+    private int commentCount; // [Step 41] 댓글 수
 }

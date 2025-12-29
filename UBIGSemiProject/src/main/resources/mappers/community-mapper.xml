@@ -14,6 +14,8 @@
         <result property="isDeleted" column="IS_DELETED"/>
         <result property="isPinned" column="IS_PINNED"/>
         <result property="hashtags" column="HASHTAGS"/>
+        <result property="likeCount" column="LIKE_COUNT"/>
+        <result property="commentCount" column="COMMENT_COUNT"/>
     </resultMap>
 
     <resultMap type="com.ubig.app.vo.community.CommentVO" id="commentResultMap">
@@ -59,8 +61,10 @@
     <select id="selectBoardList" parameterType="hashmap" resultMap="boardResultMap">
         SELECT 
             BOARD_ID, USER_ID, CATEGORY, TITLE, CONTENT, 
-            CREATE_DATE, UPDATE_DATE, VIEW_COUNT, IS_DELETED, IS_PINNED, HASHTAGS
-        FROM BOARDS
+            CREATE_DATE, UPDATE_DATE, VIEW_COUNT, IS_DELETED, IS_PINNED, HASHTAGS,
+            (SELECT COUNT(*) FROM BOARD_LIKES WHERE BOARD_ID = B.BOARD_ID) AS LIKE_COUNT,
+            (SELECT COUNT(*) FROM COMMENTS WHERE BOARD_ID = B.BOARD_ID AND IS_DELETED = 'N') AS COMMENT_COUNT
+        FROM BOARDS B
         WHERE IS_DELETED = 'N'
         <!-- [Step 28: 수정] category가 있을 때만 필터링 -->
         <if test="category != null and category != ''">
