@@ -130,10 +130,11 @@
 <script>
 
 	// 정규표현식
-	let nameRegExr = /^[가-힣]{1,10}$/;
-	let nicknameRegExr = /^[a-zA-Z0-9가-힣]{1,10}$/;
-	let contactRegExr = /^[0-9]{11}$/;
-	let addressRegExr = /^[가-힣0-9\s]+$/;
+	let nameRegExp = /^[가-힣]{1,10}$/;
+	let nicknameRegExp = /^[a-zA-Z0-9가-힣]{1,10}$/;
+	let contactRegExp = /^[0-9]{11}$/;
+	let addressRegExp = /^[가-힣0-9\s]+$/;
+	let idRegExp = /^[a-zA-Z0-9]{6,20}$/;
 	
 	
     // 1. Daum 주소 API 함수
@@ -153,9 +154,20 @@
     // 2. 유효성 검사 및 폼 제출 로직
     $(document).ready(function() {
     	
-    	// 아이디 중복 확인 및 영문, 숫자 6~20자리인지 확인
+		let userId = $("#userId").val();
+		
+		// 아이디 중복되어서는 안 됨
+		// 영문, 숫자로만 이루어진 6~20자리여야 됨
+		// 위 두 조건을 모두 만족해야 아이디 사용 가능
+		
     	$("#userId").on("keyup", function() {
     		var userId = $("#userId").val();
+    		
+            // 영문, 숫자 6~20자리인지 확인
+            if (!idRegExp.test(userId)) {
+            	$("#idCheckResult").text("영문 또는 숫자를 포함하여 6~20자로 작성해주세요.").css("color", "red");
+            	return;
+            }
     		
 
             // 아이디 중복 확인
@@ -167,33 +179,37 @@
                 	// return 값으로 fail 또는 success 중 하나 전송
                     if(result == "fail") {
                         $("#idCheckResult").text("이미 사용 중인 아이디입니다.").css("color", "red");
-                    } else {
-                        $("#idCheckResult").text("사용 가능한 아이디입니다.").css("color", "green");
+                        return;
                     }
                 },
                 error: function() {
-                    alert("통신 오류가 발생했습니다.");
+                    $("#idCheckResult").text("알 수 없는 오류가 발생했습니다.").css("color", "red");
+                    return;
                 }
             });
             
-            // 영문, 숫자 6~20자리인지 확인
-            let regExp = /^[a-zA-Z0-9]{6,20}$/;
-            
-            if (!regExp.test(userId)) {
-            	$("#idError").show();
-            }
-            else {
-            	$("#idError").hide();
-            }
+            // 위 두 가지 조건을 통과했을 경우 사용 가능한 아이디이다.
+            $("#idCheckResult").text("사용 가능한 아이디입니다.").css("color", "green");
     	});
     
         
         // 비밀번호 일치 확인
-        $("#userPwdConfirm").on("keyup", function() {
-            var pwd = $("#userPwd").value;
-            var pwdConfirm = $(this).val();
+        $("#userPwd").on("keyup", function() {
+            var pwd = $("#userPwd").val();
+            var pwdConfirm = $("#userPwdConfirm").val();
             
-            if($("#userPwd").val() != pwdConfirm) {
+            if(pwd != pwdConfirm) {
+                $("#pwdError").show();
+            } else {
+                $("#pwdError").hide();
+            }
+        });
+        
+        $("#userPwdConfirm").on("keyup", function() {
+            var pwd = $("#userPwd").val();
+            var pwdConfirm = $("#userPwdConfirm").val();
+            
+            if(pwd != pwdConfirm) {
                 $("#pwdError").show();
             } else {
                 $("#pwdError").hide();
@@ -219,7 +235,7 @@
         $("#userName").on("keyup", function() {
             var userName = $("#userName").val();
             
-            if(!nameRegExr.test(userName)) {
+            if(!nameRegExp.test(userName)) {
                 $("#userNameError").show();
             } else {
                 $("#userNameError").hide();
@@ -231,7 +247,7 @@
         $("#userNickname").on("keyup", function() {
             var userNickname = $("#userNickname").val();
             
-            if(!nicknameRegExr.test(userNickname)) {
+            if(!nicknameRegExp.test(userNickname)) {
                 $("#userNicknameError").show();
             } else {
                 $("#userNicknameError").hide();
@@ -243,7 +259,7 @@
         $("#userContact").on("keyup", function() {
             var userContact = $("#userContact").val();
             
-            if(!contactRegExr.test(userContact)) {
+            if(!contactRegExp.test(userContact)) {
                 $("#userContactError").show();
             } else {
                 $("#userContactError").hide();
@@ -255,7 +271,7 @@
         $("#detailAddress").on("keyup", function() {
             var detailAddress = $("#detailAddress").val();
             
-            if(!addressRegExr.test(detailAddress)) {
+            if(!addressRegExp.test(detailAddress)) {
                 $("#detailAddressError").show();
             } else {
                 $("#detailAddressError").hide();
@@ -266,6 +282,39 @@
         $("#signupForm").on("submit", function(e) {
         	
         	// TODO : 아이디 중복이면 차단
+			let userId = $("#userId").val();
+        
+	        // 영문, 숫자 6~20자리인지 확인
+	        if (!idRegExp.test(userId)) {
+	        	alert("아이디는 영문 또는 숫자를 포함하여 6~20자로 작성해주세요.");
+	        	return false;
+	        }
+			
+	        let isPossible = true;
+	
+	        // 아이디 중복 확인
+	        // 동기 방식으로 처리
+	        $.ajax({
+	            url: "${pageContext.request.contextPath}/user/checkId.me", 
+	            type: "post",
+	            async: false,
+	            data: { userId: userId },
+	            success: function(result) {
+	            	// return 값으로 fail 또는 success 중 하나 전송
+	                if(result == "fail") {
+	                    alert("이미 사용중인 아이디입니다.");
+	                    isPossible = false;
+	                }
+	            },
+	            error: function() {
+	            	alert("알 수 없는 오류가 발생했습니다.");
+	            	isPossible = false;
+	            }
+	        });
+	        
+	        if (!isPossible) {
+	        	return false;
+	        }
             
             // 비밀번호 불일치 시 차단
             if($("#userPwd").val() != $("#userPwdConfirm").val()){
@@ -290,22 +339,22 @@
         	
         	// 정규식 표현에 안 맞으면 차단
            	
-           	if (!nameRegExr.test(userName)) {
+           	if (!nameRegExp.test(userName)) {
            		alert("이름은 1~10글자 사이의 한글만 가능합니다.");
            		return false;
            	}
            	
-           	if (!nicknameRegExr.test(userNickname)) {
+           	if (!nicknameRegExp.test(userNickname)) {
            		alert("닉네임은 1~10글자 사이의 영문, 한글, 숫자만 가능합니다.");
            		return false;
            	}
            	
-           	if (!contactRegExr.test(userContact)) {
+           	if (!contactRegExp.test(userContact)) {
            		alert("연락처는 11자리의 숫자만 가능합니다.");
            		return false;
            	}
            	
-           	if (!addressRegExr.test(detailAddress)) {
+           	if (!addressRegExp.test(detailAddress)) {
            		alert("상세주소는 한글, 숫자, 공백만 포함 가능합니다.");
            		return false;
            	}
