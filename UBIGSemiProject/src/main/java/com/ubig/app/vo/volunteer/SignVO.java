@@ -1,6 +1,7 @@
 package com.ubig.app.vo.volunteer;
 
 import java.util.Date;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,4 +21,9 @@ public class SignVO {
 	private int signsStatus;    // SIGNS_STATUS (신청상태)
 	
 	private Date signsDate;     // SIGNS_DATE (신청날짜)
+	
+	// [추가] 마이페이지 목록 조회용 (JOIN된 데이터 담을 변수)
+		private String actTitle;    // 활동 제목
+		private Date actDate;       // 활동 시작일
+		private String actAddress;  // 활동 장소
 }

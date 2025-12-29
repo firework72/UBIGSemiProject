@@ -5,7 +5,9 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -284,14 +286,23 @@ public class VolunteerController {
         
         return "redirect:volunteerDetail.vo?actId=" + s.getActId();
     }
-	// (관리자용) 신청자 목록 조회
 	// [추가 사유] 관리자가 해당 봉사활동에 누가 신청했는지 현황을 파악하기 위해 목록을 조회함
-	@RequestMapping("signList.vo")
-	public String selectSignList(int actId, Model model) {
-		List<SignVO> list = volunteerService.selectSignList(actId);
-		model.addAttribute("signList", list);
-		return "volunteer/signList"; // 별도 JSP 필요
-	}
+    // (관리자용) 신청자 목록 조회
+ 	@RequestMapping("signList.vo")
+ 	public String selectSignList(int actId, Model model) {
+ 		
+ 		// 1. 신청자 목록 가져오기
+ 		List<SignVO> list = volunteerService.selectSignList(actId);
+ 		
+ 		// 2. [추가] 활동 정보 가져오기 (날짜 비교용)
+ 		ActivityVO activity = volunteerService.selectActivityOne(actId);
+ 		
+ 		// 3. 모델에 담기
+ 		model.addAttribute("signList", list);
+ 		model.addAttribute("activity", activity); // [추가됨]
+ 		
+ 		return "volunteer/signList";
+ 	}
 
 	// ==========================================================
 		// ▼▼▼ 후기 (Review) 관련 기능 (권한 체크 및 경로 수정 완료) ▼▼▼
@@ -464,6 +475,56 @@ public class VolunteerController {
 	    public String updateSignStatusUser(int signsNo) {
 	        int result = volunteerService.updateSignStatusUser(signsNo);
 	        return result > 0 ? "success" : "fail";
+	    }
+	    
+	    
+	    //마이페이지에서 AJAX(비동기)로 요청했을 때 JSON 데이터로 리스트를 돌려주는 메소드를 만듭니다.
+	    // [추가] 마이페이지 - 나의 봉사 신청 내역 조회 (AJAX)
+	    @ResponseBody
+		@RequestMapping(value="mySignList.vo", produces="application/json; charset=UTF-8")
+		public String mySignList(HttpSession session, @RequestParam(value="cpage", defaultValue="1") int currentPage) {
+			
+			MemberVO loginUser = (MemberVO) session.getAttribute("loginMember");
+			if (loginUser == null) {
+				return "fail";
+			}
+			
+			// 1. 전체 개수 조회
+			int listCount = volunteerService.selectMySignCount(loginUser.getUserId());
+			
+			// 2. PageInfo 생성 (5개씩 보여주기)
+			// (listCount, currentPage, pageLimit, boardLimit) -> 여기선 5개씩 보기로 설정
+			PageInfo pi = Pagination.getPageInfo(listCount, currentPage, 5, 5);
+			
+			// 3. 목록 조회
+			List<SignVO> list = volunteerService.selectMySignList(loginUser.getUserId(), pi);
+			
+			// 4. Map에 담아서 리턴 (리스트 + 페이징정보)
+			Map<String, Object> map = new HashMap<>();
+			map.put("list", list);
+			map.put("pi", pi);
+			
+			return new Gson().toJson(map);
+		}
+	    
+	 // [추가] 체크박스 이용한 일괄 활동 완료 처리 (AJAX)
+	    @ResponseBody
+	    @RequestMapping("updateSignStatusAdminMulti.vo")
+	    public String updateSignStatusAdminMulti(@RequestParam(value="signsNos[]") List<Integer> signsNos) {
+	        
+	        // 1. 체크된 인원이 없으면 실패 처리
+	        if(signsNos == null || signsNos.isEmpty()) {
+	            return "empty";
+	        }
+
+	        // 2. 서비스 호출 (반복문으로 처리하게끔 위임)
+	        int successCount = volunteerService.updateSignStatusMulti(signsNos);
+	        
+	        if(successCount > 0) {
+	            return "success";
+	        } else {
+	            return "fail";
+	        }
 	    }
 		
 		

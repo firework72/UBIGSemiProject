@@ -88,6 +88,16 @@ public interface VolunteerService {
     // 리턴값 설명 -> 1:성공, 0:실패
     int updateSignStatusUser(int signsNo);
     
+    //마이페이지
+    // [추가] 내 신청 개수 조회
+    int selectMySignCount(String userId);
+    
+    //마이페이지
+    // [수정] 내 신청 목록 조회 (PageInfo 추가)
+    List<SignVO> selectMySignList(String userId, PageInfo pi);
+    
+    // [추가] 일괄 완료 처리
+    int updateSignStatusMulti(List<Integer> signsNos);
     
 
 }

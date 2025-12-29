@@ -157,20 +157,41 @@
         </table>
 
         <div class="apply-box">
-            <div class="apply-title">📢 이 봉사활동에 참여하시겠습니까?</div>
             
-            <form action="volunteerSign.vo" method="post" style="display: inline-block;">
-                <input type="hidden" name="actId" value="${vo.actId}">
-                <input type="hidden" name="signsId" value="${loginMember.userId}">
-                
-                <button type="submit" class="btn-apply">
-                    ✋ 지금 신청하기
-                </button>
-            </form>
+            <jsp:useBean id="now" class="java.util.Date" />
+            <fmt:formatDate value="${now}" pattern="yyyyMMdd" var="today" />
+            <fmt:formatDate value="${vo.actDate}" pattern="yyyyMMdd" var="actDay" />
 
-            <a href="signList.vo?actId=${vo.actId}" class="btn-status">
-                👥 신청자 현황 보기
-            </a>
+            <c:choose>
+                <%-- 2. 날짜가 지난 경우 (오늘 > 활동일) --%>
+                <c:when test="${today > actDay}">
+                    <div class="apply-title" style="color: #666;">⛔ 모집 기간이 마감되었습니다.</div>
+                    
+                    <button type="button" class="btn-list" style="background-color: #ccc; cursor: not-allowed; padding: 15px 40px; font-size: 18px;" disabled>
+                        모집 마감
+                    </button>
+                </c:when>
+
+                <%-- 3. 신청 가능한 경우 --%>
+                <c:otherwise>
+                    <div class="apply-title">📢 이 봉사활동에 참여하시겠습니까?</div>
+                    
+                    <form action="volunteerSign.vo" method="post" style="display: inline-block;">
+                        <input type="hidden" name="actId" value="${vo.actId}">
+                        <input type="hidden" name="signsId" value="${loginMember.userId}">
+                        
+                        <button type="submit" class="btn-apply">
+                            ✋ 지금 신청하기
+                        </button>
+                    </form>
+                </c:otherwise>
+            </c:choose>
+
+            <c:if test="${loginMember.userRole eq 'ADMIN'}">
+                <a href="signList.vo?actId=${vo.actId}" class="btn-status">
+                    👥 신청자 현황 보기
+                </a>
+            </c:if>
         </div>
 
         <div class="btn-area">
