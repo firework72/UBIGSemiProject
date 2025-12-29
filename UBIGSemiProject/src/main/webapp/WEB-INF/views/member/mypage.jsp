@@ -545,7 +545,7 @@
                                                         placeholder="기본 주소" readonly>
                                                     <input type="text" class="form-control" id="detailAddress"
                                                         maxlength="20" placeholder="상세 주소를 입력해주세요">
-                                                    <div class="error-msg" id="detailAddressError">1~20자의 한글, 숫자, 공백으로
+                                                    <div class="error-msg" id="detailAddressError">20자 이하의 한글, 숫자, 공백으로
                                                         작성해주세요.</div>
 
                                                     <input type="hidden" id="userAddress" name="userAddress"
@@ -583,9 +583,6 @@
                                             <hr class="my-4">
 
                                             <div class="d-flex justify-content-between">
-                                                <button type="button" class="btn btn-outline-dark"
-                                                    data-bs-toggle="modal" data-bs-target="#pwdChangeModal">비밀번호
-                                                    변경</button>
                                                 <button type="submit" class="btn btn-warning fw-bold text-white px-4">정보
                                                     수정 저장</button>
                                             </div>
@@ -687,39 +684,6 @@
                         </div>
                     </div>
 
-                    <div class="modal fade" id="pwdChangeModal" tabindex="-1">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title fw-bold">비밀번호 변경</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                </div>
-                                <form action="/member/updatePwd" method="post">
-                                    <div class="modal-body">
-                                        <input type="hidden" name="userId" value="${loginMember.userId}">
-                                        <div class="mb-3">
-                                            <label class="form-label">현재 비밀번호</label>
-                                            <input type="password" class="form-control" name="currentPwd" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">새 비밀번호</label>
-                                            <input type="password" class="form-control" name="newPwd" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">새 비밀번호 확인</label>
-                                            <input type="password" class="form-control" name="newPwdConfirm" required>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary"
-                                            data-bs-dismiss="modal">취소</button>
-                                        <button type="submit" class="btn btn-warning text-white">변경하기</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-
                     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
                     <script>
@@ -727,7 +691,7 @@
                         let nameRegExr = /^[가-힣]{1,10}$/;
                         let nicknameRegExr = /^[a-zA-Z0-9가-힣]{1,10}$/;
                         let contactRegExr = /^[0-9]{11}$/;
-                        let addressRegExr = /^[가-힣0-9\s]+$/;
+                        let addressRegExr = /^[가-힣0-9\s]{0,20}$/;
 
                         // 0. 초기 로딩 시 남성/여성 체크
                         $(document).ready(function () {
@@ -838,7 +802,7 @@
                             }
 
                             if (!addressRegExr.test(detailAddress)) {
-                                alert("상세주소는 한글, 숫자, 공백만 포함 가능합니다.");
+                                alert("상세주소는 20자 이하의 한글, 숫자, 공백만 포함 가능합니다.");
                                 return false;
                             }
 
