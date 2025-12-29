@@ -73,11 +73,22 @@ public class VolunteerController {
    
 	
 
-	// 3. 글쓰기 화면 이동
-	@RequestMapping("volunteerWriteForm.vo")
-	public String volunteerWriteForm() {
-		return "volunteer/volunteerWriteForm";
-	}
+		// [수정 코드] 관리자 권한 체크 로직 추가
+		@RequestMapping("volunteerWriteForm.vo")
+		public String volunteerWriteForm(HttpSession session, Model model) {
+		    
+		    // 1. 로그인 정보 꺼내오기
+		    MemberVO loginUser = (MemberVO) session.getAttribute("loginMember");
+
+		    // 2. 로그인 안 했거나, 관리자(ADMIN)가 아니면 쫓아내기
+		    if (loginUser == null || !"ADMIN".equals(loginUser.getUserRole())) {
+		        session.setAttribute("alertMsg", "관리자만 접근 가능한 페이지입니다. ⛔");
+		        return "redirect:volunteerList.vo";
+		    }
+
+		    // 3. 관리자라면 작성 페이지로 이동
+		    return "volunteer/volunteerWriteForm";
+		}
 
 	// ==========================================================
 	// 4. (진짜 기능) 사용자가 입력한 데이터 DB에 등록하기 (수정됨)

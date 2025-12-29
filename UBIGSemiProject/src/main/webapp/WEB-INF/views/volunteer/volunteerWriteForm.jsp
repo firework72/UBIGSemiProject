@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
     <!DOCTYPE html>
     <html>
 
@@ -146,11 +147,14 @@
             </p>
 
             <form action="volunteerInsert.vo" method="post">
-                <input type="hidden" name="adminId" value="admin1">
+                
+                <%-- [수정] 작성자 ID를 로그인한 사용자 ID로 변경 --%>
+                <input type="hidden" name="adminId" value="${loginMember.userId}">
 
                 <div class="form-group">
                     <label>작성자</label>
-                    <input type="text" value="admin1" class="readonly-input" readonly>
+                    <%-- [수정] 화면 표시용 입력칸도 로그인 ID로 변경 --%>
+                    <input type="text" value="${loginMember.userId}" class="readonly-input" readonly>
                 </div>
 
                 <div class="form-group">
