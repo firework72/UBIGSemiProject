@@ -70,6 +70,18 @@
                         font-size: 0.8rem;
                         display: none;
                     }
+
+                    /* 입양 테이블 스타일 개선 */
+                    #myadoption2 .table td,
+                    #myadoption2 .table th {
+                        vertical-align: middle;
+                    }
+
+                    /* 더 작은 버튼 스타일 정의 */
+                    .btn-xs {
+                        padding: 0.1rem 0.3rem;
+                        font-size: 0.75rem;
+                    }
                 </style>
             </head>
 
@@ -233,8 +245,12 @@
                                                 } else {
                                                     html += "<td>승인/" + item.adoptionStatus + "</td>";
                                                 }
-                                                html += "<td><button type='button' class='btn btn-danger btn-sm' onclick='event.stopPropagation(); updateAdoption(" + item.animalNo + ")'>정보수정</button>  ";
-                                                html += "<button type='button' class='btn btn-danger btn-sm' onclick='event.stopPropagation(); cancelAdoption(" + item.animalNo + ")'>등록취소</button></td>";
+                                                html += "<td><button type='button' class='btn btn-secondary btn-xs' onclick='event.stopPropagation(); updateAdoption(" + item.animalNo + ")'>정보수정</button> ";
+                                                html += "<button type='button' class='btn btn-secondary btn-xs' onclick='event.stopPropagation(); cancelAdoption(" + item.animalNo + ")'>등록취소</button></td>";
+                                                if (item.adoptionStatus === "신청중") {
+                                                    html += "<td><button type='button' class='btn btn-success btn-xs' onclick='event.stopPropagation();openApplicantModal(" + item.animalNo + ")'>수락</button> ";
+                                                    html += "<button type='button' class='btn btn-danger btn-xs' onclick='event.stopPropagation();denyAdoption(" + item.animalNo + ")'>거절</button></td>";
+                                                }
                                                 html += "</tr>";
                                             });
 
@@ -283,7 +299,7 @@
                                                     default: statusStr = "접수중";
                                                 }
                                                 html += "<td>" + statusStr + "</td>";
-                                                html += "<td><button type='button' class='btn btn-danger btn-sm' onclick='cancelAdoptionApp(" + item.adoptionAppId + ")'>신청취소</button></td>";
+                                                html += "<td><button type='button' class='btn btn-danger btn-xs' onclick='cancelAdoptionApp(" + item.adoptionAppId + ")'>신청취소</button></td>";
                                                 html += "</tr>";
                                             });
                                             tbody2.innerHTML = html;
@@ -319,7 +335,7 @@
                                     }
                                 }
 
-                                //입양 관련 수정+삭제 링크 함수들
+                                //입양 관련 수정+삭제+수락 링크 함수들
                                 function updateAdoption(animalNo) {
                                     location.href = '${pageContext.request.contextPath}/adoption.updateanimal?anino=' + animalNo;
                                 }
@@ -328,6 +344,94 @@
                                 }
                                 function cancelAdoptionApp(adoptionAppId) {
                                     location.href = '${pageContext.request.contextPath}/adoption.deleteadoptionapp?adoptionAppId=' + adoptionAppId;
+                                }
+                                function acceptAdoption(animalNo) {
+                                    location.href = '${pageContext.request.contextPath}/adoption.acceptadoptionapp?anino=' + animalNo;
+                                }
+
+                                async function openApplicantModal(animalNo) {
+                                    try {
+                                        // 1. Fetch를 사용하여 신청자 목록 가져오기
+                                        const response = await fetch("${pageContext.request.contextPath}/adoption.applicants?anino=" + animalNo);
+
+                                        if (!response.ok) {
+                                            const text = await response.text();
+                                            throw new Error(text);
+                                        }
+
+                                        const list = await response.json();
+
+                                        // 에러 메시지 처리 (JSON 응답이지만 에러 문자열인 경우)
+                                        if (typeof list === 'string') {
+                                            if (list === "not_login") {
+                                                alert("로그인이 필요합니다.");
+                                                location.href = "${pageContext.request.contextPath}/user/login.me";
+                                            } else if (list === "animal_not_found") {
+                                                alert("동물 정보를 찾을 수 없습니다.");
+                                            } else if (list === "permission_denied") {
+                                                alert("권한이 없습니다.");
+                                            } else if (list.startsWith("error_msg:")) {
+                                                alert("서버 오류: " + list.substring(10));
+                                            } else {
+                                                alert("오류 발생: " + list);
+                                            }
+                                            return;
+                                        }
+
+                                        let html = "";
+                                        if (list.length === 0) {
+                                            html = "<tr><td colspan='4'>신청자가 없습니다.</td></tr>";
+                                        } else {
+                                            list.forEach(function (app) {
+                                                html += "<tr>";
+                                                html += "<td>" + app.adoptionAppId + "</td>";
+                                                html += "<td>" + app.userId + " (" + (app.userName ? app.userName : "이름없음") + ")</td>";
+                                                html += "<td>" + app.applyDateStr + "</td>";
+                                                html += "<td><button type='button' class='btn btn-primary btn-sm' onclick='confirmAdoption(" + app.adoptionAppId + ", " + app.animalNo + ")'>선택</button></td>";
+                                                html += "</tr>";
+                                            });
+                                        }
+                                        document.querySelector("#applicantTableBody").innerHTML = html;
+
+                                        // 모달 띄우기
+                                        const modal = new bootstrap.Modal(document.getElementById('applicantModal'));
+                                        modal.show();
+
+                                    } catch (error) {
+                                        console.error("Error details:", error);
+                                        alert("신청자 목록을 불러오는 중 오류가 발생했습니다.\n" + error);
+                                    }
+                                }
+
+                                async function confirmAdoption(appId, animalNo) {
+                                    if (!confirm("이 신청자를 선택하시겠습니까?\n선택하면 다른 신청자는 모두 반려 처리됩니다.")) return;
+
+                                    try {
+                                        const response = await fetch("${pageContext.request.contextPath}/adoption.confirm?adoptionAppId=" + appId + "&anino=" + animalNo);
+
+                                        if (!response.ok) {
+                                            const text = await response.text();
+                                            throw new Error(text);
+                                        }
+
+                                        const result = await response.json();
+
+                                        if (result === "success") {
+                                            alert("입양이 확정되었습니다.");
+                                            location.reload();
+                                        } else {
+                                            alert("처리 실패: " + result);
+                                        }
+
+                                    } catch (error) {
+                                        console.error("Error details:", error);
+                                        alert("처리 실패: " + error);
+                                    }
+                                }
+
+                                function denyAdoption(animalNo) {
+                                    if (!confirm("정말 거절하시겠습니까?")) return;
+                                    location.href = '${pageContext.request.contextPath}/adoption.denyadoptionapp?anino=' + animalNo;
                                 }
 
                                 // sun: 내 글 목록 가져오기 함수 (AJAX)
@@ -511,7 +615,8 @@
                                                     <th>동물 이름</th>
                                                     <th>등록일</th>
                                                     <th>상태</th>
-                                                    <th>설정</th>
+                                                    <th>정보 관리</th>
+                                                    <th>입양 관리</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -546,6 +651,37 @@
                                     </div>
 
 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="modal fade" id="applicantModal" tabindex="-1">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title fw-bold">입양 신청자 목록</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p class="text-muted small">입양을 확정할 신청자를 선택해주세요. 선택 시 다른 신청자는 자동 반려됩니다.</p>
+                                    <table class="table table-hover text-center">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>신청번호</th>
+                                                <th>신청자</th>
+                                                <th>신청일</th>
+                                                <th>선택</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="applicantTableBody">
+                                            <!-- AJAX Load -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
                                 </div>
                             </div>
                         </div>

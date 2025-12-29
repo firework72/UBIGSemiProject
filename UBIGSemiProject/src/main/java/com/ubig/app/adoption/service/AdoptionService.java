@@ -84,4 +84,25 @@ public interface AdoptionService {
 	// 관리자용 동물/게시글 전체 목록 갯수
 	int managepostCount(Map<String, Object> map);
 
+	// anino를 가지고 입양 신청을 수락하기(동물 디테일)
+	int acceptAdoption(int anino);
+
+	// anino를 가지고 // anino를 가지고 입양 신청을 거절하기
+	int denyAdoption(int anino);
+
+	// 입양 신청 수락 (신청정보 수정)
+	int acceptAdoptionApp(int anino);
+
+	// 입양 신청 거절 (신청정보 수정)
+	int denyAdoptionApp(int anino);
+
+	// 신청자 목록 조회
+	List<AdoptionApplicationVO> getApplicantsList(int anino);
+
+	// 최종 입양 확정 (트랜잭션)
+	int confirmAdoption(int adoptionAppId, int animalNo);
+
+	// anino를 가지고 입양 신청을 거절하기(신청자 상태)
+	// int denyAdoptionApp(int anino);
+
 }

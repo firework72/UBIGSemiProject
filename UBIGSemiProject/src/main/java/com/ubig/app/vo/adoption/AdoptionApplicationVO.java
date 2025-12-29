@@ -21,5 +21,6 @@ public class AdoptionApplicationVO {
     private String photoUrl; // 동물 사진 URL (JOIN)
     private String applyDateStr; // 신청 날짜 (String Formatted)
     private String animalName; // 동물 이름 (JOIN)
-
+    private String userName; // 신청자 이름 (JOIN)
+    private String userNickname; // 신청자 닉네임 (JOIN)
 }
