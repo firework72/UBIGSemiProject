@@ -75,7 +75,7 @@ h2 {
     <form action="${pageContext.request.contextPath}/funding/insertFunding" method="post">
         
         <label for="userId">작성자</label>
-        <input type="text" id="userId" name="userId" value="${loginMember.userId}" required>
+        <input type="text" id="userId" name="userId" value="${loginMember.userId}" readonly="readonly" required>
         
         <label for="fundingTitle">펀딩 제목</label>
         <input type="text" id="fundingTitle" name="fundingTitle" required>

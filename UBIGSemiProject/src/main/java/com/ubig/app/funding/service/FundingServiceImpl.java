@@ -1,11 +1,14 @@
 package com.ubig.app.funding.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ubig.app.common.model.vo.PageInfo;
 import com.ubig.app.funding.common.FundingException;
 import com.ubig.app.funding.dao.FundingDao;
 import com.ubig.app.vo.funding.FundingHistoryVO;
@@ -21,9 +24,21 @@ public class FundingServiceImpl implements FundingService{
 	private SqlSessionTemplate sqlSession;
 	
 	@Override
-	public ArrayList<FundingVO> selectFunding() {
+	public ArrayList<FundingVO> selectFunding(PageInfo pi) {
+
+	    return dao.selectFunding(sqlSession,pi);
+	}
+	
+	@Override
+	public int fundingListCount() {
 		
-		return dao.selectFunding(sqlSession);
+		return dao.fundingListCount(sqlSession);
+	}
+	
+	@Override
+	public int fundingListCount2(String searchKeyword) {
+
+		return dao.fundingListCount2(sqlSession,searchKeyword);
 	}
 	
 	@Override
@@ -54,9 +69,9 @@ public class FundingServiceImpl implements FundingService{
 	}
 	
 	@Override
-	public ArrayList<FundingVO> searchKeyword(String searchKeyword) {
+	public ArrayList<FundingVO> searchKeyword(String searchKeyword,PageInfo pi) {
 
-		return dao.searchKeyword(sqlSession,searchKeyword);
+		return dao.searchKeyword(sqlSession,searchKeyword,pi);
 	}
 	
 	

@@ -11,6 +11,18 @@
 		ORDER BY DONATION_NO DESC
 	</select>
 	
+	<select id="donationListCount" resultType="_int">
+		SELECT COUNT(*)
+		FROM DONATIONS
+	</select>
+	
+	<select id="donationListCount2" parameterType="string" resultType="int">
+	    SELECT COUNT(*)
+	    FROM DONATIONS
+	    WHERE USER_ID LIKE '%' || #{searchKeyword} || '%'
+	    OR DONATION_TYPE LIKE '%' || #{searchKeyword} || '%'
+	</select>
+	
 	<select id="searchKeyword" resultType="DonationVO" parameterType="string">
 	    SELECT * 
 	    FROM DONATIONS

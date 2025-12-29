@@ -2,23 +2,44 @@ package com.ubig.app.funding.dao;
 
 import java.util.ArrayList;
 
+import org.apache.ibatis.session.RowBounds;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.ubig.app.common.model.vo.PageInfo;
 import com.ubig.app.vo.funding.DonationVO;
-import com.ubig.app.vo.funding.FundingVO;
 
 @Repository
 public class DonationDao {
 	
-	public ArrayList<DonationVO> selectDonation(SqlSessionTemplate sqlSession) {
+	public ArrayList<DonationVO> selectDonation(SqlSessionTemplate sqlSession,PageInfo pi) {
 		
-		return (ArrayList)sqlSession.selectList("donationMapper.selectDonation");
+		int offset = (pi.getCurrentPage() - 1) * pi.getBoardLimit();
+	    int limit = pi.getBoardLimit();
+
+	    RowBounds rowBounds = new RowBounds(offset,limit);
+		
+		return (ArrayList)sqlSession.selectList("donationMapper.selectDonation",null,rowBounds);
 	}
 	
-	public ArrayList<DonationVO> searchKeyword(SqlSessionTemplate sqlSession, String searchKeyword) {
+	public int donationListCount(SqlSessionTemplate sqlSession) {
 		
-		return (ArrayList)sqlSession.selectList("donationMapper.searchKeyword",searchKeyword);
+		return sqlSession.selectOne("donationMapper.donationListCount");
+	}
+	
+	public int donationListCount2(SqlSessionTemplate sqlSession, String searchKeyword) {
+		
+		return sqlSession.selectOne("donationMapper.donationListCount2",searchKeyword);
+	}
+	
+	public ArrayList<DonationVO> searchKeyword(SqlSessionTemplate sqlSession, String searchKeyword,PageInfo pi) {
+		
+		int offset = (pi.getCurrentPage() - 1) * pi.getBoardLimit();
+	    int limit = pi.getBoardLimit();
+
+	    RowBounds rowBounds = new RowBounds(offset,limit);
+		
+		return (ArrayList)sqlSession.selectList("donationMapper.searchKeyword",searchKeyword,rowBounds);
 	}
 	
 	public int donation(SqlSessionTemplate sqlSession, DonationVO donationVO) {
@@ -40,6 +61,10 @@ public class DonationDao {
 		
 		return sqlSession.delete("donationMapper.cancelDonation",userId);
 	}
+
+	
+
+	
 	
 	
 }

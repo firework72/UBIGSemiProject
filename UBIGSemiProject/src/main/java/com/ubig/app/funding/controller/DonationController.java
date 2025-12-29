@@ -12,8 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ubig.app.common.model.vo.PageInfo;
+import com.ubig.app.common.util.Pagination;
 import com.ubig.app.funding.service.DonationService;
 import com.ubig.app.vo.funding.DonationVO;
+import com.ubig.app.vo.funding.FundingVO;
 import com.ubig.app.vo.member.MemberVO;
 
 @Controller
@@ -25,34 +28,55 @@ public class DonationController {
 	
 	//후원 페이지 이동
 	@RequestMapping("")
-	public String donationViewPage(Model model) {
+	public String donationViewPage(@RequestParam(value = "curPage", defaultValue = "1") int curPage,
+	        Model model) {
+
+	    int listCount = service.donationListCount();
+	
+	    int boardLimit = 15; // 한 페이지에 보여줄 개수
+	    int pageLimit = 10;  // 페이징 바 개수
+	
+	    PageInfo pi = Pagination.getPageInfo(listCount, curPage, pageLimit, boardLimit);
+	    
+	    ArrayList<DonationVO> list = service.selectDonation(pi);
+	
+	    model.addAttribute("list", list);
+	    model.addAttribute("pi", pi);
+
 		
-		ArrayList<DonationVO> list = service.selectDonation();
-		
-		model.addAttribute("list",list);
 		
 		return "funding/donationPage";
 	}
 	
 	//검색 기능
 	@RequestMapping("/searchKeyword")
-	public String searchKeyword(Model model,String searchKeyword,String searchType) {
-			
-		ArrayList<DonationVO> list = service.searchKeyword(searchKeyword);
+	public String searchKeyword(@RequestParam(value = "curPage", defaultValue = "1") int curPage,
+	        Model model,@RequestParam(value = "searchKeyword", required = false) String searchKeyword) {
+		
+		int listCount = service.donationListCount2(searchKeyword);
+
+	    int boardLimit = 15; // 한 페이지에 보여줄 개수
+	    int pageLimit = 10;  // 페이징 바 개수
+
+	    PageInfo pi = Pagination.getPageInfo(listCount, curPage, pageLimit, boardLimit);
+		
+		ArrayList<DonationVO> list = service.searchKeyword(searchKeyword,pi);
 		
 		// 후원 타입 검색
 	    if ("정기".equals(searchKeyword)) {
-	        list = service.searchKeyword("1");
+	        list = service.searchKeyword("1",pi);
 	    } 
 	    else if ("일시".equals(searchKeyword)) {
-	        list = service.searchKeyword("2");
+	        list = service.searchKeyword("2",pi);
 	    } 
 	    // 그 외 검색
 	    else {
-	        list = service.searchKeyword(searchKeyword);
+	        list = service.searchKeyword(searchKeyword,pi);
 	    }
 		
 		model.addAttribute("list",list);
+		model.addAttribute("pi", pi);
+	    model.addAttribute("keyword", searchKeyword); // 검색어 유지
 			
 		return "funding/donationPage";
 			
