@@ -8,6 +8,7 @@
 	<select id="selectFunding" resultMap="FundingVOResultMap">
 		SELECT * 
 		FROM FUNDINGS
+		ORDER BY F_NO DESC
 	</select>
 	
 	<select id="fundingListCount" resultType="_int">
@@ -34,6 +35,7 @@
 	    FROM FUNDINGS
 	    WHERE USER_ID LIKE '%' || #{searchKeyword} || '%'
 	    OR F_TITLE LIKE '%' || #{searchKeyword} || '%'
+	    ORDER BY F_NO DESC
 	</select>
 
 	

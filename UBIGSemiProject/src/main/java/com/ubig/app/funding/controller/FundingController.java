@@ -87,7 +87,7 @@ public class FundingController {
 	@RequestMapping("/insertPage")
 	public String insertPage() {
 		
-		return "funding/insertPage";
+		return "funding/insertFunding";
 	}
 	
 	//펀딩 등록

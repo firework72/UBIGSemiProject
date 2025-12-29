@@ -84,7 +84,7 @@ h2 {
         <textarea id="fundingContent" name="fundingContent" required></textarea>
 
         <label for="fundingMaxMoney">목표 금액</label>
-        <input type="number" id="fundingMaxMoney" name="fundingMaxMoney" min="100000" required>
+        <input type="number" id="fundingMaxMoney" name="fundingMaxMoney" min="100000" max="100000000" required>
         
         <button type="submit">펀딩 등록</button>
     </form>

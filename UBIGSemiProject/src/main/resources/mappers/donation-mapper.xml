@@ -28,6 +28,7 @@
 	    FROM DONATIONS
 	    WHERE USER_ID LIKE '%' || #{searchKeyword} || '%'
 	    OR DONATION_TYPE LIKE '%' || #{searchKeyword} || '%'
+	    ORDER BY DONATION_NO DESC
 	</select>
 	
 	<select id="selectDetailView" resultType="int" parameterType="string">

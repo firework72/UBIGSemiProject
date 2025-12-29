@@ -80,7 +80,9 @@
 			<mapping path="/insertReview.vo"/>
 			<mapping path="/reviewUpdateForm.vo"/>
 			<mapping path="/updateReview.vo"/>
-			<mapping path="/deleteReview.vo"/>			
+			<mapping path="/deleteReview.vo"/>
+			<!-- jae -->
+			<mapping path="/funding/insertPage"/>						
 			<!-- 제외하고싶은 매핑 주소 <exclude-mapping path=""/> -->
 			<beans:bean class="com.ubig.app.common.interceptor.AdminInterceptor"/>
 		</interceptor>
