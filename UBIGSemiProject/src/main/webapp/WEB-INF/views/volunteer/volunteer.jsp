@@ -87,72 +87,77 @@
                     button:hover {
                         background-color: #45a049;
                     }
+
+                    button:hover {
+                        background-color: #45a049;
+                    }
                 </style>
             </head>
 
             <body>
 
-               <a href="volunteerList.vo" style="text-decoration: none; color: inherit;">
-				    <h2>봉사활동 모집 리스트</h2>
-				</a>
-				<%-- 메인페이지 이동 --%>
-				<a href="${pageContext.request.contextPath}/" style="text-decoration: none; color: inherit;">
-				    <h2>유봉일공</h2>
-				</a>
-
-                <!-- [추가] 검색 폼 -->
-                <div style="margin-bottom: 20px; text-align: right;">
-                    <form action="volunteerList.vo" method="get">
-                        <select name="condition" style="padding: 5px;">
-                            <option value="title" <c:if test="${condition eq 'title'}">selected</c:if>>제목</option>
-                            <option value="address" <c:if test="${condition eq 'address'}">selected</c:if>>지역</option>
-                        </select>
-                        <input type="text" name="keyword" value="${keyword}" placeholder="검색어를 입력하세요"
-                            style="padding: 5px;">
-                        <button type="submit" style="padding: 5px 10px; background-color: #333;">검색</button>
-                    </form>
-                </div>
-
-                <table>
-                    <thead>
-                        <tr>
-                            <th width="10%">번호</th>
-                            <th width="40%">제목</th>
-                            <th width="15%">작성자</th>
-                            <th width="20%">날짜</th>
-                            <th width="15%">장소</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <c:forEach var="vo" items="${list}">
-                            <tr>
-                                <td>${vo.actId}</td>
-
-                                <td style="text-align: left; font-weight: bold;">
-                                    <a href="volunteerDetail.vo?actId=${vo.actId}">
-                                        ${vo.actTitle}
-                                    </a>
-                                </td>
-
-                                <td>${vo.adminId}</td>
-
-                                <td>
-                                    <fmt:formatDate value="${vo.actDate}" pattern="yyyy-MM-dd" />
-                                </td>
-
-                                <td>${vo.actAddress}</td>
-                            </tr>
-                        </c:forEach>
-                    </tbody>
-                </table>
-
-                <br>
-
-                <div align="right">
-                    <a href="volunteerWriteForm.vo">
-                        <button>+ 새 활동 등록하기</button>
+                <a href="volunteerList.vo" style="text-decoration: none; color: inherit;">
+                    <h2>봉사활동 모집 리스트</h2>
+                </a>
+                <%-- 메인페이지 이동 --%>
+                    <a href="${pageContext.request.contextPath}/" style="text-decoration: none; color: inherit;">
+                        <h2>유봉일공</h2>
                     </a>
-                </div>
+
+                    <!-- [추가] 검색 폼 -->
+                    <div style="margin-bottom: 20px; text-align: right;">
+                        <form action="volunteerList.vo" method="get">
+                            <select name="condition" style="padding: 5px;">
+                                <option value="title" <c:if test="${condition eq 'title'}">selected</c:if>>제목</option>
+                                <option value="address" <c:if test="${condition eq 'address'}">selected</c:if>>지역
+                                </option>
+                            </select>
+                            <input type="text" name="keyword" value="${keyword}" placeholder="검색어를 입력하세요"
+                                style="padding: 5px;">
+                            <button type="submit" style="padding: 5px 10px; background-color: #333;">검색</button>
+                        </form>
+                    </div>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th width="10%">번호</th>
+                                <th width="40%">제목</th>
+                                <th width="15%">작성자</th>
+                                <th width="20%">날짜</th>
+                                <th width="15%">장소</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <c:forEach var="vo" items="${list}">
+                                <tr>
+                                    <td>${vo.actId}</td>
+
+                                    <td style="text-align: left; font-weight: bold;">
+                                        <a href="volunteerDetail.vo?actId=${vo.actId}">
+                                            ${vo.actTitle}
+                                        </a>
+                                    </td>
+
+                                    <td>${vo.adminId}</td>
+
+                                    <td>
+                                        <fmt:formatDate value="${vo.actDate}" pattern="yyyy-MM-dd" />
+                                    </td>
+
+                                    <td>${vo.actAddress}</td>
+                                </tr>
+                            </c:forEach>
+                        </tbody>
+                    </table>
+
+                    <br>
+
+                    <div align="right">
+                        <a href="volunteerWriteForm.vo">
+                            <button>+ 새 활동 등록하기</button>
+                        </a>
+                    </div>
 
             </body>
 

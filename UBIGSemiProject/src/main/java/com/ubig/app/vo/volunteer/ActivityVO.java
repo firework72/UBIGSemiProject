@@ -35,7 +35,7 @@ public class ActivityVO {
 	private int actMax; // ACT_MAX (최대 인원)
 	private int actCur; // ACT_CUR (현재 인원)
 	private int actMoney; // ACT_MONEY (금액/회비)
-	
-	private double actRate; //관리자 전용 봉사후기에 회원들이 평점부여하는 필드
+
+	private double actRate; // 관리자 전용 봉사후기에 회원들이 평점부여하는 필드
 
 }

@@ -45,6 +45,11 @@
 						cursor: pointer;
 						padding: 5px 10px;
 					}
+
+					button {
+						cursor: pointer;
+						padding: 5px 10px;
+					}
 				</style>
 			</head>
 
@@ -55,7 +60,10 @@
 				<table>
 					<tr>
 						<th>제목</th>
-						<td>${vo.actTitle}</td>
+						<th>제목</th>
+						<td>
+							${vo.actTitle}
+						</td>
 					</tr>
 					<tr>
 						<th>작성자</th>
