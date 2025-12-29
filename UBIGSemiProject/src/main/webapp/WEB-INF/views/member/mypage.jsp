@@ -583,9 +583,6 @@
                                             <hr class="my-4">
 
                                             <div class="d-flex justify-content-between">
-                                                <button type="button" class="btn btn-outline-dark"
-                                                    data-bs-toggle="modal" data-bs-target="#pwdChangeModal">비밀번호
-                                                    변경</button>
                                                 <button type="submit" class="btn btn-warning fw-bold text-white px-4">정보
                                                     수정 저장</button>
                                             </div>
@@ -683,39 +680,6 @@
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="modal fade" id="pwdChangeModal" tabindex="-1">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title fw-bold">비밀번호 변경</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                </div>
-                                <form action="/member/updatePwd" method="post">
-                                    <div class="modal-body">
-                                        <input type="hidden" name="userId" value="${loginMember.userId}">
-                                        <div class="mb-3">
-                                            <label class="form-label">현재 비밀번호</label>
-                                            <input type="password" class="form-control" name="currentPwd" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">새 비밀번호</label>
-                                            <input type="password" class="form-control" name="newPwd" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">새 비밀번호 확인</label>
-                                            <input type="password" class="form-control" name="newPwdConfirm" required>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary"
-                                            data-bs-dismiss="modal">취소</button>
-                                        <button type="submit" class="btn btn-warning text-white">변경하기</button>
-                                    </div>
-                                </form>
                             </div>
                         </div>
                     </div>
