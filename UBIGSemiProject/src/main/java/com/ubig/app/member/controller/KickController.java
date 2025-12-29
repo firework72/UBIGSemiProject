@@ -9,12 +9,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ubig.app.common.model.vo.PageInfo;
 import com.ubig.app.member.service.KickService;
 import com.ubig.app.member.service.MessageService;
+import com.ubig.app.member.template.Pagination;
 import com.ubig.app.vo.member.KickVO;
 import com.ubig.app.vo.member.MemberVO;
+import com.ubig.app.vo.member.MessageVO;
 
 @Controller
 @RequestMapping("/kick")
@@ -63,17 +67,29 @@ public class KickController {
 	
 	// 차단 리스트로 이동
 	@RequestMapping("/kickList.ki")
-	public String selectKick(HttpSession session, Model model) {
+	public String selectKick(HttpSession session, Model model, @RequestParam(value="curPage", defaultValue="1") int curPage) {
 		
 		MemberVO loginMember = (MemberVO) session.getAttribute("loginMember");
 		// 현재 회원의 차단 리스트를 담아서 반환
 		
-		ArrayList<KickVO> list = kickService.selectKick(loginMember.getUserId());
+		int listCount = kickService.kickListCount(loginMember.getUserId());
+		
+		int boardLimit = 20;
+		int pageLimit = 10;
+		
+		PageInfo pi = Pagination.getPageInfo(listCount, curPage, boardLimit, pageLimit);
+		System.out.println("kickList pi : " + pi);
+		
+		ArrayList<KickVO> list = kickService.selectKick(loginMember.getUserId(), pi);
+		
+		System.out.println(listCount);
+		System.out.println(list);
 		
 		int unreadCount = messageService.unreadCount(loginMember.getUserId());
 		
 		model.addAttribute("list", list);
 		model.addAttribute("unreadCount", unreadCount);
+		model.addAttribute("pi", pi);
 		
 		return "member/kicklist";
 	}

@@ -119,7 +119,7 @@
        	<div id="pagingArea">
 			<ul class="pagination">
 				<c:choose>
-               		<c:when test="${pi.currentPage eq 1 }"> <!-- 현재페이지 1이면 이전버튼 비활성화 -->
+               		<c:when test="${pi.currentPage le 1 }"> <!-- 현재페이지 1이면 이전버튼 비활성화 -->
 	                    <li class="page-item disabled"><a class="page-link" href="${pageContext.request.contextPath}/message/sent.ms?curPage=${pi.currentPage - 1}">Prev</a></li>
                		</c:when>
                		<c:otherwise>
@@ -133,7 +133,7 @@
                    </c:forEach>
                    
                    <c:choose>
-                   	<c:when test="${pi.currentPage eq pi.maxPage }">
+                   	<c:when test="${pi.currentPage ge pi.maxPage }">
 	                    <li class="page-item disabled"><a class="page-link" href="${pageContext.request.contextPath}/message/sent.ms?curPage=${pi.currentPage + 1}">Next</a></li>
                    	</c:when>
                    	<c:otherwise>

@@ -6,6 +6,7 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ubig.app.common.model.vo.PageInfo;
 import com.ubig.app.member.dao.KickDao;
 import com.ubig.app.vo.member.KickVO;
 
@@ -32,14 +33,20 @@ public class KickServiceImpl implements KickService {
 	
 	// 차단 목록 가져오기
 	@Override
-	public ArrayList<KickVO> selectKick(String userId) {
-		return dao.selectKick(sqlSession, userId);
+	public ArrayList<KickVO> selectKick(String userId, PageInfo pi) {
+		return dao.selectKick(sqlSession, userId, pi);
 	}
 	
 	// 차단 목록 삭제하기
 	@Override
 	public int deleteKick(int kickNo) {
 		return dao.deleteKick(sqlSession, kickNo);
+	}
+	
+	// 차단 목록 개수 가져오기
+	@Override
+	public int kickListCount(String userId) {
+		return dao.kickListCount(sqlSession, userId);
 	}
 	
 }
