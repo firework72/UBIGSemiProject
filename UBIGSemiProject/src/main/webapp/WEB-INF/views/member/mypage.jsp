@@ -435,48 +435,137 @@
                                 }
 
                                 // sun: 내 글 목록 가져오기 함수 (AJAX)
-                                async function getMyPosts() {
-                                    const url = '${pageContext.request.contextPath}/community/myPosts';
+                                async function getMyPosts(page = 1) {
+                                    // 1. 현재 선택된 limit 값 가져오기 (없으면 기본값 10)
+                                    let limit = 10;
+                                    const limitSelect = document.querySelector("#myPostsLimitSelect");
+                                    if (limitSelect) {
+                                        limit = limitSelect.value;
+                                    }
+
+                                    const url = '${pageContext.request.contextPath}/community/myPosts?cpage=' + page + '&limit=' + limit;
                                     const container = document.querySelector("#myboard2");
 
                                     try {
                                         const response = await fetch(url);
-                                        const list = await response.json();
+                                        const data = await response.json(); // { list: [], pi: {} }
 
-                                        if (!list || list.length === 0) {
-                                            container.innerHTML = '<h4 class="mb-4 fw-bold border-bottom pb-2">내가 쓴 글</h4><div class="p-4 text-center">작성한 글이 없습니다.</div>';
+                                        // 리스트가 없는 경우 처리 (Limit Selector는 유지하거나, 없으면 생성해서 보여줘야 함)
+                                        // 여기서는 간단히 리스트가 없어도 기본 틀은 유지하도록 변경
+                                        /* 
+                                        if (!data || !data.list || data.list.length === 0) {
+                                            container.innerHTML = '...'; 
+                                            return;
+                                        } 
+                                        */
+
+                                        const list = data.list || [];
+                                        const pi = data.pi;
+
+                                        // 상단 헤더 + Limit Selector
+                                        let html = '<div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">';
+                                        html += '<h4 class="fw-bold m-0">내가 쓴 글</h4>';
+                                        html += '<select id="myPostsLimitSelect" class="form-select form-select-sm" style="width:auto;" onchange="getMyPosts(1)">';
+                                        html += '<option value="10" ' + (limit == 10 ? 'selected' : '') + '>10개씩</option>';
+                                        html += '<option value="20" ' + (limit == 20 ? 'selected' : '') + '>20개씩</option>';
+                                        html += '<option value="50" ' + (limit == 50 ? 'selected' : '') + '>50개씩</option>';
+                                        html += '</select>';
+                                        html += '</div>';
+
+                                        if (list.length === 0) {
+                                            html += '<div class="p-4 text-center">작성한 글이 없습니다.</div>';
+                                            container.innerHTML = html;
                                             return;
                                         }
 
-                                        let html = '<h4 class="mb-4 fw-bold border-bottom pb-2">내가 쓴 글</h4>';
-                                        html += '<table class="table table-hover text-center">';
-                                        html += '<thead class="table-light"><tr><th>번호</th><th>카테고리</th><th>제목</th><th>작성일</th><th>조회수</th></tr></thead>';
+                                        html += '<table class="table table-hover text-center align-middle">'; // align-middle 추가
+                                        html += '<thead class="table-light"><tr><th width="10%">번호</th><th width="15%">카테고리</th><th width="45%">제목</th><th width="20%">작성일</th><th width="10%">조회수</th></tr></thead>';
                                         html += '<tbody>';
 
                                         const catMap = {
                                             'NOTICE': '공지사항',
                                             'FREE': '자유게시판',
                                             'REVIEW': '봉사후기',
-                                            'QNA': '문의사항'
+                                            'QNA': '문의사항',
+                                            'REQUEST': '건의사항'
+                                        };
+
+                                        // 카테고리별 뱃지 색상 매핑
+                                        const badges = {
+                                            'NOTICE': 'bg-danger',      // 빨강
+                                            'FREE': 'bg-success',       // 초록
+                                            'REVIEW': 'bg-warning text-dark', // 노랑
+                                            'QNA': 'bg-info text-dark', // 파랑
+                                            'REQUEST': 'bg-primary'     // 진파랑
                                         };
 
                                         list.forEach(board => {
                                             const catName = catMap[board.category] || board.category;
+                                            const badgeClass = badges[board.category] || 'bg-secondary';
+
+                                            // 날짜 포맷 (YYYY-MM-DD)
+                                            let dateStr = board.createDate;
+                                            // 만약 Timestamp 등으로 인해 시분초가 붙어나오면 잘라주기 (yyyy-MM-dd HH:mm:ss.S)
+                                            if (dateStr && dateStr.length > 10) dateStr = dateStr.substring(0, 10);
+
                                             html += '<tr onclick="location.href=\'${pageContext.request.contextPath}/community/detail?boardId=' + board.boardId + '\'" style="cursor:pointer;">';
-                                            html += '<td>' + board.boardId + '</td>';
-                                            html += '<td><span class="badge bg-secondary">' + catName + '</span></td>';
-                                            html += '<td class="text-start text-truncate" style="max-width: 300px;">' + board.title + '</td>';
-                                            html += '<td>' + board.createDate + '</td>';
-                                            html += '<td>' + board.viewCount + '</td>';
+                                            html += '<td class="text-secondary">' + board.boardId + '</td>';
+                                            html += '<td><span class="badge ' + badgeClass + ' rounded-pill" style="font-weight:500; min-width:80px;">' + catName + '</span></td>'; // 뱃지 스타일 개선
+                                            html += '<td class="text-start"><div class="text-truncate" style="max-width: 300px; color:#333;">' + board.title + '</div></td>';
+                                            html += '<td class="text-secondary small">' + dateStr + '</td>';
+                                            html += '<td class="text-secondary small">' + board.viewCount + '</td>';
                                             html += '</tr>';
                                         });
 
                                         html += '</tbody></table>';
+
+                                        // 페이징 영역 추가 (스타일링 개선 + 화살표 텍스트로 변경)
+                                        html += '<div id="pagingAreaMyPosts" class="d-flex justify-content-center mt-4 mb-3 gap-1">';
+
+                                        if (pi) {
+                                            // 버튼 공통 클래스
+                                            const btnBase = "btn btn-sm d-flex align-items-center justify-content-center";
+                                            // 크기 조정을 위한 인라인 스타일: width/height 고정
+                                            const btnStyle = "width: 30px; height: 30px; font-size: 0.8rem; padding: 0; border-radius: 50%; box-shadow: 0 1px 2px rgba(0,0,0,0.1);";
+
+                                            // [이전]
+                                            if (pi.currentPage > 1) {
+                                                html += '<button type="button" class="' + btnBase + ' btn-light border" style="' + btnStyle + '" onclick="getMyPosts(' + (pi.currentPage - 1) + ')">&lt;</button>';
+                                            }
+
+                                            // 페이지 번호
+                                            for (let i = pi.startPage; i <= pi.endPage; i++) {
+                                                if (pi.currentPage == i) {
+                                                    // 활성 버튼 (찐한 색)
+                                                    html += '<button type="button" class="' + btnBase + ' btn-dark text-white fw-bold" style="' + btnStyle + ' border:none;" onclick="getMyPosts(' + i + ')">' + i + '</button>';
+                                                } else {
+                                                    // 비활성 버튼
+                                                    html += '<button type="button" class="' + btnBase + ' btn-white border text-secondary" style="' + btnStyle + ' background:#fff;" onclick="getMyPosts(' + i + ')">' + i + '</button>';
+                                                }
+                                            }
+
+                                            // [다음]
+                                            if (pi.currentPage < pi.maxPage) {
+                                                html += '<button type="button" class="' + btnBase + ' btn-light border" style="' + btnStyle + '" onclick="getMyPosts(' + (pi.currentPage + 1) + ')">&gt;</button>';
+                                            }
+                                        }
+
+                                        html += '</div>';
+
                                         container.innerHTML = html;
 
                                     } catch (error) {
                                         console.error('Error fetching my posts:', error);
-                                        container.innerHTML = '<h4 class="mb-4 fw-bold border-bottom pb-2">내가 쓴 글</h4><div class="alert alert-danger">데이터를 불러오는 중 오류가 발생했습니다.</div>';
+                                        let html = '<div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">';
+                                        html += '<h4 class="fw-bold m-0">내가 쓴 글</h4>';
+                                        html += '<select id="myPostsLimitSelect" class="form-select form-select-sm" style="width:auto;" onchange="getMyPosts(1)">';
+                                        html += '<option value="10" ' + (limit == 10 ? 'selected' : '') + '>10개씩</option>';
+                                        html += '<option value="20" ' + (limit == 20 ? 'selected' : '') + '>20개씩</option>';
+                                        html += '<option value="50" ' + (limit == 50 ? 'selected' : '') + '>50개씩</option>';
+                                        html += '</select>';
+                                        html += '</div>';
+                                        html += '<div class="alert alert-danger">데이터를 불러오는 중 오류가 발생했습니다.</div>';
+                                        container.innerHTML = html;
                                     }
                                 }
 
