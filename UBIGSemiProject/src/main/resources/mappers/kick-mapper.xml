@@ -32,4 +32,10 @@
 		DELETE FROM KICKS
 		WHERE KICK_NO = #{kickNo}
 	</delete>
+	
+	<select id="kickListCount" parameterType="string" resultType="_int">
+		SELECT COUNT(*)
+		FROM KICKS
+		WHERE KICKER = #{userId}
+	</select>
 </mapper>

@@ -119,7 +119,7 @@
        	<div id="pagingArea">
 			<ul class="pagination">
 				<c:choose>
-               		<c:when test="${pi.currentPage eq 1 }"> <!-- 현재페이지 1이면 이전버튼 비활성화 -->
+               		<c:when test="${pi.currentPage le 1 }"> <!-- 현재페이지 1이면 이전버튼 비활성화 -->
 	                    <li class="page-item disabled"><a class="page-link" href="${pageContext.request.contextPath}/message/sent.ms?curPage=${pi.currentPage - 1}">Prev</a></li>
                		</c:when>
                		<c:otherwise>
@@ -133,7 +133,7 @@
                    </c:forEach>
                    
                    <c:choose>
-                   	<c:when test="${pi.currentPage eq pi.maxPage }">
+                   	<c:when test="${pi.currentPage ge pi.maxPage }">
 	                    <li class="page-item disabled"><a class="page-link" href="${pageContext.request.contextPath}/message/sent.ms?curPage=${pi.currentPage + 1}">Next</a></li>
                    	</c:when>
                    	<c:otherwise>
@@ -210,8 +210,8 @@
     function openMessageDetail(msgNo, sender, content, date, isCheck) {
         // 모달 내용 채우기
         $("#modalSender").text(sender);
-        $("#modalContent").text(content); // text()로 넣어야 XSS 방지
-        $("#modalDate").text(date); // 포맷팅된 문자열이 들어온다고 가정
+        $("#modalContent").text(content);
+        $("#modalDate").text(date);
 
         // 모달 띄우기
         $("#detailModal").modal("show");
@@ -264,6 +264,38 @@
     	if (!isExist) {
     		return false;
     	}
+    	
+    	// 내용이 비어 있으면 쪽지를 보낼 수 없다.
+    	if (content === "") {
+    		alert("쪽지 내용을 입력하세요.");
+    		return false;
+    	}
+    	
+    	// 자신이 차단한 회원에게 쪽지를 보낼 수 없다.
+    	let isKicked = true;
+        $.ajax({
+        	url :  "${pageContext.request.contextPath}/kick/isKicked.ki",
+        	type: "POST",
+        	async : false,
+        	data : {
+        		messageSendUserId : receiveId,
+        		messageReceiveUserId : '${loginMember.userId}'
+        	},
+        	success : function(data) {
+        		console.log(data);
+        		if (data == "notkicked") {
+        			isKicked = false;
+        		}
+        	},
+        	error : function() {
+        		alert("알 수 없는 오류가 발생했습니다.");
+        	}
+        });
+        
+        if (isKicked) {
+        	alert("차단한 회원입니다. 차단 해제 후 다시 시도해주세요.");
+        	return false;
+        }
     	
 		// 쪽지 보내기 요청
 		return confirm("쪽지를 보내시겠습니까?");
