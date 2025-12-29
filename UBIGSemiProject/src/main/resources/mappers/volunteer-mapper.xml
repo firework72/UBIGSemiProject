@@ -313,6 +313,28 @@
 	    WHERE USER_ID = #{userId}
 	</update>
 	
+	<select id="selectMySignList" parameterType="string" resultType="com.ubig.app.vo.volunteer.SignVO">
+		SELECT 
+			S.SIGNS_NO,
+			S.SIGNS_STATUS,
+			S.SIGNS_DATE,
+			S.ACT_ID,
+			A.ACT_TITLE,
+			A.ACT_DATE,
+			A.ACT_ADDRESS
+		FROM SIGNS S
+		JOIN ACTIVITIES A ON S.ACT_ID = A.ACT_ID
+		WHERE S.SIGNS_ID = #{userId}
+		ORDER BY S.SIGNS_NO DESC
+	</select>
+	
+	<!-- 마이페이지 봉사 활동 신청 페이징처리 -->
+	<select id="selectMySignCount" parameterType="string" resultType="_int">
+		SELECT COUNT(*)
+		FROM SIGNS
+		WHERE SIGNS_ID = #{userId}
+	</select>
+	
 	
 
 </mapper>

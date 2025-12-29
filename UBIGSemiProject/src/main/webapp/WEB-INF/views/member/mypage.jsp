@@ -138,56 +138,61 @@
                             </div>
 
                             <script>
-                                //버튼 누른거만 보이게 하기 관련 메서드
-                                document.addEventListener("DOMContentLoaded", function () {
+                          //버튼 누른거만 보이게 하기 관련 메서드 -chan 12.29 2차수정
+                            document.addEventListener("DOMContentLoaded", function () {
 
-                                    const update = document.querySelector("#myupdate");
-                                    const myupdate2 = document.querySelector("#myupdate2");
-                                    const myvolunteer2 = document.querySelector("#myvolunteer2");
-                                    const myadoption2 = document.querySelector("#myadoption2");
-                                    const myboard2 = document.querySelector("#myboard2"); // sun: myboard2 복원
+                                const update = document.querySelector("#myupdate");
+                                const myupdate2 = document.querySelector("#myupdate2");
+                                const myvolunteer2 = document.querySelector("#myvolunteer2");
+                                const myadoption2 = document.querySelector("#myadoption2");
+                                const myboard2 = document.querySelector("#myboard2"); // sun: myboard2 복원
 
-                                    const list = [myupdate2, myvolunteer2, myadoption2, myboard2];
+                                const list = [myupdate2, myvolunteer2, myadoption2, myboard2];
+                                const mymenu = document.querySelector("#myMenu");
 
-                                    const mymenu = document.querySelector("#myMenu");
+                                mymenu.addEventListener("click", function (e) {
+                                    
+                                    // 클릭된 요소가 버튼이 아니면 무시 (안전장치)
+                                    if (!e.target.classList.contains('list-group-item')) return;
 
-                                    mymenu.addEventListener("click", function (e) {
+                                    // 1. [봉사 신청 내역] 클릭 시
+                                    if (e.target.id === 'myvolunteer') {
+                                        list.forEach(el => el.style.display = "none"); // 다 숨기고
+                                        myvolunteer2.style.display = "block"; // 봉사내역만 보임
+                                        getMyVolunteerList(); // ★ 데이터 가져오는 함수 실행
+                                    }
+                                    // 2. [내가 쓴 글] 클릭 시
+                                    else if (e.target.id === 'myboard') {
+                                        list.forEach(el => el.style.display = "none");
+                                        myboard2.style.display = "block";
+                                        getMyPosts();
+                                    }
+                                    // 3. 그 외 (내 정보 수정, 입양 신청 내역)
+                                    else {
+                                        // 회원 탈퇴 버튼은 폼 제출이므로 제외
+                                        if(e.target.id === 'delete') return;
 
-                                        // sun: 내가 쓴 글 버튼 클릭 처리
-                                        if (e.target.id === 'myboard') {
-                                            // 탭 UI 활성화 (기존 로직과 동일)
-                                            // 모두 숨기기
-                                            list.forEach(el => el.style.display = "none");
-
-                                            // myboard2 보이기
-                                            myboard2.style.display = "block";
-
-                                            // AJAX로 글 목록 가져오기
-                                            getMyPosts();
-                                        }
-                                        else {
-                                            // 기존 로직 (그대로 복원)
-                                            // 모두 숨기기
-                                            list.forEach(el => el.style.display = "none");
-
-                                            // 선택된 콘텐츠 보이기
-                                            const targetId = e.target.id + "2";
-                                            const targetContent = document.querySelector("#" + targetId);
-                                            if (targetContent) {
-                                                targetContent.style.display = "block";
+                                        list.forEach(el => el.style.display = "none");
+                                        const targetId = e.target.id + "2";
+                                        const targetContent = document.querySelector("#" + targetId);
+                                        if (targetContent) {
+                                            targetContent.style.display = "block";
+                                            // 입양 버튼일 때만 입양 데이터 호출
+                                            if(e.target.id === 'myadoption') {
                                                 getAdoptionData(currPage1, currPage2);
                                             }
                                         }
-
-                                        // 버튼 활성화 스타일 처리
-                                        const allButtons = mymenu.querySelectorAll('.list-group-item');
-                                        allButtons.forEach(btn => btn.classList.remove('active'));
-
-                                        // 클릭된 버튼에 active 추가
-                                        e.target.classList.add('active');
-                                    });
-
+                                    }
+                                    
+                                    // 버튼 활성화 스타일 처리
+                                    const allButtons = mymenu.querySelectorAll('.list-group-item');
+                                    allButtons.forEach(btn => btn.classList.remove('active'));
+                                    e.target.classList.add('active');
                                 });
+
+                            });
+
+                                
                                 // 전역 변수로 현재 페이지 상태 관리
                                 let currPage1 = 1;
                                 let currPage2 = 1;
@@ -679,7 +684,21 @@
                                     </div>
 
                                     <div class="card-body p-4" style="display: none;" id="myvolunteer2">
-                                        봉사 신청 내역
+                                        <h4 class="mb-4 fw-bold border-bottom pb-2">봉사 신청 내역</h4>
+                                        
+                                        <table class="table table-hover text-center">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>신청일</th>
+                                                    <th>활동명</th>
+                                                    <th>활동날짜</th>
+                                                    <th>상태</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="volunteerTableBody">
+                                                </tbody>
+                                        </table>
+                                        <div id="volPagingArea" class="d-flex justify-content-center mt-3 gap-1"></div>
                                     </div>
 
                                     <div class="card-body p-4" style="display: none;" id="myadoption2">
@@ -911,6 +930,82 @@
                         function deleteMember() {
                             return confirm("정말로 탈퇴하시겠습니까? 탈퇴 시 복구할 수 없습니다.");
                         }
+                        
+                        
+                     // chan-12.29일 [추가] 봉사 신청 내역 가져오기 (AJAX)
+                        // [수정] 봉사 신청 내역 가져오기 (AJAX + 페이징)
+                        async function getMyVolunteerList(cpage = 1) { // 페이지 번호 매개변수 추가 (기본값 1)
+                            
+                            // 쿼리 스트링으로 페이지 번호 전달
+                            const url = '${pageContext.request.contextPath}/mySignList.vo?cpage=' + cpage;
+                            const tbody = document.querySelector("#volunteerTableBody");
+                            const pagingArea = document.querySelector("#volPagingArea");
+                            
+                            try {
+                                const response = await fetch(url);
+                                const resultMap = await response.json(); // Map 형태 (list, pi)
+                                
+                                const list = resultMap.list;
+                                const pi = resultMap.pi;
+                                
+                                if (!list || list.length === 0) {
+                                    tbody.innerHTML = '<tr><td colspan="4" class="p-4">신청한 봉사활동 내역이 없습니다.</td></tr>';
+                                    pagingArea.innerHTML = ""; // 페이징도 비움
+                                    return;
+                                }
+
+                                // 1. 리스트 그리기
+                                let html = "";
+                                list.forEach(sign => {
+                                    let signDate = new Date(sign.signsDate).toISOString().split('T')[0];
+                                    let actDate = new Date(sign.actDate).toISOString().split('T')[0];
+                                    
+                                    let statusBadge = "";
+                                    if(sign.signsStatus === 0) statusBadge = '<span class="badge bg-warning text-dark">대기중</span>';
+                                    else if(sign.signsStatus === 1) statusBadge = '<span class="badge bg-success">승인됨</span>';
+                                    else if(sign.signsStatus === 2) statusBadge = '<span class="badge bg-danger">반려됨</span>';
+                                    else if(sign.signsStatus === 3) statusBadge = '<span class="badge bg-secondary">취소됨</span>';
+                                    else if(sign.signsStatus === 4) statusBadge = '<span class="badge bg-primary">활동완료</span>';
+
+                                    html += '<tr style="cursor:pointer;" onclick="location.href=\'${pageContext.request.contextPath}/volunteerDetail.vo?actId=' + sign.actId + '\'">';
+                                    html += '<td>' + signDate + '</td>';
+                                    html += '<td class="text-start">' + sign.actTitle + '</td>';
+                                    html += '<td>' + actDate + '</td>';
+                                    html += '<td>' + statusBadge + '</td>';
+                                    html += '</tr>';
+                                });
+                                tbody.innerHTML = html;
+
+                                // 2. 페이징 버튼 그리기
+                                let pageHtml = "";
+                                
+                                // [이전] 버튼
+                                if (pi.currentPage > 1) {
+                                    pageHtml += '<button class="btn btn-sm btn-outline-secondary" onclick="getMyVolunteerList(' + (pi.currentPage - 1) + ')">&lt;</button>';
+                                }
+                                
+                                // [번호] 버튼
+                                for (let p = pi.startPage; p <= pi.endPage; p++) {
+                                    if (p === pi.currentPage) {
+                                        pageHtml += '<button class="btn btn-sm btn-secondary active" disabled>' + p + '</button>';
+                                    } else {
+                                        pageHtml += '<button class="btn btn-sm btn-outline-secondary" onclick="getMyVolunteerList(' + p + ')">' + p + '</button>';
+                                    }
+                                }
+                                
+                                // [다음] 버튼
+                                if (pi.currentPage < pi.maxPage) {
+                                    pageHtml += '<button class="btn btn-sm btn-outline-secondary" onclick="getMyVolunteerList(' + (pi.currentPage + 1) + ')">&gt;</button>';
+                                }
+                                
+                                pagingArea.innerHTML = pageHtml;
+
+                            } catch (error) {
+                                console.error('Error:', error);
+                                tbody.innerHTML = '<tr><td colspan="4" class="text-danger">데이터 로딩 실패</td></tr>';
+                            }
+                        }
+                        
                     </script>
             </body>
 

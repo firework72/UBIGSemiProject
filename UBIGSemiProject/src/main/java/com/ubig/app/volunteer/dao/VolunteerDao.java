@@ -190,7 +190,23 @@ public class VolunteerDao {
     public int increaseUserAttendanceCount(String userId) {
         return sqlSession.update("volunteerMapper.increaseUserAttendanceCount", userId);
     }
-	
+    
+    
+    // [추가] 나의 신청 내역 개수 조회
+    public int selectMySignCount(String userId) {
+        return sqlSession.selectOne("volunteerMapper.selectMySignCount", userId);
+    }
+
+    // [수정] 나의 봉사 신청 내역 조회 (페이징 적용)
+    public List<SignVO> selectMySignList(String userId, PageInfo pi) {
+        
+        int offset = (pi.getCurrentPage() - 1) * pi.getBoardLimit();
+        int limit = pi.getBoardLimit();
+        
+        RowBounds rowBounds = new RowBounds(offset, limit);
+        
+        return sqlSession.selectList("volunteerMapper.selectMySignList", userId, rowBounds);
+    }
 	
 	
 	

@@ -298,6 +298,34 @@ public class VolunteerServiceImpl implements VolunteerService {
         return result;
     }
     
+    //마이페이지 페이징바 처리
+    @Override
+    public int selectMySignCount(String userId) {
+        return volunteerDao.selectMySignCount(userId);
+    }
+    //마이페이지 페이징바 처리
+    @Override
+    public List<SignVO> selectMySignList(String userId, PageInfo pi) {
+        return volunteerDao.selectMySignList(userId, pi);
+    }
+    
+    
+    @Override
+    public int updateSignStatusMulti(List<Integer> signsNos) {
+        int count = 0;
+        
+        // 넘어온 번호 리스트를 하나씩 꺼내서 기존의 'complete' 로직을 재활용합니다.
+        for(int signsNo : signsNos) {
+            // "complete" 파라미터를 넘겨서 기존 로직(상태변경+횟수증가)을 수행
+            int result = updateSignStatusAdmin(signsNo, "complete");
+            
+            if(result > 0) {
+                count++;
+            }
+        }
+        return count; // 성공한 횟수 리턴
+    }
+    
 
 
 }
