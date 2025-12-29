@@ -103,7 +103,7 @@ window.addEventListener('DOMContentLoaded', () => {
                            value="${loginMember.userId}" readonly>
 
                     <label>후원 금액</label>
-                    <input type="number" name="donationMoney" required>
+                    <input type="number" name="donationMoney" min="1" required>
 
                     <button class="submit-btn">정기 후원 신청</button>
                 </form>
@@ -123,7 +123,7 @@ window.addEventListener('DOMContentLoaded', () => {
                        value="${loginMember.userId}" readonly>
 
                 <label>후원 금액</label>
-                <input type="number" name="donationMoney" required>
+                <input type="number" name="donationMoney" min="1" required>
 
                 <button class="submit-btn">일시 후원 신청</button>
             </form>
