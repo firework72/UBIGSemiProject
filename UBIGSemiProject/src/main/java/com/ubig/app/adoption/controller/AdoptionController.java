@@ -147,6 +147,12 @@ public class AdoptionController {
 			return "redirect:/adoption.detailpage?anino=" + application.getAnimalNo();
 		}
 
+		// [추가] 마감된 동물인지 확인
+		if (animal != null && "마감".equals(animal.getAdoptionStatus())) {
+			session.setAttribute("alertMsgAd", "마감된 입양건입니다.");
+			return "redirect:/adoption.detailpage?anino=" + application.getAnimalNo();
+		}
+
 		if (check > 0) {
 			session.setAttribute("alertMsgAd", "이미 입양 신청을 하셨습니다.");
 			return "redirect:/adoption.detailpage?anino=" + application.getAnimalNo();
@@ -530,15 +536,33 @@ public class AdoptionController {
 	@RequestMapping(value = "/adoption.applicants", produces = "application/json; charset=UTF-8")
 	public String getApplicants(int anino, HttpSession session) {
 		MemberVO user = (MemberVO) session.getAttribute("loginMember");
-		AnimalDetailVO animal = service.goAdoptionDetail(anino);
 
-		// 권한 체크
-		if (animal == null || !animal.getUserId().equals(user.getUserId())) {
-			return new Gson().toJson("error");
+		// 1. 로그인 체크
+		if (user == null) {
+			return new Gson().toJson("not_login");
 		}
 
-		List<AdoptionApplicationVO> list = service.getApplicantsList(anino);
-		return new Gson().toJson(list);
+		try {
+			AnimalDetailVO animal = service.goAdoptionDetail(anino);
+
+			// 2. 동물 존재 여부 체크
+			if (animal == null) {
+				return new Gson().toJson("animal_not_found");
+			}
+
+			// 3. 권한 체크 (본인 동물인지)
+			if (!animal.getUserId().equals(user.getUserId())) {
+				return new Gson().toJson("permission_denied");
+			}
+
+			List<AdoptionApplicationVO> list = service.getApplicantsList(anino);
+			return new Gson().toJson(list);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			// 서버 오류 발생 시
+			return new Gson().toJson("error_msg:" + e.getMessage());
+		}
 	}
 
 	// [AJAX] 최종 입양 확정 (특정 신청자 선택)
@@ -546,16 +570,33 @@ public class AdoptionController {
 	@RequestMapping(value = "/adoption.confirm", produces = "application/json; charset=UTF-8")
 	public String confirmAdoption(int adoptionAppId, int anino, HttpSession session) {
 		MemberVO user = (MemberVO) session.getAttribute("loginMember");
-		AnimalDetailVO animal = service.goAdoptionDetail(anino);
 
-		// 권한 체크
-		if (animal == null || !animal.getUserId().equals(user.getUserId())) {
-			return new Gson().toJson("error");
+		// 1. 로그인 체크
+		if (user == null) {
+			return new Gson().toJson("not_login");
 		}
 
-		int result = service.confirmAdoption(adoptionAppId, anino);
+		try {
+			AnimalDetailVO animal = service.goAdoptionDetail(anino);
 
-		return new Gson().toJson(result > 0 ? "success" : "fail");
+			// 2. 동물 존재 여부 체크
+			if (animal == null) {
+				return new Gson().toJson("animal_not_found");
+			}
+
+			// 3. 권한 체크
+			if (!animal.getUserId().equals(user.getUserId())) {
+				return new Gson().toJson("permission_denied");
+			}
+
+			int result = service.confirmAdoption(adoptionAppId, anino);
+
+			return new Gson().toJson(result > 0 ? "success" : "fail");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new Gson().toJson("error_msg:" + e.getMessage());
+		}
 	}
 
 }

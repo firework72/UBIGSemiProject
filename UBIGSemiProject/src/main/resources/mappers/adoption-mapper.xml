@@ -75,6 +75,15 @@
     	WHERE ANIMAL_NO = #{animalNo}
     </update>
     
+    <!-- 마감 기한 지난 동물 상태 '마감'으로 일괄 변경 (입양완료가 아닌 것만) -->
+    <update id="updateExpiredAdoptionStatus">
+    	UPDATE ANIMAL_DETAILS
+    	SET ADOPTION_STATUS = '마감'
+    	WHERE DEADLINE_DATE &lt; SYSDATE
+    	AND ADOPTION_STATUS != '입양완료'
+    	AND ADOPTION_STATUS != '마감'
+    </update>
+    
     <!-- 리스트 갯수 세기 (게시글 기준, 검색 필터 적용) -->
     <select id="listCount" resultType="_int" parameterType="com.ubig.app.vo.adoption.AdoptionSearchFilterVO">
     	SELECT count(*)
