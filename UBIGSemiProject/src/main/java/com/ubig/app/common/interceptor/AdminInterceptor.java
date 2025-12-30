@@ -22,7 +22,7 @@ public class AdminInterceptor implements HandlerInterceptor {
 		if (member == null || !"ADMIN".equals(member.getUserRole())) {
 
 			request.getSession().setAttribute("alertMsg", "관리자만 접근 가능합니다.");
-			response.sendRedirect(request.getContextPath() + "/common/errerpage");
+			response.sendRedirect(request.getContextPath());
 			return false;
 		}
 
