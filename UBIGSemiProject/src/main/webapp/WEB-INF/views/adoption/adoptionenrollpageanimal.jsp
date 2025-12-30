@@ -59,14 +59,14 @@
                             <div class="col-md-6">
                                 <label for="animalName" class="form-label fw-bold">2. 이름 (Name)</label>
                                 <input type="text" name="animalName" id="animalName" class="form-control"
-                                    placeholder="예: 뽀삐" required pattern="^[가-힣a-zA-Z0-9\s]+$" title="특수문자는 사용할 수 없습니다">
+                                    placeholder="예: 뽀삐" required pattern="^[가-힣a-zA-Z0-9\s]+$" title="특수문자는 사용할 수 없습니다" maxlength="30">
                             </div>
 
                             <!-- 3. 품종 -->
                             <div class="col-md-6">
                                 <label for="breed" class="form-label fw-bold">3. 품종 (Breed)</label>
                                 <input type="text" name="breed" id="breed" class="form-control" placeholder="예: 말티즈"
-                                    required pattern="^[가-힣a-zA-Z\s]+$" title="특수문자 및 숫자는 사용할 수 없습니다">
+                                    required pattern="^[가-힣a-zA-Z\s]+$" title="특수문자 및 숫자는 사용할 수 없습니다" maxlength="30">
                             </div>
 
                             <!-- 4. 성별 -->
@@ -104,7 +104,7 @@
                             <div class="col-md-4">
                                 <label for="petSize" class="form-label fw-bold">7. 크기 (Size / cm)</label>
                                 <input type="number" name="petSize" id="petSize" class="form-control" step="0.1"
-                                    placeholder="크기 입력" required min="0">
+                                    placeholder="크기 입력" required min="0" max="300">
                             </div>
 
                             <!-- 8. 중성화 여부 -->
@@ -129,14 +129,14 @@
                                 <label for="vaccinationStatus" class="form-label fw-bold">9. 접종 상태 (Vaccination
                                     Status)</label>
                                 <input type="text" name="vaccinationStatus" id="vaccinationStatus" class="form-control"
-                                    placeholder="예: 3차 완료" value="미접종">
+                                    placeholder="예: 3차 완료" value="미접종" maxlength="300">
                             </div>
 
                             <!-- 10. 특이사항 -->
                             <div class="col-12">
                                 <label for="healthNotes" class="form-label fw-bold">10. 특이사항 (Health Notes)</label>
                                 <textarea name="healthNotes" id="healthNotes" class="form-control" rows="3"
-                                    placeholder="건강 상태 및 특징 작성">건강 상태 정상</textarea>
+                                    placeholder="건강 상태 및 특징 작성" maxlength="300">건강 상태 정상</textarea>
                             </div>
 
                             <!-- 11. 입양 상태 -->
@@ -160,7 +160,7 @@
                                 <label for="adoptionConditions" class="form-label fw-bold">12. 입양 조건
                                     (Conditions)</label>
                                 <textarea name="adoptionConditions" id="adoptionConditions" class="form-control"
-                                    rows="3" placeholder="필수 입양 조건 작성">조건 없음</textarea>
+                                    rows="3" placeholder="필수 입양 조건 작성" maxlength="300">조건 없음</textarea>
                             </div>
 
                             <!-- 13. 입양 희망 지역 -->
