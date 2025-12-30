@@ -80,6 +80,14 @@ img {
     padding: 0 20px;
 }
 
+/* Shared Container for Community-like pages */
+.community-container {
+    padding: 100px 0;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
 /* Header */
 header {
     background-color: var(--white);

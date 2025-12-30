@@ -328,7 +328,7 @@
 	        APPLY_DT
 	    FROM ADOPTION_APPLICATIONS
 	    WHERE ADOPTION_APP_ID = #{adoptionAppId}
-	    ORDER BY ADOPTION_STATUS
+	    ORDER BY ADOPT_STATUS
 	</select>
 
 	<!-- 입양 신청 번호로 해당 입양 신청취소(삭제) -->

@@ -273,6 +273,16 @@
                         transform: translateY(0);
                     }
                 }
+
+                /* [User Request] 메인 텍스트 애니메이션 제거 및 중앙 고정 */
+                .hero-content,
+                .hero h1,
+                .hero p,
+                .hero .btn-main {
+                    animation: none !important;
+                    opacity: 1 !important;
+                    transform: none !important;
+                }
             </style>
         </head>
 
@@ -297,20 +307,20 @@
             <section class="stats">
                 <div class="container">
                     <div class="stats-grid">
-                        <div class="stat-item">
-                            <h3>1,204</h3>
+                        <div class="stat-item" data-aos="fade-up" data-aos-delay="100">
+                            <h3>128</h3>
                             <p>구조된 동물들</p>
                         </div>
-                        <div class="stat-item">
-                            <h3>580</h3>
+                        <div class="stat-item" data-aos="fade-up" data-aos-delay="200">
+                            <h3>28</h3>
                             <p>행복한 입양</p>
                         </div>
-                        <div class="stat-item">
-                            <h3>3,500+</h3>
+                        <div class="stat-item" data-aos="fade-up" data-aos-delay="300">
+                            <h3>280</h3>
                             <p>함께하는 봉사자</p>
                         </div>
-                        <div class="stat-item">
-                            <h3>12</h3>
+                        <div class="stat-item" data-aos="fade-up" data-aos-delay="400">
+                            <h3>18</h3>
                             <p>연계 보호소</p>
                         </div>
                     </div>
@@ -336,7 +346,8 @@
                                 여러분의 작은 관심이 아이들에게는 새로운 세상이 됩니다.
                                 지금 바로 따뜻한 동행을 시작해보세요.
                             </p>
-                            <a href="#" class="btn-main">우리 이야기 더보기</a>
+                            <a href="${pageContext.request.contextPath}/community/list?category=FREE"
+                                class="btn-main">우리 이야기 더보기</a>
                         </div>
                     </div>
                 </div>

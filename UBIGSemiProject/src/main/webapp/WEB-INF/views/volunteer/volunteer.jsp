@@ -11,9 +11,12 @@
                 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
                 <style>
                     /* volunteer.jsp specific overrides if needed */
-                    .container {
-                        margin-top: 50px;
-                        margin-bottom: 50px;
+                    /* volunteer.jsp specific overrides if needed */
+                    /* [User Request] 글자 잘림 방지 */
+                    .page-title {
+                        line-height: 1.4 !important;
+                        padding-bottom: 10px;
+                        overflow: visible;
                     }
                 </style>
             </head>
@@ -22,7 +25,7 @@
 
                 <jsp:include page="../common/menubar.jsp" />
 
-                <div class="container">
+                <main class="community-container">
                     <div class="page-header">
                         <div class="page-title">봉사활동 모집</div>
                         <p class="page-desc">따뜻한 손길이 필요한 곳을 찾아보세요.</p>
@@ -136,7 +139,7 @@
                             </a>
                         </c:if>
                     </div>
-                </div>
+                </main>
 
             </body>
 

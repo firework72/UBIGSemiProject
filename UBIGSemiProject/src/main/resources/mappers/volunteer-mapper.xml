@@ -120,6 +120,19 @@
 		WHERE ACT_ID = #{actId}
 	</select>
 	
+    <!-- 활동 삭제 시 관련 자식 레코드 삭제 (Cascade 시뮬레이션) -->
+    <delete id="deleteSignsByActId" parameterType="_int">
+        DELETE FROM SIGNS WHERE ACT_ID = #{actId}
+    </delete>
+    
+    <delete id="deleteReviewsByActId" parameterType="_int">
+        DELETE FROM VOLUNTEER_REVIEWS WHERE ACT_ID = #{actId}
+    </delete>
+    
+    <delete id="deleteCommentsByActId" parameterType="_int">
+        DELETE FROM VOLUNTEER_BOARD_COMMENTS WHERE ACT_ID = #{actId}
+    </delete>
+
 	<delete id="deleteActivity" parameterType="int">
 		DELETE FROM ACTIVITIES
 		WHERE ACT_ID = #{actId}
