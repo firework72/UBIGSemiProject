@@ -411,10 +411,7 @@ footer {
     box-shadow: var(--shadow-sm);
 }
 
-background-color: var(--primary-color);
-color: var(--white);
-font-weight: bold;
-}
+
 
 /* Search Area */
 .search-area {
@@ -465,4 +462,145 @@ font-weight: bold;
 
 .btn-search:hover {
     background: #34495e;
+}
+
+/* ==========================================================================
+   5. Board & Table Styles (Added for Unification)
+   ========================================================================== */
+
+/* Board Controls (Write button, counts) */
+.board-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 0 10px;
+}
+
+.select-box {
+    padding: 8px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+    background-color: var(--white);
+    color: #555;
+    outline: none;
+    cursor: pointer;
+}
+
+.btn-write {
+    background: var(--primary-color);
+    color: var(--white);
+    padding: 10px 25px;
+    border-radius: var(--border-radius-md);
+    font-weight: 500;
+    transition: background 0.3s;
+    box-shadow: 0 4px 6px rgba(255, 159, 67, 0.2);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-write:hover {
+    background: var(--primary-hover);
+    color: var(--white);
+}
+
+/* Board Card & Table */
+.board-card {
+    background: var(--white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    margin-bottom: 40px;
+}
+
+.board-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+.board-table th {
+    padding: 20px;
+    background-color: #f1f2f6;
+    color: var(--secondary-color);
+    font-weight: 700;
+    font-size: 0.95rem;
+    border-bottom: 2px solid #eaedf1;
+}
+
+.board-table td {
+    padding: 20px;
+    border-bottom: 1px solid #f1f2f6;
+    color: #555;
+    font-size: 0.95rem;
+}
+
+.board-table tr:last-child td {
+    border-bottom: none;
+}
+
+.board-table tr:hover {
+    background-color: #fafbfc;
+}
+
+.board-title {
+    text-align: left;
+    padding-left: 20px;
+}
+
+.board-title a {
+    font-weight: 500;
+    transition: color 0.2s;
+    color: var(--text-color);
+}
+
+.board-title a:hover {
+    color: var(--primary-color);
+    text-decoration: underline;
+}
+
+/* Notices & Pinned */
+.row-notice {
+    background-color: #fff9f0;
+}
+
+.row-pinned {
+    background-color: #fff3cd !important;
+    border: 2px solid #ffeeba;
+}
+
+.row-pinned td {
+    color: #856404 !important;
+}
+
+.row-notice .board-title a {
+    font-weight: 700;
+    color: #e58e3c;
+}
+
+/* Badges */
+.badge-notice {
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 4px 8px;
+    font-size: 0.75rem;
+    border-radius: 4px;
+    margin-right: 8px;
+}
+
+.badge-tag {
+    display: inline-block;
+    background-color: #f1f3f5;
+    color: #adb5bd;
+    font-size: 0.75rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-right: 4px;
+    margin-top: 5px;
+}
+
+.empty-list {
+    padding: 50px;
+    color: var(--text-muted);
 }

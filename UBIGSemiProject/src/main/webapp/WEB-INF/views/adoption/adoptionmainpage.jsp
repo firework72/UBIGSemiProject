@@ -48,8 +48,8 @@
 					}
 
 					.form-check-input:checked {
-						background-color: #0d6efd;
-						border-color: #0d6efd;
+						background-color: var(--primary-color);
+						border-color: var(--primary-color);
 					}
 
 					.custom-input-group {

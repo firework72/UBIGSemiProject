@@ -22,12 +22,12 @@
 
                 <style>
                     body {
-                        background-color: #f8f9fa;
+                        background-color: var(--body-bg);
                     }
 
                     .mypage-header {
-                        background-color: #FFC107;
-                        color: white;
+                        background-color: var(--primary-color);
+                        color: var(--white);
                         padding: 40px 0;
                         margin-bottom: 30px;
                     }
@@ -40,10 +40,10 @@
                     }
 
                     .sidebar-menu .list-group-item.active {
-                        background-color: #FFC107;
-                        border-color: #FFC107;
-                        color: white;
-                        font-weight: bold;
+                        background-color: var(--primary-color);
+                        border-color: var(--primary-color);
+                        color: var(--white);
+                        font-weight: 700;
                     }
 
                     .sidebar-menu .list-group-item:hover:not(.active) {
@@ -52,7 +52,7 @@
                     }
 
                     .stat-card {
-                        border-left: 5px solid #FFC107;
+                        border-left: 5px solid var(--primary-color);
                         transition: transform 0.2s;
                     }
 
@@ -66,7 +66,7 @@
                     }
 
                     .error-msg {
-                        color: red;
+                        color: #ff6b6b;
                         font-size: 0.8rem;
                         display: none;
                     }
@@ -688,7 +688,7 @@
                                             <hr class="my-4">
 
                                             <div class="d-flex justify-content-between">
-                                                <button type="submit" class="btn btn-warning fw-bold text-white px-4">정보
+                                                <button type="submit" class="btn btn-primary fw-bold text-white px-4">정보
                                                     수정 저장</button>
                                             </div>
                                         </form>

@@ -19,91 +19,13 @@
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 
             <style>
-                /* 기본 초기화 */
-                * {
-                    margin: 0;
-                    padding: 0;
-                    box-sizing: border-box;
-                }
+                /* 기본 초기화와 공통 스타일은 style.css에서 가져옵니다 */
 
-                body {
-                    font-family: 'Noto Sans KR', sans-serif;
-                    color: #333;
-                    line-height: 1.6;
-                    background-color: #fff;
-                    overflow-x: hidden;
-                    /* 가로 스크롤 방지 */
-                }
-
-                a {
-                    text-decoration: none;
-                    color: inherit;
-                    transition: color 0.3s;
-                }
-
-                ul {
-                    list-style: none;
-                }
-
-                /* 메인 컬러 정의 */
-                :root {
-                    --primary-color: #FFC107;
-                    /* 따뜻한 노란색 */
-                    --primary-dark: #FFA000;
-                    --text-dark: #2c3e50;
-                    --text-gray: #6c757d;
-                    --bg-light: #f8f9fa;
-                    --glass-bg: rgba(255, 255, 255, 0.9);
-                }
-
-                /* 공통 유틸리티 */
-                .container {
-                    max-width: 1200px;
-                    margin: 0 auto;
-                    padding: 0 20px;
-                }
-
-                .btn-main {
-                    display: inline-block;
-                    padding: 12px 30px;
-                    background-color: var(--primary-color);
-                    color: white;
-                    font-weight: 700;
-                    border-radius: 50px;
-                    box-shadow: 0 4px 6px rgba(255, 193, 7, 0.3);
-                    transition: all 0.3s ease;
-                }
-
-                .btn-main:hover {
-                    background-color: var(--primary-dark);
-                    transform: translateY(-3px);
-                    box-shadow: 0 6px 12px rgba(255, 193, 7, 0.4);
-                }
-
-                .section-title {
-                    text-align: center;
-                    margin-bottom: 50px;
-                    position: relative;
-                }
-
-                .section-title h2 {
-                    font-size: 2.5rem;
-                    font-weight: 700;
-                    color: var(--text-dark);
-                    margin-bottom: 10px;
-                    font-family: 'Outfit', sans-serif;
-                }
-
-                .section-title p {
-                    color: var(--text-gray);
-                    font-size: 1.1rem;
-                }
-
+                /* 메인 페이지 전용 스타일 */
                 /* --- Hero Section --- */
                 .hero {
                     position: relative;
                     height: 80vh;
-                    /* 화면 꽉 차게 */
                     min-height: 600px;
                     background: url('${pageContext.request.contextPath}/resources/images/main/main1.png') no-repeat center center/cover;
                     display: flex;
@@ -121,7 +43,6 @@
                     right: 0;
                     bottom: 0;
                     background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.6));
-                    /* 살짝 어둡게 */
                 }
 
                 .hero-content {
@@ -143,15 +64,32 @@
                     text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
                 }
 
+                /* 메인 버튼 스타일 (오버라이드) */
+                .btn-main {
+                    display: inline-block;
+                    padding: 12px 30px;
+                    background-color: var(--primary-color);
+                    color: white;
+                    font-weight: 700;
+                    border-radius: 50px;
+                    box-shadow: 0 4px 6px rgba(255, 159, 67, 0.3);
+                    transition: all 0.3s ease;
+                }
+
+                .btn-main:hover {
+                    background-color: var(--primary-hover);
+                    transform: translateY(-3px);
+                    box-shadow: 0 6px 12px rgba(255, 159, 67, 0.4);
+                }
+
                 /* --- Stats Section --- */
                 .stats {
                     background-color: white;
                     padding: 60px 0;
                     margin-top: -60px;
-                    /* Hero와 겹치게 */
                     position: relative;
                     z-index: 2;
-                    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+                    box-shadow: var(--shadow-lg);
                     border-radius: 20px 20px 0 0;
                 }
 
@@ -165,19 +103,20 @@
                 .stat-item h3 {
                     font-size: 2.5rem;
                     font-weight: 700;
-                    color: var(--primary-dark);
+                    color: var(--primary-color);
+                    /* Updated to Primary */
                     margin-bottom: 5px;
                 }
 
                 .stat-item p {
-                    color: var(--text-gray);
+                    color: var(--text-muted);
                     font-weight: 500;
                 }
 
                 /* --- About Section --- */
                 .about {
                     padding: 100px 0;
-                    background-color: var(--bg-light);
+                    background-color: var(--body-bg);
                 }
 
                 .about-content {
@@ -194,7 +133,7 @@
                     font-size: 2.2rem;
                     margin-bottom: 20px;
                     font-weight: 700;
-                    color: var(--text-dark);
+                    color: var(--secondary-color);
                 }
 
                 .about-text p {
@@ -211,7 +150,7 @@
                 .about-img img {
                     width: 100%;
                     border-radius: 20px;
-                    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                    box-shadow: var(--shadow-lg);
                     transition: transform 0.5s;
                 }
 
@@ -225,6 +164,23 @@
                     background-color: white;
                 }
 
+                .section-title {
+                    text-align: center;
+                    margin-bottom: 50px;
+                }
+
+                .section-title h2 {
+                    font-size: 2.5rem;
+                    font-weight: 700;
+                    color: var(--secondary-color);
+                    margin-bottom: 10px;
+                }
+
+                .section-title p {
+                    color: var(--text-muted);
+                    font-size: 1.1rem;
+                }
+
                 .activity-grid {
                     display: grid;
                     grid-template-columns: repeat(3, 1fr);
@@ -235,14 +191,14 @@
                     background: white;
                     border-radius: 15px;
                     overflow: hidden;
-                    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+                    box-shadow: var(--shadow-md);
                     transition: transform 0.3s, box-shadow 0.3s;
                     cursor: pointer;
                 }
 
                 .activity-card:hover {
                     transform: translateY(-10px);
-                    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+                    box-shadow: var(--shadow-lg);
                 }
 
                 .activity-card img {
@@ -258,18 +214,18 @@
                 .card-body h3 {
                     font-size: 1.4rem;
                     margin-bottom: 10px;
-                    color: var(--text-dark);
+                    color: var(--secondary-color);
                 }
 
                 .card-body p {
-                    color: var(--text-gray);
+                    color: var(--text-muted);
                     font-size: 0.95rem;
                 }
 
                 /* --- Call to Action --- */
                 .cta {
                     padding: 100px 0;
-                    background: linear-gradient(rgba(255, 193, 7, 0.9), rgba(255, 160, 0, 0.9)),
+                    background: linear-gradient(rgba(255, 159, 67, 0.9), rgba(229, 142, 60, 0.9)),
                     url('${pageContext.request.contextPath}/resources/images/main/main3.png') fixed center center/cover;
                     text-align: center;
                     color: white;
@@ -288,18 +244,18 @@
 
                 .cta .btn-main {
                     background-color: white;
-                    color: var(--primary-dark);
+                    color: var(--primary-color);
                     font-size: 1.2rem;
                 }
 
                 .cta .btn-main:hover {
-                    background-color: var(--bg-light);
-                    color: var(--primary-color);
+                    background-color: var(--body-bg);
+                    color: var(--primary-hover);
                 }
 
-                /* Footer (Simply included here for layout completeness, ideally in common file) */
+                /* Footer - Simple version override if needed, otherwise rely on common */
                 .footer-simple {
-                    background-color: #333;
+                    background-color: var(--secondary-color);
                     color: #aaa;
                     padding: 50px 0;
                     text-align: center;
@@ -330,9 +286,10 @@
                 <div class="hero-content">
                     <h1 class="animate__animated animate__fadeInDown">작은 발걸음이 만드는<br>기적 같은 변화</h1>
                     <p class="animate__animated animate__fadeInUp animate__delay-1s">유기견 봉사활동 일등 공신, 유봉일공과 함께하세요.</p>
-                   <a href="${pageContext.request.contextPath}/volunteerList.vo" class="btn-main animate__animated animate__zoomIn animate__delay-1s">
-					    봉사활동 신청하기
-					</a>
+                    <a href="${pageContext.request.contextPath}/volunteerList.vo"
+                        class="btn-main animate__animated animate__zoomIn animate__delay-1s">
+                        봉사활동 신청하기
+                    </a>
                 </div>
             </section>
 
