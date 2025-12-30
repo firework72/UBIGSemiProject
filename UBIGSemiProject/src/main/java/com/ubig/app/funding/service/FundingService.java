@@ -2,8 +2,9 @@ package com.ubig.app.funding.service;
 
 import java.util.ArrayList;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import com.ubig.app.common.model.vo.PageInfo;
-import com.ubig.app.vo.funding.DonationVO;
 import com.ubig.app.vo.funding.FundingHistoryVO;
 import com.ubig.app.vo.funding.FundingVO;
 
@@ -17,6 +18,7 @@ public interface FundingService {
 
 	int insertFunding(FundingVO fundingVO);
 
+	@Transactional
 	int insertMoney(FundingHistoryVO fundingHistoryVO);
 
 	FundingVO fundingDetailView(int fundingNo);
