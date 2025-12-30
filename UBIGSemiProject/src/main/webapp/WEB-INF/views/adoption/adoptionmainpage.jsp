@@ -6,6 +6,8 @@
 		<head>
 			<meta charset="UTF-8">
 			<title>UBIG - 입양 친구들 소개</title>
+			<!-- Bootstrap 5 CSS -->
+			<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 			<!-- Global Style -->
 			<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
 			<!-- Adoption Specific Style -->
@@ -57,10 +59,11 @@
 					}
 
 					.btn-search {
-						padding: 10px 40px;
+						padding: 6px 20px;
 						font-weight: 600;
-						border-radius: 8px;
+						border-radius: 6px;
 						transition: all 0.2s;
+						font-size: 0.9rem;
 					}
 
 					.btn-search:hover {
@@ -72,10 +75,11 @@
 				<!-- 검색 필터 섹션 -->
 				<div class="search-filter-container">
 					<form action="adoption.mainpage" method="get">
-						<div class="row g-4">
+						<!-- Row 1: 5개 항목 한줄 (축종, 성별, 중성화, 나이, 몸무게) -->
+						<div class="row g-2 mb-2">
 							<!-- 1. 축종 -->
-							<div class="col-md-4">
-								<span class="filter-label">축종</span>
+							<div class="col-auto">
+								<label class="filter-label">축종</label>
 								<div class="bg-white p-2 rounded border">
 									<div class="form-check form-check-inline">
 										<input class="form-check-input" type="radio" name="species" value="1" id="dog"
@@ -91,8 +95,8 @@
 							</div>
 
 							<!-- 2. 성별 -->
-							<div class="col-md-4">
-								<span class="filter-label">성별</span>
+							<div class="col-auto">
+								<label class="filter-label">성별</label>
 								<div class="bg-white p-2 rounded border">
 									<div class="form-check form-check-inline">
 										<input class="form-check-input" type="radio" name="gender" value="1" id="male"
@@ -108,8 +112,8 @@
 							</div>
 
 							<!-- 3. 중성화 -->
-							<div class="col-md-4">
-								<span class="filter-label">중성화 여부</span>
+							<div class="col-auto">
+								<label class="filter-label">중성화 여부</label>
 								<div class="bg-white p-2 rounded border">
 									<div class="form-check form-check-inline">
 										<input class="form-check-input" type="radio" name="neutered" value="1"
@@ -125,42 +129,55 @@
 							</div>
 
 							<!-- 4. 나이 범위 -->
-							<div class="col-md-3">
+							<div class="col-auto">
 								<label class="filter-label">나이 (살)</label>
-								<div class="input-group input-group-sm custom-input-group">
-									<input type="number" class="form-control" name="ageMin" placeholder="최소"
-										value="${filter.ageMin}" step="0.1">
-									<span class="input-group-text bg-light">~</span>
-									<input type="number" class="form-control" name="ageMax" placeholder="최대"
-										value="${filter.ageMax}" step="0.1">
+								<div class="bg-white p-2 rounded border">
+									<div class="input-group input-group-sm custom-input-group">
+										<input type="number" class="form-control input-short" name="ageMin"
+											placeholder="최소" value="${filter.ageMin}" step="1" max="99"
+											oninput="if(this.value.length>2) this.value=this.value.slice(0,2);">
+										<span class="input-group-text bg-light">~</span>
+										<input type="number" class="form-control input-short" name="ageMax"
+											placeholder="최대" value="${filter.ageMax}" step="1" max="99"
+											oninput="if(this.value.length>2) this.value=this.value.slice(0,2);">
+									</div>
 								</div>
 							</div>
 
 							<!-- 5. 몸무게 범위 -->
-							<div class="col-md-3">
+							<div class="col-auto">
 								<label class="filter-label">몸무게 (kg)</label>
-								<div class="input-group input-group-sm custom-input-group">
-									<input type="number" class="form-control" name="weightMin" placeholder="최소"
-										value="${filter.weightMin}" step="0.1">
-									<span class="input-group-text bg-light">~</span>
-									<input type="number" class="form-control" name="weightMax" placeholder="최대"
-										value="${filter.weightMax}" step="0.1">
+								<div class="bg-white p-2 rounded border">
+									<div class="input-group input-group-sm custom-input-group">
+										<input type="number" class="form-control input-short" name="weightMin"
+											placeholder="최소" value="${filter.weightMin}" step="0.1" max="99"
+											oninput="if(this.value.length>2) this.value=this.value.slice(0,2);">
+										<span class="input-group-text bg-light">~</span>
+										<input type="number" class="form-control input-short" name="weightMax"
+											placeholder="최대" value="${filter.weightMax}" step="0.1" max="99"
+											oninput="if(this.value.length>2) this.value=this.value.slice(0,2);">
+									</div>
 								</div>
 							</div>
+						</div>
 
+						<!-- Row 2: 2개 항목 한줄 (희망 지역, 이름 검색) -->
+						<div class="row g-2 align-items-end">
 							<!-- 6. 지역 -->
-							<div class="col-md-3">
+							<div class="col-md-6">
 								<label class="filter-label">희망 지역</label>
 								<input type="text" class="form-control form-control-sm" name="hopeRegion"
 									placeholder="예: 서울, 경기" value="${filter.hopeRegion}">
 							</div>
 
 							<!-- 7. 검색어 (이름) -->
-							<div class="col-md-3">
+							<div class="col-md-6">
 								<label class="filter-label">이름 검색</label>
 								<input type="text" class="form-control form-control-sm" name="keyword"
 									placeholder="동물 이름 입력" value="${filter.keyword}">
 							</div>
+
+
 
 							<!-- 검색 버튼 -->
 							<div class="col-12 text-center mt-4">
@@ -247,6 +264,8 @@
 			</div>
 
 		</body>
+		<!-- Bootstrap 5 JS Bundle -->
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 		<script>
 			document.addEventListener("DOMContentLoaded", function () {
