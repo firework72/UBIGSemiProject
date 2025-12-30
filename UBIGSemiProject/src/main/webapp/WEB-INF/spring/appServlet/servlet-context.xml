@@ -43,6 +43,11 @@
 			<mapping path="/adoption.insert.board.direct"/>
 			<mapping path="/adoption.insert.animal"/>
 			<mapping path="/adoption.deleteadoptionapp"/>
+			<mapping path="/adoption.update.animal.action"/>
+			<mapping path="/adoption.insertapplication"/>
+			<mapping path="/adoption.enrollpagepost"/>
+			<mapping path="/adoption.mypage"/>
+			<mapping path="/adoption.deny.board.direct"/>
 			<!-- Dong : /message, /kick 모든 주소, /user 일부 주소 로그인 시에만 접근 가능하게 -->
 			<mapping path="/message"/>
 			<mapping path="/message/**"/>
@@ -71,6 +76,7 @@
 		<interceptor>
 			<!-- 적용할 매핑 주소 <mapping path=""/> -->
 			<mapping path="/adoption.postmanage"/>
+			<mapping path="/adoption.deny.board.direct"/>
 			<!-- Dong : /admin 모든 주소 관리자만 접근 가능하게 -->
 			<mapping path="/admin/**"/>
 			<mapping path="/admin"/>
