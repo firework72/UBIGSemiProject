@@ -42,9 +42,31 @@ public class AdoptionController {
 	MessageService messageService;
 
 	// anino를 가지고 입양 상세 페이지로 이동하기
+	// anino를 가지고 입양 상세 페이지로 이동하기
 	@RequestMapping("/adoption.detailpage")
-	public String goAdoptionDetail(int anino, Model model) {
+	public String goAdoptionDetail(int anino, Model model, HttpSession session) {
+
+		MemberVO loginUser = (MemberVO) session.getAttribute("loginMember");
+
+		// 1. 로그인 체크
+		if (loginUser == null) {
+			session.setAttribute("alertMsgAd", "로그인 후 이용 가능합니다.");
+			return "redirect:/adoption.mainpage";
+		}
+
 		AnimalDetailVO ani = service.goAdoptionDetail(anino);
+
+		// 2. 비공개(승인 대기, 게시글 없음) 동물 접근 제한
+		if (ani != null && ani.getPostNo() == 0) {
+			boolean isOwner = ani.getUserId().equals(loginUser.getUserId());
+			boolean isAdmin = "ADMIN".equals(loginUser.getUserRole());
+
+			if (!isOwner && !isAdmin) {
+				session.setAttribute("alertMsgAd", "비공개 상태(승인 대기)인 동물입니다.");
+				return "redirect:/adoption.mainpage";
+			}
+		}
+
 		model.addAttribute("animal", ani);
 
 		service.updateViewCount(anino);
@@ -59,8 +81,48 @@ public class AdoptionController {
 	}
 
 	// anino를 가지고 입양 신청 페이지로 이동하기
+	// anino를 가지고 입양 신청 페이지로 이동하기
 	@RequestMapping("/adoption.applicationpage")
-	public String goAdoptionApplicationPage(int anino) {
+	public String goAdoptionApplicationPage(int anino, HttpSession session, Model model) {
+
+		MemberVO loginUser = (MemberVO) session.getAttribute("loginMember");
+
+		// 1. 로그인 체크
+		if (loginUser == null) {
+			session.setAttribute("alertMsgAd", "로그인 후 이용 가능합니다.");
+			return "redirect:/adoption.detailpage?anino=" + anino;
+		}
+
+		String userId = loginUser.getUserId();
+
+		// 2. 동물 정보 조회
+		AnimalDetailVO animal = service.goAdoptionDetail(anino);
+		if (animal == null) {
+			session.setAttribute("alertMsgAd", "존재하지 않는 동물입니다.");
+			return "redirect:/adoption.mainpage";
+		}
+
+		// 3. 본인 동물인지 확인
+		if (animal.getUserId().equals(userId)) {
+			session.setAttribute("alertMsgAd", "본인이 등록한 동물에는 입양 신청을 할 수 없습니다.");
+			return "redirect:/adoption.detailpage?anino=" + anino;
+		}
+
+		// 4. 마감 여부 확인
+		if ("마감".equals(animal.getAdoptionStatus())) {
+			session.setAttribute("alertMsgAd", "마감된 입양건입니다.");
+			return "redirect:/adoption.detailpage?anino=" + anino;
+		}
+
+		// 5. 중복 신청 확인
+		int check = service.checkApplication(anino, userId);
+		if (check > 0) {
+			session.setAttribute("alertMsgAd", "이미 입양 신청을 하셨습니다.");
+			return "redirect:/adoption.detailpage?anino=" + anino;
+		}
+
+		model.addAttribute("animal", animal); // 뷰에서 필요할 수 있으므로 전달 (선택사항)
+
 		return "/adoption/adoptionapplication";
 	}
 
@@ -203,12 +265,17 @@ public class AdoptionController {
 			animal.setPhotoUrl(changeName);
 
 			// C. DB에 동물 정보 저장
-			int result = service.insertAnimal(animal);
+			try {
+				int result = service.insertAnimal(animal);
 
-			if (result > 0) {
-				session.setAttribute("alertMsgAd", "동물 등록 성공!");
-			} else {
-				session.setAttribute("alertMsgAd", "동물 등록 실패!");
+				if (result > 0) {
+					session.setAttribute("alertMsgAd", "동물 등록 성공!");
+				} else {
+					session.setAttribute("alertMsgAd", "동물 등록 실패!");
+				}
+			} catch (IllegalArgumentException e) {
+				session.setAttribute("alertMsgAd", e.getMessage());
+				// 실패 시 업로드된 파일 삭제 등 추가 로직 필요할 수 있음
 			}
 		}
 		return "redirect:/adoption.mainpage";
@@ -259,9 +326,19 @@ public class AdoptionController {
 	}
 
 	// anino를 가지고 동물 정보 수정 페이지로 이동하기
+	// anino를 가지고 동물 정보 수정 페이지로 이동하기
 	@RequestMapping("/adoption.updateanimal")
-	public String updateAnimal(int anino, Model model) {
+	public String updateAnimal(int anino, Model model, HttpSession session) {
 		AnimalDetailVO animal = service.goAdoptionDetail(anino);
+
+		// [검증] 승인되거나 입양완료된 동물은 수정 불가
+		if (animal != null) {
+			if (animal.getPostNo() != 0 || "입양완료".equals(animal.getAdoptionStatus())) {
+				session.setAttribute("alertMsgAd", "승인되거나 입양 완료된 동물은 수정할 수 없습니다.");
+				return "redirect:/user/mypage.me";
+			}
+		}
+
 		model.addAttribute("animal", animal);
 		return "/adoption/adoptionenrollpageanimal";
 	}
@@ -270,6 +347,15 @@ public class AdoptionController {
 	@RequestMapping("/adoption.update.animal.action")
 	public String updateAnimalAction(HttpSession session, MultipartFile uploadFile, AnimalDetailVO animal,
 			String originalPhotoUrl) {
+
+		// [검증] 승인되거나 입양완료된 동물은 수정 불가 (DB 조회 필요)
+		AnimalDetailVO dbAnimal = service.goAdoptionDetail(animal.getAnimalNo());
+		if (dbAnimal != null) {
+			if (dbAnimal.getPostNo() != 0 || "입양완료".equals(dbAnimal.getAdoptionStatus())) {
+				session.setAttribute("alertMsgAd", "승인되거나 입양 완료된 동물은 수정할 수 없습니다.");
+				return "redirect:/user/mypage.me";
+			}
+		}
 
 		// 1. 파일 업로드 로직 (새 파일이 있으면 교체)
 		String changeName = null;
@@ -292,21 +378,30 @@ public class AdoptionController {
 		animal.setAdoptionStatus("대기중");
 
 		// 3. DB 업데이트
-		int result = service.updateAnimal(animal);
+		try {
+			int result = service.updateAnimal(animal);
 
-		// 4. [중요] 관리자가 아닌 사용자가 수정했을 경우, 기존의 승인된 게시글 삭제 (재승인 필요)
-		MemberVO user = (MemberVO) session.getAttribute("loginMember");
-		if (user != null && !"ADMIN".equals(user.getUserRole())) {
-			service.deletePost(animal.getAnimalNo());
+			// 4. [중요] 관리자가 아닌 사용자가 수정했을 경우, 기존의 승인된 게시글 삭제 (재승인 필요)
+			MemberVO user = (MemberVO) session.getAttribute("loginMember");
+			if (user != null && !"ADMIN".equals(user.getUserRole())) {
+				service.deletePost(animal.getAnimalNo());
+			}
+
+			if (result > 0) {
+				session.setAttribute("alertMsgAd", "동물 정보가 성공적으로 수정되었습니다.");
+			} else {
+				session.setAttribute("alertMsgAd", "정보 수정 실패");
+			}
+		} catch (IllegalArgumentException e) {
+			session.setAttribute("alertMsgAd", e.getMessage());
 		}
 
-		if (result > 0) {
-			session.setAttribute("alertMsgAd", "동물 정보가 성공적으로 수정되었습니다.");
+		MemberVO loginUser = (MemberVO) session.getAttribute("loginMember");
+		if (loginUser != null && "ADMIN".equals(loginUser.getUserRole())) {
+			return "redirect:/adoption.postmanage";
 		} else {
-			session.setAttribute("alertMsgAd", "정보 수정 실패");
+			return "redirect:/user/mypage.me";
 		}
-
-		return "redirect:/user/mypage.me";
 	}
 
 	// anino를 가지고 동물 정보 및 관련 데이터 삭제하기
@@ -315,6 +410,15 @@ public class AdoptionController {
 		MemberVO user = (MemberVO) session.getAttribute("loginMember");
 		String userRole = user.getUserRole();
 		String userId = user.getUserId();
+
+		// [검증] 승인되거나 입양완료된 동물은 삭제 불가 (관리자 제외하고 검증)
+		AnimalDetailVO animal = service.goAdoptionDetail(anino);
+		if (animal != null && !"ADMIN".equals(userRole)) {
+			if (animal.getPostNo() != 0 || "입양완료".equals(animal.getAdoptionStatus())) {
+				session.setAttribute("alertMsgAd", "승인되거나 입양 완료된 동물은 삭제할 수 없습니다.");
+				return "redirect:/user/mypage.me";
+			}
+		}
 
 		// 관리자: 강제 삭제 (트랜잭션 적용)
 		if ("ADMIN".equals(userRole)) {
@@ -328,7 +432,7 @@ public class AdoptionController {
 		}
 		// 일반 유저: 본인 확인 (트랜잭션 적용)
 		else if ("MEMBER".equals(userRole)) {
-			AnimalDetailVO animal = service.goAdoptionDetail(anino);
+			// AnimalDetailVO animal = service.goAdoptionDetail(anino); // 위에서 이미 조회함
 
 			if (animal != null && userId.equals(animal.getUserId())) {
 				int result = service.deleteAnimalFull(anino);
@@ -359,6 +463,12 @@ public class AdoptionController {
 
 		int result = 0;
 		if (application != null) {
+			// [검증] 입양 완료된 상태(2)이면 취소 불가
+			if (application.getAdoptStatus() == 2) {
+				session.setAttribute("alertMsgAd", "입양 완료된 신청 내역은 취소할 수 없습니다.");
+				return "redirect:/user/mypage.me";
+			}
+
 			int animalNo = application.getAnimalNo();
 
 			// 2. 신청 내역 삭제
