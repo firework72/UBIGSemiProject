@@ -38,12 +38,24 @@ public class AdoptionServiceImpl implements AdoptionService {
 	// AnimalDetailVO를 가지고 동물 정보 등록하기
 	@Override
 	public int insertAnimal(AnimalDetailVO animal) {
+		if (animal.getDeadlineDate() != null) {
+			java.time.LocalDate deadline = animal.getDeadlineDate().toLocalDate();
+			if (deadline.isBefore(java.time.LocalDate.now())) {
+				throw new IllegalArgumentException("마감일은 과거 날짜일 수 없습니다.");
+			}
+		}
 		return dao.insertAnimal(sqlSession, animal);
 	}
 
 	// AnimalDetailVO를 가지고 동물 정보 수정하기
 	@Override
 	public int updateAnimal(AnimalDetailVO animal) {
+		if (animal.getDeadlineDate() != null) {
+			java.time.LocalDate deadline = animal.getDeadlineDate().toLocalDate();
+			if (deadline.isBefore(java.time.LocalDate.now())) {
+				throw new IllegalArgumentException("마감일은 과거 날짜일 수 없습니다.");
+			}
+		}
 		return dao.updateAnimal(sqlSession, animal);
 	}
 

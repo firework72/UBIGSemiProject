@@ -145,7 +145,11 @@
             </div>
 
             <script>
-
+                // 알림 메시지 처리
+                <c:if test="${not empty sessionScope.alertMsgAd}">
+                    alert("${sessionScope.alertMsgAd}");
+                    <c:remove var="alertMsgAd" scope="session" />
+                </c:if>
             </script>
         </body>
 
