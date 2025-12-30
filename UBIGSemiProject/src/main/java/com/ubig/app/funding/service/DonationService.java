@@ -1,6 +1,7 @@
 package com.ubig.app.funding.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.ubig.app.common.model.vo.PageInfo;
 import com.ubig.app.vo.funding.DonationVO;
@@ -22,6 +23,10 @@ public interface DonationService {
 	int selectDetailView(String userId);
 
 	int cancelDonation(String userId);
+
+	ArrayList<DonationVO> myDonation(PageInfo pi, String userId);
+
+	ArrayList<DonationVO> myDonation2(PageInfo pi, String userId);
 	
 	
 }

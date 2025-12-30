@@ -5,191 +5,74 @@
 
 <html>
 <head>
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css?v=3">
-    <title>후원 목록</title>
+    <title>내 후원 목록</title>
+
+    <link rel="stylesheet"
+          href="${pageContext.request.contextPath}/resources/css/style.css?v=3">
 
     <style>
-        /* ===============================
-   기본 설정
-================================ */
-body {
-    font-family: 'Noto Sans KR', sans-serif;
-    background-color: #f8f9fa;
-    padding-top: 50px;
-    color: #333;
-    line-height: 1.6;
-}
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #f8f9fa; padding-top: 50px; }
+        h2 { text-align: center; margin: 30px 0; }
 
-h2 {
-    text-align: center;
-    font-size: 2rem;
-    margin: 40px 0 20px;
-    color: #2c3e50;
-}
+        /* 상단 영역 */
+        .top-menu { width: 90%; max-width: 1200px; margin: 0 auto 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        .filter-area { display: flex; gap: 10px; }
+        .filter-btn { padding: 8px 16px; background-color: #17a2b8; color: #fff; border-radius: 20px; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: 0.3s; }
+        .filter-btn:hover { background-color: #138496; transform: translateY(-2px); }
 
-/* ===============================
-   상단 검색 영역
-================================ */
-.top-menu {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    margin: 0 20px 30px;
-    gap: 10px;
-    flex-wrap: wrap;
-}
+        /* 검색 */
+        .search-area { display: flex; gap: 10px; }
+        .search-area select, .search-area input { padding: 8px; border-radius: 5px; border: 1px solid #ccc; }
+        .search-btn { background-color: #FFC107; border: none; padding: 8px 16px; border-radius: 5px; font-weight: bold; cursor: pointer; }
 
-.top-menu select,
-.top-menu input[type="text"] {
-    padding: 8px 12px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    font-size: 0.95rem;
-}
+        /* 테이블 */
+        table { width: 90%; max-width: 1200px; margin: 0 auto 40px; border-collapse: collapse; background: #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        th, td { padding: 14px; text-align: center; border-bottom: 1px solid #eee; }
+        th { background-color: #FFC107; color: #fff; }
+        tr:hover { background-color: #fff3cd; }
 
-.top-menu button {
-    padding: 8px 16px;
-    border: none;
-    border-radius: 5px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.search-btn {
-    background-color: #FFC107;
-    color: #fff;
-}
-
-.search-btn:hover {
-    background-color: #FFA000;
-    transform: translateY(-2px);
-}
-
-/* ===============================
-   테이블
-================================ */
-table {
-    width: 90%;
-    max-width: 1200px;
-    margin: 0 auto 40px;
-    border-collapse: collapse;
-    background-color: #fff;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-}
-
-th, td {
-    padding: 15px;
-    text-align: center;
-    border-bottom: 1px solid #eee;
-}
-
-th {
-    background-color: #FFC107;
-    color: #fff;
-    font-weight: 700;
-}
-
-tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-tr:hover {
-    background-color: #fff3cd;
-}
-
-/* ===============================
-   버튼 스타일
-================================ */
-.cancel-btn {
-    padding: 6px 12px;
-    background-color: #dc3545;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 0.85rem;
-    transition: all 0.2s;
-}
-
-.cancel-btn:hover {
-    background-color: #c82333;
-    transform: translateY(-2px);
-}
-
-.btn-area {
-    width: 90%;
-    max-width: 1200px;
-    margin: 0 auto 60px;
-    display: flex;
-    justify-content: flex-end;
-}
-
-.btn-back {
-    width: 150px;
-    padding: 12px 0;
-    text-align: center;
-    background-color: #28a745;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 50px;
-    font-weight: 700;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    transition: all 0.3s;
-}
-
-.btn-back:hover {
-    background-color: #218838;
-    transform: translateY(-3px);
-}
-
-/* ===============================
-   반응형
-================================ */
-@media (max-width: 1024px) {
-    .top-menu {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    table {
-        width: 95%;
-    }
-}
-
-@media (max-width: 768px) {
-    table, th, td {
-        font-size: 0.85rem;
-    }
-    .btn-back {
-        width: 120px;
-        padding: 10px 0;
-    }
-}
-
+        /* 버튼 */
+        .cancel-btn { padding: 6px 12px; background-color: #dc3545; color: #fff; border: none; border-radius: 5px; cursor: pointer; }
+        .btn-area { width: 90%; max-width: 1200px; margin: 0 auto 60px; text-align: right; }
+        .btn-back { display: inline-block; padding: 12px 30px; background-color: #28a745; color: #fff; border-radius: 30px; text-decoration: none; font-weight: bold; }
     </style>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
+
 <body>
 
-<jsp:include page="/WEB-INF/views/common/menubar.jsp"></jsp:include>
+<jsp:include page="/WEB-INF/views/common/menubar.jsp"/>
 
-<h2>후원 목록</h2>
+<h2>내 후원 목록</h2>
 
+<!-- ================= 상단 필터 / 검색 ================= -->
 <div class="top-menu">
-    <form action="${pageContext.request.contextPath}/donation/searchKeyword" method="get" style="display:flex; gap:10px; flex-wrap:wrap;">
-        <select id="searchType" name="searchType">
-            <option value="all">전체</option>
-            <option value="user">작성자</option>
-            <option value="title">후원타입</option>
+
+    <!-- 🔥 빠른 필터 -->
+    <div class="filter-area">
+        <a class="filter-btn" href="${pageContext.request.contextPath}/donation/myDonation">내 정기후원</a>
+        <a class="filter-btn" href="${pageContext.request.contextPath}/donation/myDonation2">내 일시후원</a>
+        <a class="filter-btn" href="${pageContext.request.contextPath}/donation">전체</a>
+    </div>
+
+    <!-- 🔍 검색 -->
+    <form class="search-area"
+          action="${pageContext.request.contextPath}/donation/searchKeyword"
+          method="get">
+
+        <select name="searchType" id="searchType">
+            <option value="user">회원 ID</option>
+            <option value="type">후원 타입</option>
         </select>
-        <input type="text" id="searchInput" name="searchKeyword" placeholder="검색어 입력" value="${param.searchKeyword}">
+
+        <input type="text" name="searchKeyword" id="searchInput" placeholder="회원 ID를 입력하세요">
+
         <button type="submit" class="search-btn">검색</button>
     </form>
 </div>
 
+<!-- ================= 테이블 ================= -->
 <table>
     <tr>
         <th>번호</th>
@@ -202,27 +85,25 @@ tr:hover {
     </tr>
 
     <c:forEach var="d" items="${list}">
-        <tr id="donationRow${d.donationNo}">
+        <tr>
             <td>${d.donationNo}</td>
             <td>${d.userId}</td>
             <td>
                 <c:choose>
                     <c:when test="${d.donationType == 1}">정기</c:when>
                     <c:when test="${d.donationType == 2}">일시</c:when>
-                    <c:otherwise>기타</c:otherwise>
                 </c:choose>
             </td>
-            <td>${d.donationMoney}</td>
-            <td id="status${d.donationNo}">
+            <td><fmt:formatNumber value="${d.donationMoney}"/></td>
+            <td>
                 <c:choose>
                     <c:when test="${d.donationYn == 1}">신청</c:when>
                     <c:when test="${d.donationYn == 2}">신청 취소</c:when>
-                    <c:otherwise>기타</c:otherwise>
                 </c:choose>
             </td>
             <td><fmt:formatDate value="${d.donationDate}" pattern="yyyy-MM-dd"/></td>
             <td>
-                <c:if test="${d.donationType eq 1 && d.donationYn == 1 && loginMember.userId eq d.userId}">
+                <c:if test="${d.donationType == 1 && d.donationYn == 1 && loginMember.userId eq d.userId}">
                     <button class="cancel-btn" data-id="${d.donationNo}">정기 해제</button>
                 </c:if>
             </td>
@@ -230,86 +111,54 @@ tr:hover {
     </c:forEach>
 </table>
 
+<!-- ================= 하단 버튼 ================= -->
 <div class="btn-area">
-    <a href="${pageContext.request.contextPath}/donation/donationDetailView"
-       class="btn-back">후원하기</a>
+    <a href="${pageContext.request.contextPath}/donation/donationDetailView" class="btn-back">후원하기</a>
 </div>
 
-<div id="pagingArea">
-    <ul class="pagination">
-
-        <!-- 이전 -->
-        <c:if test="${pi.currentPage > 1}">
-            <li class="page-item">
-                <a class="page-link" href="${pageContext.request.contextPath}/donation/searchKeyword?curPage=${pi.currentPage - 1}&searchKeyword=${keyword}">Prev</a>
-            </li>
-        </c:if>
-
-        <!-- 페이지 번호 -->
-        <c:forEach var="p" begin="${pi.startPage}" end="${pi.endPage}">
-            <c:choose>
-                <c:when test="${p == pi.currentPage}">
-                    <li class="page-item active"><a class="page-link" href="#">${p}</a></li>
-                </c:when>
-                <c:otherwise>
-                    <li class="page-item">
-                        <a class="page-link" href="${pageContext.request.contextPath}/donation/searchKeyword?curPage=${p}&searchKeyword=${keyword}">${p}</a>
-                    </li>
-                </c:otherwise>
-            </c:choose>
-        </c:forEach>
-
-        <!-- 다음 -->
-        <c:if test="${pi.currentPage < pi.maxPage}">
-            <li class="page-item">
-                <a class="page-link" href="${pageContext.request.contextPath}/donation/searchKeyword?curPage=${pi.currentPage + 1}&searchKeyword=${keyword}">Next</a>
-            </li>
-        </c:if>
-
-    </ul>
-</div>
-
-
+<!-- ================= JS ================= -->
 <script>
-$(document).ready(function(){
+$(function(){
 
-    // 정기 후원 해제 버튼 클릭 이벤트
+    // 검색 placeholder 변경
+    $("#searchType").change(function () {
+        const type = $(this).val();
+        if (type === "user") {
+            $("#searchInput").attr("placeholder", "회원 ID를 입력하세요");
+        } else if (type === "type") {
+            $("#searchInput").attr("placeholder", "정기 / 일시");
+        } else {
+            $("#searchInput").attr("placeholder", "검색어 입력");
+        }
+    });
+
+    // 정기 후원 해제
     $(".cancel-btn").click(function(){
         if(!confirm("정기 후원을 해제하시겠습니까?")) return;
 
-        let donationNo = $(this).data("id");  // 버튼에 있는 데이터 ID 가져오기
-        let btn = $(this);  // 클릭한 버튼 객체
+        const donationNo = $(this).data("id");
+        const btn = $(this);
 
         $.ajax({
-            url: "${pageContext.request.contextPath}/donation/cancelDonation", // 컨트롤러 요청 주소
+            url: "${pageContext.request.contextPath}/donation/cancelDonation",
             type: "POST",
-            data: { donationNo: donationNo },
-            dataType: "text", // 서버에서 단순 문자열 반환 예상
-            success: function(response){
-                if(response === "success"){
-                    // 상태 텍스트 변경
-                    $("#status" + donationNo).text("신청 취소");
-                    // 버튼 제거
+            data: { donationNo : donationNo },
+            success: function(res){
+                if(res === "success"){
+                    btn.closest("tr").find("td:eq(4)").text("신청 취소");
                     btn.remove();
                 } else {
-                    alert("정기 후원 해제 실패: 서버 처리 오류");
+                    alert("정기 후원 해제 실패");
                 }
             },
-            error: function(xhr, status, error){
-                alert("정기 후원 해제 실패: " + error + "\nHTTP 상태: " + xhr.status);
+            error: function(xhr){
+                alert("서버 오류: " + xhr.status);
             }
         });
     });
 
-    // 검색 placeholder 변경
-    $("#searchType").change(function(){
-        if(this.value==='user'){ $("#searchInput").attr("placeholder","작성자 입력"); }
-        else if(this.value==='title'){ $("#searchInput").attr("placeholder","후원타입 입력"); }
-        else { $("#searchInput").attr("placeholder","검색어 입력"); }
-    });
 });
 </script>
-
 
 </body>
 </html>
