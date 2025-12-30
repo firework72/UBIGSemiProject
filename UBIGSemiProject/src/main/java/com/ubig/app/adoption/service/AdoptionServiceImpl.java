@@ -35,7 +35,7 @@ public class AdoptionServiceImpl implements AdoptionService {
 	@Autowired
 	private KickService kickService;
 
-	// AnimalDetailVO를 가지고 동물 정보 등록하기
+	// [동물 등록] 동물 상세 정보(AnimalDetailVO)를 받아 DB에 등록하고 결과를 반환하는 메서드
 	@Override
 	public int insertAnimal(AnimalDetailVO animal) {
 		if (animal.getDeadlineDate() != null) {
@@ -47,7 +47,7 @@ public class AdoptionServiceImpl implements AdoptionService {
 		return dao.insertAnimal(sqlSession, animal);
 	}
 
-	// AnimalDetailVO를 가지고 동물 정보 수정하기
+	// [동물 수정] 동물 상세 정보(AnimalDetailVO)를 받아 DB를 정보를 수정하고 결과를 반환하는 메서드
 	@Override
 	public int updateAnimal(AnimalDetailVO animal) {
 		if (animal.getDeadlineDate() != null) {
@@ -59,13 +59,13 @@ public class AdoptionServiceImpl implements AdoptionService {
 		return dao.updateAnimal(sqlSession, animal);
 	}
 
-	// 게시글 전체 갯수 가져오기 (필터 적용)
+	// [게시글 목록] 검색 필터(AdoptionSearchFilterVO)를 사용하여 전체 게시글 수를 조회하고 반환하는 메서드
 	@Override
 	public int listCount(AdoptionSearchFilterVO filter) {
 		return dao.listCount(sqlSession, filter);
 	}
 
-	// PageInfo를 가지고 메인 페이지 게시글 목록 가져오기 (필터 적용)
+	// [게시글 목록] 검색 필터와 페이징 정보를 사용하여 게시글 목록을 조회하고 반환하는 메서드
 	@Override
 	public List<AdoptionMainListVO> selectAdoptionMainList(AdoptionPageInfoVO pi, AdoptionSearchFilterVO filter) {
 
@@ -77,7 +77,7 @@ public class AdoptionServiceImpl implements AdoptionService {
 		return dao.selectAdoptionMainList(sqlSession, pi, filter, rowBounds);
 	}
 
-	// AdoptionPostVO를 가지고 게시글 등록하기 (게시글 승인/등록 알림)
+	// [게시글 등록] 입양 게시글 정보(AdoptionPostVO)를 받아 DB에 등록하고 결과를 반환하는 메서드
 	@Override
 	public int insertBoard(AdoptionPostVO post) {
 		int result = dao.insertBoard(sqlSession, post);
@@ -90,13 +90,13 @@ public class AdoptionServiceImpl implements AdoptionService {
 		return result;
 	}
 
-	// anino를 가지고 동물 상세 정보 가져오기
+	// [입양 상세] 동물 고유 번호(anino)를 사용하여 동물 상세 정보를 조회하고 반환하는 메서드
 	@Override
 	public AnimalDetailVO goAdoptionDetail(int anino) {
 		return dao.goAdoptionDetail(sqlSession, anino);
 	}
 
-	// AdoptionApplicationVO를 가지고 입양 신청서 등록하기 (성공 시 상태 변경 포함 + 주인에게 알림)
+	// [입양 신청] 입양 신청 정보(AdoptionApplicationVO)를 받아 DB에 등록하고 결과를 반환하는 메서드
 	@Override
 	public int insertApplication(AdoptionApplicationVO application) {
 		int result = dao.insertApplication(sqlSession, application);
@@ -117,19 +117,19 @@ public class AdoptionServiceImpl implements AdoptionService {
 		return result;
 	}
 
-	// animalNo를 가지고 조회수 증가시키기
+	// [입양 상세] 동물 번호(animalNo)를 사용하여 조회수를 1 증가시키고 결과를 반환하는 메서드
 	@Override
 	public int updateViewCount(int animalNo) {
 		return dao.updateViewCount(sqlSession, animalNo);
 	}
 
-	// anino를 가지고 동물 정보 삭제하기
+	// [동물 삭제] 동물 번호(anino)를 사용하여 동물 정보를 삭제하고 결과를 반환하는 메서드
 	@Override
 	public int deleteAnimal(int anino) {
 		return dao.deleteAnimal(sqlSession, anino);
 	}
 
-	// anino를 가지고 동물 정보 및 관련 데이터(게시글, 신청내역) 일괄 삭제하기 (트랜잭션 적용)
+	// [동물 삭제] 동물 번호(anino)를 사용하여 동물 정보 및 관련 데이터(게시글, 신청내역)를 일괄 삭제하고 결과를 반환하는 메서드
 	@Override
 	@Transactional
 	public int deleteAnimalFull(int anino) {
@@ -143,13 +143,13 @@ public class AdoptionServiceImpl implements AdoptionService {
 		return dao.deleteAnimal(sqlSession, anino);
 	}
 
-	// anino를 가지고 게시글 존재 여부(갯수) 가져오기
+	// [게시글 등록] 동물 번호(anino)를 사용하여 게시글 등록 여부를 확인하고 결과를 반환하는 메서드
 	@Override
 	public int checkpost(int anino) {
 		return dao.checkpost(sqlSession, anino);
 	}
 
-	// 관리자용 동물/게시글 전체 목록 가져오기 (페이징)
+	// [게시글 관리] 검색 조건과 페이징 정보를 사용하여 관리용 동물/게시글 목록을 조회하고 반환하는 메서드
 	@Override
 	public List<AnimalDetailVO> managepost(AdoptionPageInfoVO pi, Map<String, Object> map) {
 		int limit = pi.getBoardLimit();
@@ -158,7 +158,7 @@ public class AdoptionServiceImpl implements AdoptionService {
 		return dao.managepost(sqlSession, rowBounds, map);
 	}
 
-	// userId를 가지고 등록한 동물 목록 가져오기 (페이징, 검색)
+	// [마이페이지] 사용자 ID를 사용하여 등록한 동물 목록을 조회하고 반환하는 메서드
 	@Override
 	public List<AdoptionMainListVO> selectAnimalList1(String userId, AdoptionPageInfoVO pi, String keyword) {
 		int limit = pi.getBoardLimit();
@@ -167,13 +167,13 @@ public class AdoptionServiceImpl implements AdoptionService {
 		return dao.selectAnimalList1(sqlSession, userId, rowBounds, keyword);
 	}
 
-	// userId를 가지고 등록한 동물 수 세기 (검색)
+	// [마이페이지] 사용자 ID를 사용하여 등록한 동물 수를 조회하고 반환하는 메서드
 	@Override
 	public int myList1Count(String userId, String keyword) {
 		return dao.myList1Count(sqlSession, userId, keyword);
 	}
 
-	// userId를 가지고 신청한 입양 목록 가져오기 (페이징)
+	// [마이페이지] 사용자 ID를 사용하여 신청한 입양 목록을 조회하고 반환하는 메서드
 	@Override
 	public List<AdoptionApplicationVO> selectAnimalList2(String userId, AdoptionPageInfoVO pi) {
 		int limit = pi.getBoardLimit();
@@ -182,43 +182,43 @@ public class AdoptionServiceImpl implements AdoptionService {
 		return dao.selectAnimalList2(sqlSession, userId, rowBounds);
 	}
 
-	// userId를 가지고 신청한 입양 수 세기
+	// [마이페이지] 사용자 ID를 사용하여 신청한 입양 수를 조회하고 반환하는 메서드
 	@Override
 	public int myList2Count(String userId) {
 		return dao.myList2Count(sqlSession, userId);
 	}
 
-	// anino를 가지고 게시글 삭제하기
+	// [게시글 삭제] 동물 번호(anino)를 사용하여 게시글을 삭제하고 결과를 반환하는 메서드
 	@Override
 	public int deletePost(int anino) {
 		return dao.deletePost(sqlSession, anino);
 	}
 
-	// anino를 가지고 관련 입양 신청 내역 전체 삭제하기
+	// [동물 삭제] 동물 번호(anino)를 사용하여 관련 입양 신청 내역을 전체 삭제하고 결과를 반환하는 메서드
 	@Override
 	public int deleteApplicationsByAnimalNo(int anino) {
 		return dao.deleteApplicationsByAnimalNo(sqlSession, anino);
 	}
 
-	// Map(animalNo, status)을 가지고 입양 상태 변경하기
+	// [입양 관리] 동물 번호와 상태 값을 사용하여 입양 상태를 변경하고 결과를 반환하는 메서드
 	@Override
 	public int updateAdoptionStatus(Map<String, Object> map) {
 		return dao.updateAdoptionStatus(sqlSession, map);
 	}
 
-	// adoptionAppId를 가지고 신청서 정보 가져오기
+	// [입양 신청] 신청 아이디(adoptionAppId)를 사용하여 신청서 정보를 조회하고 반환하는 메서드
 	@Override
 	public AdoptionApplicationVO selectApplication(int adoptionAppId) {
 		return dao.selectApplication(sqlSession, adoptionAppId);
 	}
 
-	// adoptionAppId를 가지고 신청서 삭제하기
+	// [입양 신청] 신청 아이디(adoptionAppId)를 사용하여 신청서를 삭제하고 결과를 반환하는 메서드
 	@Override
 	public int deleteapp(int adoptionAppId) {
 		return dao.deleteapp(sqlSession, adoptionAppId);
 	}
 
-	// 입양 등록 반려하기 (반려 알림)
+	// [게시글 관리] 동물 번호(anino)를 사용하여 입양 게시글(동물 상태)을 반려 처리하고 결과를 반환하는 메서드
 	@Override
 	public int denyBoard(int anino) {
 		int result = dao.denyBoard(sqlSession, anino);
@@ -235,7 +235,7 @@ public class AdoptionServiceImpl implements AdoptionService {
 		return result;
 	}
 
-	// 입양 신청 중복 체크
+	// [입양 신청] 동물 번호(animalNo)와 사용자 ID를 사용하여 중복 신청 여부를 확인하고 결과를 반환하는 메서드
 	@Override
 	public int checkApplication(int animalNo, String userId) {
 		Map<String, Object> map = new HashMap<>();
@@ -244,43 +244,43 @@ public class AdoptionServiceImpl implements AdoptionService {
 		return dao.checkApplication(sqlSession, map);
 	}
 
-	// 관리자용 동물/게시글 전체 목록 갯수
+	// [게시글 관리] 검색 조건을 사용하여 전체 관리 항목 수를 조회하고 반환하는 메서드
 	@Override
 	public int managepostCount(Map<String, Object> map) {
 		return dao.managepostCount(sqlSession, map);
 	}
 
-	// anino를 가지고 입양 신청을 수락하기(동물 디테일)
+	// [입양 수락] 동물 번호(anino)를 사용하여 입양 신청 상태를 수락으로 변경하고 결과를 반환하는 메서드
 	@Override
 	public int acceptAdoption(int anino) {
 		return dao.acceptAdoption(sqlSession, anino);
 	}
 
-	// anino를 가지고 입양 신청을 수락하기(신청자 상태)
+	// [입양 수락] 동물 번호(anino)를 사용하여 신청자의 신청 정보를 수락 상태로 변경하고 결과를 반환하는 메서드
 	@Override
 	public int acceptAdoptionApp(int anino) {
 		return dao.acceptAdoptionApp(sqlSession, anino);
 	}
 
-	// anino를 가지고 입양 신청을 거절하기
+	// [입양 거절] 동물 번호(anino)를 사용하여 입양 신청 상태를 거절로 변경하고 결과를 반환하는 메서드
 	@Override
 	public int denyAdoption(int anino) {
 		return dao.denyAdoption(sqlSession, anino);
 	}
 
-	// anino를 가지고 입양 신청을 거절하기(신청자 상태)
+	// [입양 거절] 동물 번호(anino)를 사용하여 신청자의 신청 정보를 거절 상태로 변경하고 결과를 반환하는 메서드
 	@Override
 	public int denyAdoptionApp(int anino) {
 		return dao.denyAdoptionApp(sqlSession, anino);
 	}
 
-	// 특정 동물의 입양 신청자 목록 가져오기
+	// [신청자 목록] 동물 번호(anino)를 사용하여 입양 신청자 목록을 조회하고 반환하는 메서드
 	@Override
 	public List<AdoptionApplicationVO> getApplicantsList(int anino) {
 		return dao.selectApplicantsByAnimalNo(sqlSession, anino);
 	}
 
-	// 입양 확정 처리 (신청자 확정, 나머지 반려, 동물 상태 변경, 알림 발송 - 트랜잭션)
+	// [입양 확정] 입양 신청 번호(adoptionAppId)와 동물 번호를 사용하여 최종 입양을 확정하고 결과를 반환하는 메서드
 	@Override
 	@Transactional
 	public int confirmAdoption(int adoptionAppId, int animalNo) {
@@ -322,7 +322,7 @@ public class AdoptionServiceImpl implements AdoptionService {
 		return (result1 > 0 && result2 > 0) ? 1 : 0;
 	}
 
-	// 마감 기한 지난 동물 상태 일괄 '마감' 처리
+	// [입양 관리] 마감 기한이 지난 동물의 상태를 '마감'으로 일괄 변경하고 결과를 반환하는 메서드
 	@Override
 	public int expireOverdueAdoptions() {
 		return dao.updateExpiredAdoptionStatus(sqlSession);

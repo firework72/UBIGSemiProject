@@ -59,14 +59,15 @@
                             <div class="col-md-6">
                                 <label for="animalName" class="form-label fw-bold">2. 이름 (Name)</label>
                                 <input type="text" name="animalName" id="animalName" class="form-control"
-                                    placeholder="예: 뽀삐" required pattern="^[가-힣a-zA-Z0-9\s]+$" title="특수문자는 사용할 수 없습니다" maxlength="30">
+                                    placeholder="예: 뽀삐" required pattern="^[가-힣a-zA-Z0-9\s]+$" title="특수문자는 사용할 수 없습니다"
+                                    maxlength="33">
                             </div>
 
                             <!-- 3. 품종 -->
                             <div class="col-md-6">
                                 <label for="breed" class="form-label fw-bold">3. 품종 (Breed)</label>
                                 <input type="text" name="breed" id="breed" class="form-control" placeholder="예: 말티즈"
-                                    required pattern="^[가-힣a-zA-Z\s]+$" title="특수문자 및 숫자는 사용할 수 없습니다" maxlength="30">
+                                    required pattern="^[가-힣a-zA-Z\s]+$" title="특수문자 및 숫자는 사용할 수 없습니다" maxlength="33">
                             </div>
 
                             <!-- 4. 성별 -->
@@ -90,21 +91,24 @@
                             <div class="col-md-4">
                                 <label for="age" class="form-label fw-bold">5. 나이 (Age / 살)</label>
                                 <input type="number" name="age" id="age" class="form-control" step="0.1"
-                                    placeholder="예: 2.5" required min="0" max="50">
+                                    placeholder="예: 2.5 (최대 50살)" required min="0" max="50"
+                                    oninput="if(this.value > 50) this.value = 50;">
                             </div>
 
                             <!-- 6. 체중 -->
                             <div class="col-md-4">
                                 <label for="weight" class="form-label fw-bold">6. 체중 (Weight / kg)</label>
                                 <input type="number" name="weight" id="weight" class="form-control" step="0.1"
-                                    placeholder="예: 5.2" required min="0" max="100">
+                                    placeholder="예: 5.2 (최대 100kg)" required min="0" max="100"
+                                    oninput="if(this.value > 100) this.value = 100;">
                             </div>
 
                             <!-- 7. 크기 -->
                             <div class="col-md-4">
                                 <label for="petSize" class="form-label fw-bold">7. 크기 (Size / cm)</label>
                                 <input type="number" name="petSize" id="petSize" class="form-control" step="0.1"
-                                    placeholder="크기 입력" required min="0" max="300">
+                                    placeholder="크기 입력 (최대 300cm)" required min="0" max="300"
+                                    oninput="if(this.value > 300) this.value = 300;">
                             </div>
 
                             <!-- 8. 중성화 여부 -->
@@ -129,14 +133,14 @@
                                 <label for="vaccinationStatus" class="form-label fw-bold">9. 접종 상태 (Vaccination
                                     Status)</label>
                                 <input type="text" name="vaccinationStatus" id="vaccinationStatus" class="form-control"
-                                    placeholder="예: 3차 완료" value="미접종" maxlength="300">
+                                    placeholder="예: 3차 완료" value="미접종" maxlength="333">
                             </div>
 
                             <!-- 10. 특이사항 -->
                             <div class="col-12">
                                 <label for="healthNotes" class="form-label fw-bold">10. 특이사항 (Health Notes)</label>
                                 <textarea name="healthNotes" id="healthNotes" class="form-control" rows="3"
-                                    placeholder="건강 상태 및 특징 작성" maxlength="300">건강 상태 정상</textarea>
+                                    placeholder="건강 상태 및 특징 작성" maxlength="333">건강 상태 정상</textarea>
                             </div>
 
                             <!-- 11. 입양 상태 -->
@@ -160,7 +164,7 @@
                                 <label for="adoptionConditions" class="form-label fw-bold">12. 입양 조건
                                     (Conditions)</label>
                                 <textarea name="adoptionConditions" id="adoptionConditions" class="form-control"
-                                    rows="3" placeholder="필수 입양 조건 작성" maxlength="300">조건 없음</textarea>
+                                    rows="3" placeholder="필수 입양 조건 작성" maxlength="333">조건 없음</textarea>
                             </div>
 
                             <!-- 13. 입양 희망 지역 -->

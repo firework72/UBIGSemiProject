@@ -210,7 +210,12 @@
 										<div class="card-title">${item.animalName}</div>
 										<div class="card-details">
 											나이: ${item.animalAge}세<br>
-											성별: ${item.animalGender}<br>
+											성별:
+											<c:choose>
+												<c:when test="${item.animalGender eq '1'}">수컷</c:when>
+												<c:when test="${item.animalGender eq '2'}">암컷</c:when>
+												<c:otherwise>알 수 없음</c:otherwise>
+											</c:choose><br>
 											몸무게: ${item.animalWeight}kg<br>
 											지역: ${item.hopeRegion}
 										</div>
