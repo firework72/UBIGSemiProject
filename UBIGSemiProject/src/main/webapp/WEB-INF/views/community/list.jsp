@@ -8,12 +8,21 @@
             <head>
                 <meta charset="UTF-8">
                 <title>유봉일공 - 커뮤니티</title>
-                <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css?v=2">
-                <!-- Google Fonts & Icons -->
-                <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap"
+                <!-- Google Fonts -->
+                <link rel="preconnect" href="https://fonts.googleapis.com">
+                <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+                <link
+                    href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Outfit:wght@300;500;700&display=swap"
                     rel="stylesheet">
-                <link rel="stylesheet"
-                    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+                <!-- Bootstrap 5 -->
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+                <!-- Font Awesome -->
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+                <!-- Custom Style -->
+                <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css?v=2">
 
                 <style>
                     /* 커뮤니티 페이지 전용 스타일 */
