@@ -126,8 +126,8 @@
 
                     <div class="form-group">
                         <label class="form-label">제목</label>
-                        <input type="text" name="title" class="form-input" placeholder="제목을 입력하세요"
-                            value="${board.title}" required>
+                        <input type="text" name="title" class="form-input" placeholder="제목을 입력하세요 (30자 이내)"
+                            value="${board.title}" maxlength="30" required>
                     </div>
 
                     <div class="form-group">
