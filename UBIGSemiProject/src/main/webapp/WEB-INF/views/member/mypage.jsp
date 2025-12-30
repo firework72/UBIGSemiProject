@@ -141,6 +141,7 @@
 
                             <script>
                                 //버튼 누른거만 보이게 하기 관련 메서드 -chan 12.29 2차수정
+                                //머지오류로 인해 작성
                                 document.addEventListener("DOMContentLoaded", function () {
 
                                     const update = document.querySelector("#myupdate");
