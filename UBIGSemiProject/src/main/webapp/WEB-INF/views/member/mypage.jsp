@@ -23,6 +23,8 @@
                 <style>
                     body {
                         background-color: var(--body-bg);
+                        padding-top: 120px;
+                        /* Header clearance */
                     }
 
                     .mypage-header {
@@ -723,16 +725,16 @@
                                                 onclick="getAdoptionData(1, currPage2)">검색</button>
                                         </div>
 
-                                        <table class="table table-bordered text-center">
+                                        <table class="table table-bordered text-center" style="table-layout: fixed;">
                                             <thead class="table-light">
                                                 <tr>
-                                                    <th>등록번호</th>
-                                                    <th>사진</th>
-                                                    <th>동물 이름</th>
-                                                    <th>등록일</th>
-                                                    <th>상태</th>
-                                                    <th>정보 관리</th>
-                                                    <th>입양 관리</th>
+                                                    <th style="width: 10%;">등록번호</th>
+                                                    <th style="width: 10%;">사진</th>
+                                                    <th style="width: 15%;">동물 이름</th>
+                                                    <th style="width: 15%;">등록일</th>
+                                                    <th style="width: 10%;">상태</th>
+                                                    <th style="width: 20%;">정보 관리</th>
+                                                    <th style="width: 20%;">입양 관리</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -742,15 +744,15 @@
                                         <div id="pagingArea1" class="d-flex justify-content-center mt-3 gap-1"></div>
 
                                         <h4 class="mt-4"> 입양 신청 내역 </h4>
-                                        <table class="table table-bordered text-center">
+                                        <table class="table table-bordered text-center" style="table-layout: fixed;">
                                             <thead class="table-light">
                                                 <tr>
-                                                    <th>신청번호</th>
-                                                    <th>사진</th>
-                                                    <th>동물 이름</th>
-                                                    <th>신청일</th>
-                                                    <th>신청 상태</th>
-                                                    <th>설정</th>
+                                                    <th style="width: 10%;">신청번호</th>
+                                                    <th style="width: 10%;">사진</th>
+                                                    <th style="width: 15%;">동물 이름</th>
+                                                    <th style="width: 15%;">신청일</th>
+                                                    <th style="width: 10%;">신청 상태</th>
+                                                    <th style="width: 40%;">설정</th>
                                                 </tr>
                                             </thead>
                                             <tbody>

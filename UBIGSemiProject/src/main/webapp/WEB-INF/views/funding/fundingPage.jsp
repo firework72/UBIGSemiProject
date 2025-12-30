@@ -14,32 +14,29 @@
 					body {
 						font-family: 'Noto Sans KR', sans-serif;
 						background-color: #f8f9fa;
-						padding: 100px;
 						margin: 0;
 					}
 
-					/* 헤더 영역 */
-					.funding-header {
-						display: flex;
-						flex-wrap: wrap;
-						justify-content: space-between;
-						align-items: center;
-						margin-bottom: 40px;
-						gap: 15px;
-					}
-
-					.funding-header h2 {
-						font-size: 2rem;
-						color: #333;
-						margin: 0;
-					}
-
-					/* 검색 폼 */
+					/* [User Request] Refactored Header to match Community */
 					.funding-actions {
 						display: flex;
 						gap: 10px;
-						flex-wrap: wrap;
+						justify-content: flex-end;
+						/* Right align actions */
+						margin-bottom: 20px;
 					}
+
+					/* Card Container adjustment for community-container */
+					.funding-grid {
+						display: flex;
+						flex-wrap: wrap;
+						gap: 20px;
+						justify-content: flex-start;
+						/* Align left */
+					}
+
+					/* ... existing styles ... */
+
 
 					.search-form {
 						display: flex;
@@ -179,106 +176,111 @@
 
 				<jsp:include page="/WEB-INF/views/common/menubar.jsp"></jsp:include>
 
-				<!-- 펀딩 목록 헤더 + 검색 + 버튼 -->
-				<div class="funding-header">
-					<h2>펀딩 목록</h2>
+				<main class="community-container">
+					<!-- Standard Page Header -->
+					<div class="page-header">
+						<div class="page-title">펀딩 목록</div>
+						<p class="page-desc">따뜻한 마음을 모아 기적을 만듭니다.</p>
+					</div>
 
 					<div class="funding-actions">
-						<!-- 검색 폼 -->
+						<!-- Search Form -->
 						<form action="${pageContext.request.contextPath}/funding/searchKeyword" method="get"
 							class="search-form">
 							<input type="text" name="searchKeyword" value="${param.keyword}" placeholder="작성자 또는 제목 검색">
 							<button type="submit">검색</button>
 						</form>
 
-						<!-- 펀딩 추가 버튼 (관리자 전용) -->
+						<!-- Add Funding Button (Admin) -->
 						<c:if test="${loginMember.userRole == 'ADMIN'}">
 							<form action="${pageContext.request.contextPath}/funding/insertPage" method="get">
 								<button type="submit" class="add-btn">펀딩 추가</button>
 							</form>
 						</c:if>
 					</div>
-				</div>
 
-				<!-- 펀딩 카드 목록 -->
-				<div class="container">
-					<c:forEach var="funding" items="${list}">
-						<div class="card">
-							<h3>${funding.fundingTitle}</h3>
-							<p><strong>작성자:</strong> ${funding.userId}</p>
-							<p>${funding.fundingContent}</p>
-							<p class="amount"><strong>목표금액:</strong> ${funding.fundingMaxMoney}원</p>
-							<p class="amount"><strong>현재금액:</strong> ${funding.fundingCurrentMoney}원</p>
+					<!-- Funding Grid -->
+					<div class="funding-grid">
+						<c:forEach var="funding" items="${list}">
+							<div class="card">
+								<h3>${funding.fundingTitle}</h3>
+								<p><strong>작성자:</strong> ${funding.userId}</p>
+								<p>${funding.fundingContent}</p>
+								<p class="amount"><strong>목표금액:</strong> ${funding.fundingMaxMoney}원</p>
+								<p class="amount"><strong>현재금액:</strong> ${funding.fundingCurrentMoney}원</p>
 
-							<!-- 달성률 계산 -->
-							<c:choose>
-								<c:when test="${funding.fundingMaxMoney > 0}">
-									<c:set var="fundingRate"
-										value="${funding.fundingCurrentMoney * 100.0 / funding.fundingMaxMoney}" />
-								</c:when>
-								<c:otherwise>
-									<c:set var="fundingRate" value="0" />
-								</c:otherwise>
-							</c:choose>
+								<!-- 달성률 계산 -->
+								<c:choose>
+									<c:when test="${funding.fundingMaxMoney > 0}">
+										<c:set var="fundingRate"
+											value="${funding.fundingCurrentMoney * 100.0 / funding.fundingMaxMoney}" />
+									</c:when>
+									<c:otherwise>
+										<c:set var="fundingRate" value="0" />
+									</c:otherwise>
+								</c:choose>
 
-							<!-- 달성률 표시 -->
-							<p><strong>달성률:</strong>
-								<fmt:formatNumber value="${fundingRate}" type="number" maxFractionDigits="2" />%
-							</p>
+								<!-- 달성률 표시 -->
+								<p><strong>달성률:</strong>
+									<fmt:formatNumber value="${fundingRate}" type="number" maxFractionDigits="2" />%
+								</p>
 
-							<div class="progress-bar">
-								<div class="progress" style="width: <c:out value='${fundingRate}'/>%; min-width:1%;">
+								<div class="progress-bar">
+									<div class="progress"
+										style="width: <c:out value='${fundingRate}'/>%; min-width:1%;">
+									</div>
 								</div>
+
+								<form action="${pageContext.request.contextPath}/funding/fundingDetailView"
+									method="get">
+									<input type="hidden" name="fundingNo" value="${funding.fundingNo}">
+									<button type="submit">펀딩 참여하기</button>
+								</form>
 							</div>
-
-							<form action="${pageContext.request.contextPath}/funding/fundingDetailView" method="get">
-								<input type="hidden" name="fundingNo" value="${funding.fundingNo}">
-								<button type="submit">펀딩 참여하기</button>
-							</form>
-						</div>
-					</c:forEach>
-				</div>
-
-				<div id="pagingArea">
-					<ul class="pagination">
-
-						<!-- 이전 -->
-						<c:if test="${pi.currentPage > 1}">
-							<li class="page-item">
-								<a class="page-link"
-									href="${pageContext.request.contextPath}/funding/searchKeyword?curPage=${pi.currentPage - 1}&searchKeyword=${keyword}">Prev</a>
-							</li>
-						</c:if>
-
-						<!-- 페이지 번호 -->
-						<c:forEach var="p" begin="${pi.startPage}" end="${pi.endPage}">
-							<c:choose>
-								<c:when test="${p == pi.currentPage}">
-									<li class="page-item active"><a class="page-link" href="#">${p}</a></li>
-								</c:when>
-								<c:otherwise>
-									<li class="page-item">
-										<a class="page-link"
-											href="${pageContext.request.contextPath}/funding/searchKeyword?curPage=${p}&searchKeyword=${keyword}">${p}</a>
-									</li>
-								</c:otherwise>
-							</c:choose>
 						</c:forEach>
+					</div>
 
-						<!-- 다음 -->
-						<c:if test="${pi.currentPage < pi.maxPage}">
-							<li class="page-item">
-								<a class="page-link"
-									href="${pageContext.request.contextPath}/funding/searchKeyword?curPage=${pi.currentPage + 1}&searchKeyword=${keyword}">Next</a>
-							</li>
-						</c:if>
+					<div id="pagingArea">
+						<ul class="pagination">
 
-					</ul>
-				</div>
+							<!-- 이전 -->
+							<c:if test="${pi.currentPage > 1}">
+								<li class="page-item">
+									<a class="page-link"
+										href="${pageContext.request.contextPath}/funding/searchKeyword?curPage=${pi.currentPage - 1}&searchKeyword=${keyword}">Prev</a>
+								</li>
+							</c:if>
+
+							<!-- 페이지 번호 -->
+							<c:forEach var="p" begin="${pi.startPage}" end="${pi.endPage}">
+								<c:choose>
+									<c:when test="${p == pi.currentPage}">
+										<li class="page-item active"><a class="page-link" href="#">${p}</a></li>
+									</c:when>
+									<c:otherwise>
+										<li class="page-item">
+											<a class="page-link"
+												href="${pageContext.request.contextPath}/funding/searchKeyword?curPage=${p}&searchKeyword=${keyword}">${p}</a>
+										</li>
+									</c:otherwise>
+								</c:choose>
+							</c:forEach>
+
+							<!-- 다음 -->
+							<c:if test="${pi.currentPage < pi.maxPage}">
+								<li class="page-item">
+									<a class="page-link"
+										href="${pageContext.request.contextPath}/funding/searchKeyword?curPage=${pi.currentPage + 1}&searchKeyword=${keyword}">Next</a>
+								</li>
+							</c:if>
+
+						</ul>
+					</div>
 
 
 
 
+				</main>
 			</body>
 
 			</html>
