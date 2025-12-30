@@ -100,7 +100,7 @@
 
                                     <td class="text-start ps-4">
                                         <span class="msg-preview text-dark text-decoration-none">
-                                            ${msg.messageContent}
+                                            <c:out value="${msg.messageContent}"></c:out>
                                         </span>
                                     </td>
 
