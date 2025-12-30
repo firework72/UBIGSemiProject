@@ -43,7 +43,7 @@ public class VolunteerController {
 		public String volunteerList(@RequestParam(value="cpage", defaultValue="1") int currentPage, 
 		                            @RequestParam(value="condition", required=false) String condition, 
 		                            @RequestParam(value="keyword", required=false) String keyword, 
-		                            Model model) {
+		                            Model model) { //400 Bad Request 에러를 발생 예외를 위한 required=false
 
 			// 1. 검색 조건 설정
 			java.util.HashMap<String, String> map = new java.util.HashMap<>();
