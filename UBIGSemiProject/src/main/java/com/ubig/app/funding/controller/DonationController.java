@@ -1,6 +1,8 @@
 package com.ubig.app.funding.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
@@ -16,7 +18,6 @@ import com.ubig.app.common.model.vo.PageInfo;
 import com.ubig.app.common.util.Pagination;
 import com.ubig.app.funding.service.DonationService;
 import com.ubig.app.vo.funding.DonationVO;
-import com.ubig.app.vo.funding.FundingVO;
 import com.ubig.app.vo.member.MemberVO;
 
 @Controller
@@ -81,6 +82,53 @@ public class DonationController {
 		return "funding/donationPage";
 			
 	}
+	
+	//내 후원 목록
+	@RequestMapping("myDonation")
+	public String myDonation(HttpSession session,@RequestParam(value = "curPage", defaultValue = "1") int curPage,
+		       Model model) {
+			
+		MemberVO m = (MemberVO)session.getAttribute("loginMember");
+		
+		int listCount = service.donationListCount();
+		
+		int boardLimit = 15; // 한 페이지에 보여줄 개수
+		int pageLimit = 10;  // 페이징 바 개수
+		
+		PageInfo pi = Pagination.getPageInfo(listCount, curPage, pageLimit, boardLimit);
+		   
+		ArrayList<DonationVO> list = service.myDonation(pi,m.getUserId());
+		
+		model.addAttribute("list", list);
+		model.addAttribute("pi", pi);
+			
+		return "funding/donationPage";
+	}
+	
+	//내 후원 목록
+		@RequestMapping("myDonation2")
+		public String myDonation2(HttpSession session,@RequestParam(value = "curPage", defaultValue = "1") int curPage,
+			       Model model) {
+				
+			MemberVO m = (MemberVO)session.getAttribute("loginMember");
+			
+			int listCount = service.donationListCount();
+			
+			int boardLimit = 15; // 한 페이지에 보여줄 개수
+			int pageLimit = 10;  // 페이징 바 개수
+			
+			PageInfo pi = Pagination.getPageInfo(listCount, curPage, pageLimit, boardLimit);
+			   
+			ArrayList<DonationVO> list = service.myDonation2(pi,m.getUserId());
+			
+			model.addAttribute("list", list);
+			model.addAttribute("pi", pi);
+
+				
+				
+			return "funding/donationPage";
+		}
+	
 	
 	//후원 상세 페이지 이동
 	@RequestMapping("/donationDetailView")

@@ -31,6 +31,22 @@
 	    ORDER BY DONATION_NO DESC
 	</select>
 	
+	<select id="myDonation" resultType="DonationVO" parameterType="string">
+	    SELECT * 
+	    FROM DONATIONS
+	    WHERE USER_ID = #{userId}
+	    AND DONATION_TYPE = 1
+	    ORDER BY DONATION_NO DESC
+	</select>
+	
+	<select id="myDonation2" resultType="DonationVO" parameterType="string">
+	    SELECT * 
+	    FROM DONATIONS
+	    WHERE USER_ID = #{userId}
+	    AND DONATION_TYPE = 2
+	    ORDER BY DONATION_NO DESC
+	</select>
+	
 	<select id="selectDetailView" resultType="int" parameterType="string">
 		SELECT COUNT(*)
 		FROM DONATIONS

@@ -1,6 +1,7 @@
 package com.ubig.app.funding.dao;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.apache.ibatis.session.RowBounds;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -60,6 +61,26 @@ public class DonationDao {
 	public int cancelDonation(SqlSessionTemplate sqlSession, String userId) {
 		
 		return sqlSession.delete("donationMapper.cancelDonation",userId);
+	}
+
+	public ArrayList<DonationVO> myDonation(SqlSessionTemplate sqlSession, String userId, PageInfo pi) {
+		
+		int offset = (pi.getCurrentPage() - 1) * pi.getBoardLimit();
+	    int limit = pi.getBoardLimit();
+
+	    RowBounds rowBounds = new RowBounds(offset,limit);
+		
+		return (ArrayList)sqlSession.selectList("donationMapper.myDonation",userId,rowBounds);
+	}
+
+	public ArrayList<DonationVO> myDonation2(SqlSessionTemplate sqlSession, String userId, PageInfo pi) {
+		
+		int offset = (pi.getCurrentPage() - 1) * pi.getBoardLimit();
+	    int limit = pi.getBoardLimit();
+
+	    RowBounds rowBounds = new RowBounds(offset,limit);
+		
+		return (ArrayList)sqlSession.selectList("donationMapper.myDonation2",userId,rowBounds);
 	}
 
 	

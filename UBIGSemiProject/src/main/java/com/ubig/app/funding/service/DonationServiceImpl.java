@@ -1,6 +1,7 @@
 package com.ubig.app.funding.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,18 @@ public class DonationServiceImpl implements DonationService{
 	public ArrayList<DonationVO> searchKeyword(String searchKeyword,PageInfo pi) {
 		
 		return dao.searchKeyword(sqlSession,searchKeyword,pi);
+	}
+	
+	@Override
+	public ArrayList<DonationVO> myDonation(PageInfo pi, String userId) {
+		
+		return dao.myDonation(sqlSession,userId,pi);
+	}
+	
+	@Override
+	public ArrayList<DonationVO> myDonation2(PageInfo pi, String userId) {
+		
+		return dao.myDonation2(sqlSession,userId,pi);
 	}
 	
 	@Override
