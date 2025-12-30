@@ -21,11 +21,15 @@ public class VolunteerServiceImpl implements VolunteerService {
     private VolunteerDao volunteerDao;
 	
 	
+	// [기능] 검색 조건에 해당하는 봉사활동 게시글의 총 개수를 조회 (페이징 계산용)
+    // [기술] MyBatis selectOne (COUNT 집계 함수)
 	@Override
     public int selectActivityCount(HashMap<String, String> map) {
         return volunteerDao.selectActivityCount(map);
     }
 
+    // [기능] 검색 조건과 페이징 정보를 바탕으로 봉사활동 게시글 목록을 조회
+    // [기술] MyBatis selectList (RowBounds 사용)
     @Override
     public List<ActivityVO> selectActivityList(HashMap<String, String> map, PageInfo pi) {
         // DAO에게 PageInfo도 같이 넘겨줌
@@ -34,17 +38,23 @@ public class VolunteerServiceImpl implements VolunteerService {
   
 	
 
+	// [기능] 새로운 봉사활동 정보를 DB에 삽입
+	// [기술] MyBatis insert
 	@Override
 	public int insertActivity(ActivityVO a) {
 	    return volunteerDao.insertActivity(a);
 	}
 	
 	
+	// [기능] 봉사활동 상세 정보를 조회 (조회수 증가 로직 포함 가능성 있음)
+	// [기술] MyBatis selectOne
 	@Override
 	public ActivityVO selectActivityOne(int actId) {
 		return volunteerDao.selectActivityOne(actId);
 	}
 	
+	// [기능] 특정 봉사활동 게시글을 삭제 (DB 상태 변경 또는 실제 삭제)
+	// [기술] MyBatis update/delete
 	@Override
 	public int deleteActivity(int actId) {
 		return volunteerDao.deleteActivity(actId);
@@ -53,16 +63,22 @@ public class VolunteerServiceImpl implements VolunteerService {
 	
 	
 	
+	// [기능] 기존 봉사활동 정보를 수정
+	// [기술] MyBatis update
 	@Override
 	public int updateActivity(ActivityVO a) {
 		return volunteerDao.updateActivity(a);
 	}
 
+    // [기능] 특정 활동 또는 후기에 달린 댓글 목록을 조회
+    // [기술] MyBatis selectList
     @Override
     public List<VolunteerCommentVO> selectReplyList(VolunteerCommentVO vo) {
         return volunteerDao.selectReplyList(vo);
     }
 
+    // [기능] 댓글을 등록하고, 평점이 포함된 경우 활동의 평균 평점을 업데이트
+    // [기술] MyBatis insert, update (평점 재계산 Trigger 성격의 로직)
     @Override
     public int insertReply(VolunteerCommentVO r) {
         int result = volunteerDao.insertReply(r);
@@ -72,6 +88,8 @@ public class VolunteerServiceImpl implements VolunteerService {
         }
         return result;
     }
+    // [기능] 댓글을 삭제하고, 평점이 포함되었던 댓글이면 활동의 평균 평점을 재계산
+    // [기술] MyBatis delete, update (Data Integrity 유지)
     @Override
     public int deleteReply(int cmtNo) {
     	// [추가] 삭제 전 미리 정보 조회
@@ -86,6 +104,8 @@ public class VolunteerServiceImpl implements VolunteerService {
         return result;
     }
     
+    // [기능] 봉사활동 신청 처리 (중복 신청 및 정원 초과 여부를 순차적으로 검증 후 신청 진행)
+    // [기술] Java Logic (Sequential Checks), Transaction Management
     @Override
     public int insertSign(SignVO s) {
         // [1단계] 중복 신청 체크 (가장 먼저 해야 함!)
@@ -109,11 +129,15 @@ public class VolunteerServiceImpl implements VolunteerService {
         // [3단계] 모든 검사 통과 -> 등록 진행
         return volunteerDao.insertSign(s);
     }
+    // [기능] 특정 활동의 신청자 목록을 조회
+    // [기술] MyBatis selectList
     @Override
     public List<SignVO> selectSignList(int actId) {
         return volunteerDao.selectSignList(actId);
     }
 
+    // [기능] 후기를 등록하고, 관련된 활동의 평균 평점을 업데이트 (중복 등록 방지 포함)
+    // [기술] MyBatis insert, update, Logic Check
     @Override
     public int insertReview(VolunteerReviewVO r) {
         // [1단계: 추가됨] 중복 체크 먼저 수행
@@ -137,27 +161,37 @@ public class VolunteerServiceImpl implements VolunteerService {
         return result;
     }
 
+    // [기능] 특정 활동에 대한 후기 목록 조회
+    // [기술] MyBatis selectList
     @Override
     public List<VolunteerReviewVO> selectReviewList(int actId) {
         return volunteerDao.selectReviewList(actId);
     }
     
+    // [기능] 전체 후기 개수 조회 (페이징용)
+    // [기술] MyBatis selectOne
     @Override
     public int selectReviewCount(HashMap<String, String> map) {
         return volunteerDao.selectReviewCount(map);
     }
 
+    // [기능] 전체 후기 목록을 페이징 처리하여 조회
+    // [기술] MyBatis selectList, RowBounds
     @Override
     public List<VolunteerReviewVO> selectReviewListAll(HashMap<String, String> map, PageInfo pi) {
         // DAO로 PageInfo 전달
         return volunteerDao.selectReviewListAll(map, pi);
     }
     
+    // [기능] 특정 후기의 상세 정보 조회
+    // [기술] MyBatis selectOne
     @Override
     public VolunteerReviewVO selectReviewOne(int reviewNo) {
         return volunteerDao.selectReviewOne(reviewNo);
     }
     
+    // [기능] 후기 정보를 수정하고 평점이 변경되었을 경우 활동 평점을 재계산
+    // [기술] MyBatis update, Logic Check (Consistency)
     @Override
     public int updateReview(VolunteerReviewVO r) {
         // [추가] 후기 내용/평점 수정 시에도 평균 평점 업데이트가 필요할 수 있음
@@ -178,6 +212,8 @@ public class VolunteerServiceImpl implements VolunteerService {
         return result;
     }
 
+    // [기능] 후기를 삭제하고 활동의 평균 평점을 재계산 (Soft Delete 적용 가능성)
+    // [기술] MyBatis delete (or update), Rate Recalculation
     @Override
     public int deleteReview(int reviewNo) {
         // [추가] 삭제 전 actId를 조회해야 함 (삭제 후엔 조회 안될 수도 있거나, FK 문제 등)
@@ -197,12 +233,16 @@ public class VolunteerServiceImpl implements VolunteerService {
     // ▼ [누락된 후기 전용 메서드 추가] ▼ 12월 24일 15:29분 안티그래비티가 백업수정 다안해줌
     // ==========================================
 
+    // [기능] 후기 댓글 목록 조회 (기존 댓글 조회 로직 재사용)
+    // [기술] Code Reuse (method wrapping)
     @Override
     public List<VolunteerCommentVO> selectReviewReplyList(VolunteerCommentVO vo) {
         // 기존에 만들어둔 DAO 메서드 재사용
         return volunteerDao.selectReplyList(vo);
     }
 
+    // [기능] 후기 댓글을 등록하고 평점 변화를 반영
+    // [기술] DAO Method Reuse, Logic Combining
     @Override
     public int insertReviewReply(VolunteerCommentVO r) {
         // 1. 댓글 등록 (DAO 재사용)
@@ -218,6 +258,8 @@ public class VolunteerServiceImpl implements VolunteerService {
     
     // VolunteerServiceImpl.java (구현 클래스)
 
+    // [기능] 아직 후기가 작성되지 않은 봉사활동 목록을 조회 (후기 작성 폼용)
+    // [기술] MyBatis selectList (filtering)
     @Override
     public List<ActivityVO> selectActivityNoReview() {
         return volunteerDao.selectActivityNoReview();
@@ -226,6 +268,8 @@ public class VolunteerServiceImpl implements VolunteerService {
 
 
  // [관리자] 승인/반려 및 완료 프로세스 구현
+    // [기능] 관리자 기능: 봉사 신청 상태를 승인, 반려 또는 완료로 변경
+    // [기술] Java Business Logic (Status Switch), Data Update
     @Override
     public int updateSignStatusAdmin(int signsNo, String status) {
         // 1. 어떤 신청인지 정보 조회
@@ -276,6 +320,8 @@ public class VolunteerServiceImpl implements VolunteerService {
     }
 
     // [사용자] 취소 프로세스 구현
+    // [기능] 사용자가 자신의 봉사 신청을 취소하고, 승인 상태였다면 참여 인원수를 감소시킴
+    // [기술] Service Logic (Conditional Update)
     @Override
     public int updateSignStatusUser(int signsNo) {
         // 1. 어떤 신청인지 정보 조회
@@ -299,17 +345,23 @@ public class VolunteerServiceImpl implements VolunteerService {
     }
     
     //마이페이지 페이징바 처리
+    // [기능] 마이페이지 용: 내 신청 내역의 총 개수 조회
+    // [기술] MyBatis selectOne
     @Override
     public int selectMySignCount(String userId) {
         return volunteerDao.selectMySignCount(userId);
     }
     //마이페이지 페이징바 처리
+    // [기능] 마이페이지 용: 내 신청 내역 목록을 조회 (페이징 포함)
+    // [기술] MyBatis selectList
     @Override
     public List<SignVO> selectMySignList(String userId, PageInfo pi) {
         return volunteerDao.selectMySignList(userId, pi);
     }
     
     
+    // [기능] 다수의 신청 건을 일괄적으로 활동 완료 처리 (반복문을 통해 개별 처리 로직 호출)
+    // [기술] Java Loop, Code Reuse
     @Override
     public int updateSignStatusMulti(List<Integer> signsNos) {
         int count = 0;

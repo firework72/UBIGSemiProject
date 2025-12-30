@@ -139,6 +139,8 @@
                     </p>
 
                     <!-- [추가] 검색 폼 -->
+                    <!-- [기능] 조건(제목, 작성자, 내용)과 키워드를 입력받아 GET 방식으로 검색 요청 -->
+                    <!-- [기술] HTML Form, Get Request -->
                     <div style="margin-bottom: 20px; text-align: right;">
                         <form action="reviewList.vo" method="get">
                             <select name="condition" style="padding: 6px; border-radius: 4px; border: 1px solid #ddd;">
@@ -167,6 +169,8 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <!-- [기능] 후기 목록 데이터를 반복하며 테이블 행을 생성. 데이터가 없으면 안내 문구 표시 -->
+                            <!-- [기술] JSTL forEach, choose -->
                             <c:choose>
                                 <c:when test="${empty list}">
                                     <tr>
@@ -204,66 +208,73 @@
                             </c:choose>
                         </tbody>
                     </table>
-						<div style="text-align: center; margin-top: 30px;">
-            <c:if test="${not empty list}">
-                
-                <c:choose>
-                    <c:when test="${pi.currentPage eq 1}">
-                        <button disabled class="btn-page" style="color:#ccc;">&lt;</button>
-                    </c:when>
-                    <c:otherwise>
-                        <a href="reviewList.vo?cpage=${pi.currentPage - 1}&condition=${condition}&keyword=${keyword}" class="btn-page">&lt;</a>
-                    </c:otherwise>
-                </c:choose>
-                
-                <c:forEach var="p" begin="${pi.startPage}" end="${pi.endPage}">
-                    <c:choose>
-                        <c:when test="${p eq pi.currentPage}">
-                            <button disabled class="btn-page active">${p}</button>
-                        </c:when>
-                        <c:otherwise>
-                            <a href="reviewList.vo?cpage=${p}&condition=${condition}&keyword=${keyword}" class="btn-page">${p}</a>
-                        </c:otherwise>
-                    </c:choose>
-                </c:forEach>
-                
-                <c:choose>
-                    <c:when test="${pi.currentPage eq pi.maxPage}">
-                        <button disabled class="btn-page" style="color:#ccc;">&gt;</button>
-                    </c:when>
-                    <c:otherwise>
-                        <a href="reviewList.vo?cpage=${pi.currentPage + 1}&condition=${condition}&keyword=${keyword}" class="btn-page">&gt;</a>
-                    </c:otherwise>
-                </c:choose>
-                
-            </c:if>
-        </div>
+                    <div style="text-align: center; margin-top: 30px;">
+                        <!-- [기능] 페이징 바 생성 (이전, 다음, 페이지 번호 버튼) -->
+                        <!-- [기술] JSTL PageInfo(pi) 객체 활용 -->
+                        <c:if test="${not empty list}">
 
-        <style>
-            .btn-page {
-                display: inline-block;
-                padding: 8px 14px;
-                margin: 0 3px;
-                border: 1px solid #ddd;
-                background-color: white;
-                color: #333;
-                text-decoration: none;
-                border-radius: 4px;
-                font-weight: 500;
-                cursor: pointer;
-                transition: all 0.2s;
-            }
-            .btn-page:hover:not([disabled]) {
-                background-color: #f1f1f1;
-                border-color: #bbb;
-            }
-            .btn-page.active {
-                background-color: #007bff;
-                color: white;
-                border-color: #007bff;
-                cursor: default;
-            }
-        </style>
+                            <c:choose>
+                                <c:when test="${pi.currentPage eq 1}">
+                                    <button disabled class="btn-page" style="color:#ccc;">&lt;</button>
+                                </c:when>
+                                <c:otherwise>
+                                    <a href="reviewList.vo?cpage=${pi.currentPage - 1}&condition=${condition}&keyword=${keyword}"
+                                        class="btn-page">&lt;</a>
+                                </c:otherwise>
+                            </c:choose>
+
+                            <c:forEach var="p" begin="${pi.startPage}" end="${pi.endPage}">
+                                <c:choose>
+                                    <c:when test="${p eq pi.currentPage}">
+                                        <button disabled class="btn-page active">${p}</button>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <a href="reviewList.vo?cpage=${p}&condition=${condition}&keyword=${keyword}"
+                                            class="btn-page">${p}</a>
+                                    </c:otherwise>
+                                </c:choose>
+                            </c:forEach>
+
+                            <c:choose>
+                                <c:when test="${pi.currentPage eq pi.maxPage}">
+                                    <button disabled class="btn-page" style="color:#ccc;">&gt;</button>
+                                </c:when>
+                                <c:otherwise>
+                                    <a href="reviewList.vo?cpage=${pi.currentPage + 1}&condition=${condition}&keyword=${keyword}"
+                                        class="btn-page">&gt;</a>
+                                </c:otherwise>
+                            </c:choose>
+
+                        </c:if>
+                    </div>
+
+                    <style>
+                        .btn-page {
+                            display: inline-block;
+                            padding: 8px 14px;
+                            margin: 0 3px;
+                            border: 1px solid #ddd;
+                            background-color: white;
+                            color: #333;
+                            text-decoration: none;
+                            border-radius: 4px;
+                            font-weight: 500;
+                            cursor: pointer;
+                            transition: all 0.2s;
+                        }
+
+                        .btn-page:hover:not([disabled]) {
+                            background-color: #f1f1f1;
+                            border-color: #bbb;
+                        }
+
+                        .btn-page.active {
+                            background-color: #007bff;
+                            color: white;
+                            border-color: #007bff;
+                            cursor: default;
+                        }
+                    </style>
                     <div class="btn-area">
                         <a href="volunteerList.vo" class="btn-main">봉사 목록으로</a>
                     </div>
