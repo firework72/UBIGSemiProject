@@ -39,37 +39,37 @@
 	</select>
 
 	<select id="selectReviewListAll" parameterType="hashmap" resultType="com.ubig.app.vo.volunteer.VolunteerReviewVO">
-		SELECT R.*, A.ACT_TITLE, A.ACT_RATE
-		FROM VOLUNTEER_REVIEWS R
-		JOIN ACTIVITIES A ON R.ACT_ID = A.ACT_ID
-		WHERE R.R_REMOVE = 0
-		<if test="condition == 'title'">
-			AND A.ACT_TITLE LIKE '%' || #{keyword} || '%'
-		</if>
-		<if test="condition == 'writer'">
-			AND R.R_ID LIKE '%' || #{keyword} || '%'
-		</if>
-		<if test="condition == 'content'">
-			AND R.R_REVIEW LIKE '%' || #{keyword} || '%'
-		</if>
-		ORDER BY R.REVIEW_NO DESC
-	</select>
+    SELECT R.*, A.ACT_TITLE, A.ACT_RATE
+    FROM VOLUNTEER_REVIEWS R
+    JOIN ACTIVITIES A ON R.ACT_ID = A.ACT_ID
+    WHERE R.R_REMOVE = 0
+    <if test="condition == 'title'">
+        AND A.ACT_TITLE LIKE '%' || #{keyword} || '%'
+    </if>
+    <if test="condition == 'writer'">
+        AND R.R_ID LIKE '%' || #{keyword} || '%'
+    </if>
+    <if test="condition == 'content'">
+        AND (R.R_TITLE LIKE '%' || #{keyword} || '%' OR R.R_REVIEW LIKE '%' || #{keyword} || '%')
+    </if>
+    ORDER BY R.REVIEW_NO DESC
+</select>
 	
 	<!-- 페이징바 추가 -->
 	<select id="selectReviewCount" parameterType="hashmap" resultType="_int">
-		SELECT COUNT(*)
-		FROM VOLUNTEER_REVIEWS R
-		JOIN ACTIVITIES A ON R.ACT_ID = A.ACT_ID
-		WHERE R.R_REMOVE = 0
-		<if test="condition == 'title'">
-			AND A.ACT_TITLE LIKE '%' || #{keyword} || '%'
-		</if>
-		<if test="condition == 'writer'">
-			AND R.R_ID LIKE '%' || #{keyword} || '%'
-		</if>
-		<if test="condition == 'content'">
-			AND R.R_REVIEW LIKE '%' || #{keyword} || '%'
-		</if>
+    SELECT COUNT(*)
+    FROM VOLUNTEER_REVIEWS R
+    JOIN ACTIVITIES A ON R.ACT_ID = A.ACT_ID
+    WHERE R.R_REMOVE = 0
+    <if test="condition == 'title'">
+        AND A.ACT_TITLE LIKE '%' || #{keyword} || '%'
+    </if>
+    <if test="condition == 'writer'">
+        AND R.R_ID LIKE '%' || #{keyword} || '%'
+    </if>
+    <if test="condition == 'content'">
+        AND (R.R_TITLE LIKE '%' || #{keyword} || '%' OR R.R_REVIEW LIKE '%' || #{keyword} || '%')
+    </if>
 	</select>
 
 	<insert id="insertActivity" parameterType="activity">
