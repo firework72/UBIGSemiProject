@@ -11,8 +11,7 @@
             <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css?v=3">
             <style>
                 body {
-                    background-color: #f8f9fa;
-                    /* 연한 회색 배경 */
+                    background-color: var(--body-bg);
                     height: 100vh;
                     display: flex;
                     align-items: center;
@@ -23,40 +22,46 @@
                     width: 100%;
                     max-width: 400px;
                     border: none;
-                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                    border-radius: 15px;
+                    box-shadow: var(--shadow-md);
+                    border-radius: var(--border-radius-lg);
                 }
 
                 .login-header {
-                    background-color: #FFC107;
-                    /* 유기견 봉사 느낌의 따뜻한 노란색/주황색 계열 추천 */
-                    color: white;
+                    background-color: var(--primary-color);
+                    color: var(--white);
                     text-align: center;
                     padding: 20px;
-                    border-top-left-radius: 15px;
-                    border-top-right-radius: 15px;
-                    font-weight: bold;
+                    border-top-left-radius: var(--border-radius-lg);
+                    border-top-right-radius: var(--border-radius-lg);
+                    font-weight: 700;
                     font-size: 1.5rem;
                 }
 
                 .btn-custom {
-                    background-color: #FFC107;
-                    border-color: #FFC107;
-                    color: white;
-                    font-weight: bold;
+                    background-color: var(--primary-color);
+                    border-color: var(--primary-color);
+                    color: var(--white);
+                    font-weight: 700;
+                    transition: all 0.3s;
                 }
 
                 .btn-custom:hover {
-                    background-color: #e0a800;
-                    color: white;
+                    background-color: var(--primary-hover);
+                    border-color: var(--primary-hover);
+                    color: var(--white);
+                }
+
+                /* Link color fix */
+                a.text-decoration-none {
+                    color: var(--primary-color) !important;
                 }
             </style>
-            
-    
+
+
         </head>
 
         <body>
-			<jsp:include page="/WEB-INF/views/common/menubar.jsp" />
+            <jsp:include page="/WEB-INF/views/common/menubar.jsp" />
             <div class="card login-card">
                 <div class="login-header">
                     유봉일공 LOGIN
@@ -92,7 +97,7 @@
                         <div class="mt-4 text-center">
                             <span class="text-secondary">아직 회원이 아니신가요?</span>
                             <a href="${pageContext.request.contextPath}/user/signup.me"
-                                class="text-decoration-none fw-bold ms-2" style="color: #FFC107;">회원가입</a>
+                                class="text-decoration-none fw-bold ms-2">회원가입</a>
                         </div>
                         <!--                 <div class="mt-2 text-center"> -->
                         <!--                      <a href="/member/findInfo" class="text-decoration-none text-secondary small">아이디 / 비밀번호 찾기</a> -->

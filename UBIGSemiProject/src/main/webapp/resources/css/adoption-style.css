@@ -1,6 +1,7 @@
 @charset "UTF-8";
 
 /* Adoption Common Styles */
+/* Adoption Common Styles */
 .adoption-container {
     max-width: 1200px;
     margin: 120px auto 40px;
@@ -11,7 +12,7 @@
     text-align: center;
     margin-bottom: 40px;
     font-size: 2rem;
-    color: #333;
+    color: var(--secondary-color);
     font-weight: 700;
 }
 
@@ -24,24 +25,27 @@
 
 /* Adoption Card */
 .adoption-card {
-    background: white;
+    background: var(--white);
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Softer shadow */
+    box-shadow: var(--shadow-sm);
+    /* Softer shadow */
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
-    border: none; /* Remove default border */
+    border: none;
+    /* Remove default border */
 }
 
 .adoption-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--shadow-md);
 }
 
 .card-image-wrapper {
     position: relative;
     width: 100%;
-    padding-top: 100%; /* 1:1 Aspect Ratio */
+    padding-top: 100%;
+    /* 1:1 Aspect Ratio */
     background-color: #f8f9fa;
     overflow: hidden;
 }
@@ -64,13 +68,14 @@
     position: absolute;
     top: 15px;
     right: 15px;
-    background-color: rgba(255, 142, 60, 0.9); /* Primary color with opacity */
-    color: white;
+    background-color: var(--primary-color);
+    /* Primary color with opacity */
+    color: var(--white);
     padding: 6px 12px;
     font-size: 0.85rem;
     font-weight: 600;
     border-radius: 20px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .card-content {
@@ -81,7 +86,7 @@
 .card-title {
     font-size: 1.1rem;
     font-weight: 600;
-    color: #333;
+    color: var(--text-color);
     margin: 0;
     white-space: nowrap;
     overflow: hidden;
@@ -99,8 +104,9 @@
     display: inline-block;
     padding: 8px 16px;
     margin: 0 4px;
-    border: 1px solid #ddd; /* Light border */
-    background-color: white;
+    border: 1px solid var(--border-color);
+    /* Light border */
+    background-color: var(--white);
     color: #555;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -110,14 +116,14 @@
 
 .pagination-btn:hover:not(:disabled) {
     background-color: #f1f1f1;
-    color: #ff8e3c;
-    border-color: #ff8e3c;
+    color: var(--primary-color);
+    border-color: var(--primary-color);
 }
 
 .pagination-btn.active {
-    background-color: #ff8e3c;
-    color: white;
-    border-color: #ff8e3c;
+    background-color: var(--primary-color);
+    color: var(--white);
+    border-color: var(--primary-color);
     font-weight: bold;
 }
 
@@ -129,8 +135,8 @@
 
 /* Buttons */
 .btn-primary {
-    background-color: #ff8e3c;
-    color: white;
+    background-color: var(--primary-color);
+    color: var(--white);
     border: none;
     padding: 10px 20px;
     font-size: 1rem;
@@ -141,12 +147,12 @@
 }
 
 .btn-primary:hover {
-    background-color: #e67e30;
+    background-color: var(--primary-hover);
 }
 
 .btn-secondary {
     background-color: #6c757d;
-    color: white;
+    color: var(--white);
     border: none;
     padding: 10px 20px;
     font-size: 1rem;
@@ -173,7 +179,7 @@
     border-collapse: collapse;
     margin: 20px 0;
     background-color: white;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .adoption-table th,
@@ -206,7 +212,7 @@
     padding: 30px;
     background: white;
     border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     border: 1px solid #eee;
 }
 
@@ -234,7 +240,7 @@
 .adoption-form input:focus,
 .adoption-form textarea:focus,
 .adoption-form select:focus {
-    border-color: #ff8e3c;
+    border-color: var(--primary-color);
     outline: none;
 }
 
@@ -247,7 +253,7 @@
 
 .adoption-form input[type="radio"] {
     margin-right: 5px;
-    accent-color: #ff8e3c;
+    accent-color: var(--primary-color);
 }
 
 /* Detail View Specifics */
@@ -293,10 +299,18 @@
     max-width: 100%;
     max-height: 500px;
     border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 /* Utility */
-.text-center { text-align: center; }
-.mt-20 { margin-top: 20px; }
-.mb-20 { margin-bottom: 20px; }
+.text-center {
+    text-align: center;
+}
+
+.mt-20 {
+    margin-top: 20px;
+}
+
+.mb-20 {
+    margin-bottom: 20px;
+}
