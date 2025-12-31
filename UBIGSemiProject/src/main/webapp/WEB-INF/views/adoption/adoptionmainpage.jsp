@@ -19,7 +19,7 @@
 
 			<c:if test="${not empty alertMsgAd}">
 				<script>
-					alert("${alertMsgAd}");
+					alert(`${alertMsgAd}`);
 				</script>
 				<c:remove var="alertMsgAd" scope="session" />
 			</c:if>
@@ -135,11 +135,11 @@
 									<div class="input-group input-group-sm custom-input-group">
 										<input type="number" class="form-control input-short" name="ageMin"
 											placeholder="최소" value="${filter.ageMin}" step="0.1" min="0" max="99"
-											onchange="if(this.value) this.value=parseFloat(this.value).toFixed(1);">
+											onchange="if(this.value){ let v=parseFloat(this.value); if(v<0)v=0; if(v>99)v=99; this.value=v.toFixed(1); }">
 										<span class="input-group-text bg-light">~</span>
 										<input type="number" class="form-control input-short" name="ageMax"
 											placeholder="최대" value="${filter.ageMax}" step="0.1" min="0" max="99"
-											onchange="if(this.value) this.value=parseFloat(this.value).toFixed(1);">
+											onchange="if(this.value){ let v=parseFloat(this.value); if(v<0)v=0; if(v>99)v=99; this.value=v.toFixed(1); }">
 									</div>
 								</div>
 							</div>
@@ -151,11 +151,11 @@
 									<div class="input-group input-group-sm custom-input-group">
 										<input type="number" class="form-control input-short" name="weightMin"
 											placeholder="최소" value="${filter.weightMin}" step="0.1" min="0" max="99"
-											onchange="if(this.value) this.value=parseFloat(this.value).toFixed(1);">
+											onchange="if(this.value){ let v=parseFloat(this.value); if(v<0)v=0; if(v>99)v=99; this.value=v.toFixed(1); }">
 										<span class="input-group-text bg-light">~</span>
 										<input type="number" class="form-control input-short" name="weightMax"
 											placeholder="최대" value="${filter.weightMax}" step="0.1" min="0" max="99"
-											onchange="if(this.value) this.value=parseFloat(this.value).toFixed(1);">
+											onchange="if(this.value){ let v=parseFloat(this.value); if(v<0)v=0; if(v>99)v=99; this.value=v.toFixed(1); }">
 									</div>
 								</div>
 							</div>
@@ -167,14 +167,14 @@
 							<div class="col-md-6">
 								<label class="filter-label">희망 지역</label>
 								<input type="text" class="form-control form-control-sm" name="hopeRegion"
-									placeholder="예: 서울, 경기" value="${filter.hopeRegion}">
+									placeholder="예: 서울, 경기" value="${filter.hopeRegion}" maxlength="10">
 							</div>
 
 							<!-- 7. 검색어 (이름) -->
 							<div class="col-md-6">
 								<label class="filter-label">이름 검색</label>
 								<input type="text" class="form-control form-control-sm" name="keyword"
-									placeholder="동물 이름 입력" value="${filter.keyword}">
+									placeholder="동물 이름 입력" value="${filter.keyword}" maxlength="10">
 							</div>
 
 

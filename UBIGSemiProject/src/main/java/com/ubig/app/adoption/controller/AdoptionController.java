@@ -107,8 +107,8 @@ public class AdoptionController {
 		}
 
 		// 4. 마감 여부 확인
-		if ("마감".equals(animal.getAdoptionStatus())) {
-			session.setAttribute("alertMsgAd", "마감된 입양건입니다.");
+		if ("마감".equals(animal.getAdoptionStatus()) || "입양완료".equals(animal.getAdoptionStatus())) {
+			session.setAttribute("alertMsgAd", "이미 입양 완료되었거나 마감된 입양건입니다.");
 			return "redirect:/adoption.detailpage?anino=" + anino;
 		}
 
@@ -208,8 +208,8 @@ public class AdoptionController {
 		}
 
 		// [추가] 마감된 동물인지 확인
-		if (animal != null && "마감".equals(animal.getAdoptionStatus())) {
-			session.setAttribute("alertMsgAd", "마감된 입양건입니다.");
+		if (animal != null && ("마감".equals(animal.getAdoptionStatus()) || "입양완료".equals(animal.getAdoptionStatus()))) {
+			session.setAttribute("alertMsgAd", "이미 입양 완료되었거나 마감된 입양건입니다.");
 			return "redirect:/adoption.detailpage?anino=" + application.getAnimalNo();
 		}
 
