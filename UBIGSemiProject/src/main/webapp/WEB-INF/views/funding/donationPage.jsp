@@ -147,11 +147,11 @@
 
                         <!-- 🔥 빠른 필터 -->
                         <div class="filter-area">
+                            <a class="filter-btn" href="${pageContext.request.contextPath}/donation">전체</a>
                             <a class="filter-btn" href="${pageContext.request.contextPath}/donation/myDonation">내
                                 정기후원</a>
                             <a class="filter-btn" href="${pageContext.request.contextPath}/donation/myDonation2">내
                                 일시후원</a>
-                            <a class="filter-btn" href="${pageContext.request.contextPath}/donation">전체</a>
                         </div>
 
                         <!-- 🔍 검색 -->
