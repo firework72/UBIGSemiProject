@@ -39,8 +39,6 @@ public class FundingController {
 
 	    PageInfo pi = Pagination.getPageInfo(listCount, curPage, pageLimit, boardLimit);
 	    
-	    System.out.println(pi);
-	    
 	    ArrayList<FundingVO> list = service.selectFunding(pi);
 
 	    model.addAttribute("list", list);

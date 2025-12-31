@@ -121,9 +121,9 @@ public class DonationController {
 			
 			model.addAttribute("list", list);
 			model.addAttribute("pi", pi);
-
-				
-				
+			
+			System.out.println(pi.getEndPage());
+			
 			return "funding/donationPage";
 		}
 	
