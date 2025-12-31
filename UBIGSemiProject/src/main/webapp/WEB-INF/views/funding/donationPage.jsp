@@ -147,11 +147,11 @@
 
                         <!-- 🔥 빠른 필터 -->
                         <div class="filter-area">
+                            <a class="filter-btn" href="${pageContext.request.contextPath}/donation">전체</a>
                             <a class="filter-btn" href="${pageContext.request.contextPath}/donation/myDonation">내
                                 정기후원</a>
                             <a class="filter-btn" href="${pageContext.request.contextPath}/donation/myDonation2">내
                                 일시후원</a>
-                            <a class="filter-btn" href="${pageContext.request.contextPath}/donation">전체</a>
                         </div>
 
                         <!-- 🔍 검색 -->
@@ -212,6 +212,43 @@
                             </tr>
                         </c:forEach>
                     </table>
+                    
+                    <div id="pagingArea">
+						<ul class="pagination">
+
+							<!-- 이전 -->
+							<c:if test="${pi.currentPage > 1}">
+								<li class="page-item">
+									<a class="page-link"
+										href="${pageContext.request.contextPath}/donation/searchKeyword?curPage=${pi.currentPage - 1}&searchKeyword=${keyword}">Prev</a>
+								</li>
+							</c:if>
+
+							<!-- 페이지 번호 -->
+							<c:forEach var="p" begin="${pi.startPage}" end="${pi.endPage}">
+								<c:choose>
+									<c:when test="${p == pi.currentPage}">
+										<li class="page-item active"><a class="page-link" href="#">${p}</a></li>
+									</c:when>
+									<c:otherwise>
+										<li class="page-item">
+											<a class="page-link"
+												href="${pageContext.request.contextPath}/donation/searchKeyword?curPage=${p}&searchKeyword=${keyword}">${p}</a>
+										</li>
+									</c:otherwise>
+								</c:choose>
+							</c:forEach>
+
+							<!-- 다음 -->
+							<c:if test="${pi.currentPage < pi.maxPage}">
+								<li class="page-item">
+									<a class="page-link"
+										href="${pageContext.request.contextPath}/donation/searchKeyword?curPage=${pi.currentPage + 1}&searchKeyword=${keyword}">Next</a>
+								</li>
+							</c:if>
+
+						</ul>
+					</div>
 
                     <!-- ================= 하단 버튼 ================= -->
                     <div class="btn-area">
