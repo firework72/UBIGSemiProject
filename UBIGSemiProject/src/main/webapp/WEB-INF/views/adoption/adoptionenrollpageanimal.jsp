@@ -19,7 +19,7 @@
 
             <c:if test="${not empty alertMsgAd}">
                 <script>
-                    alert('${alertMsgAd}');
+                    alert("${alertMsgAd}");
                 </script>
                 <c:remove var="alertMsgAd" scope="session" />
             </c:if>
@@ -50,8 +50,8 @@
                             <div class="col-md-6">
                                 <label for="species" class="form-label fw-bold">1. 축종 (Species)</label>
                                 <select name="species" id="species" class="form-select" required>
-                                    <option value="1">강아지</option>
-                                    <option value="2">고양이</option>
+                                    <option value="1" ${animal.species eq 1 ? 'selected' : '' }>강아지</option>
+                                    <option value="2" ${animal.species eq 2 ? 'selected' : '' }>고양이</option>
                                 </select>
                             </div>
 
@@ -59,14 +59,16 @@
                             <div class="col-md-6">
                                 <label for="animalName" class="form-label fw-bold">2. 이름 (Name)</label>
                                 <input type="text" name="animalName" id="animalName" class="form-control"
-                                    placeholder="예: 뽀삐" required pattern="^[가-힣a-zA-Z0-9\s]+$" title="특수문자는 사용할 수 없습니다">
+                                    placeholder="예: 뽀삐" required pattern="^[가-힣a-zA-Z0-9\s]+$" title="특수문자는 사용할 수 없습니다"
+                                    maxlength="33" value="<c:out value='${animal.animalName}'/>">
                             </div>
 
                             <!-- 3. 품종 -->
                             <div class="col-md-6">
                                 <label for="breed" class="form-label fw-bold">3. 품종 (Breed)</label>
                                 <input type="text" name="breed" id="breed" class="form-control" placeholder="예: 말티즈"
-                                    required pattern="^[가-힣a-zA-Z\s]+$" title="특수문자 및 숫자는 사용할 수 없습니다">
+                                    required pattern="^[가-힣a-zA-Z\s]+$" title="특수문자 및 숫자는 사용할 수 없습니다" maxlength="33"
+                                    value="<c:out value='${animal.breed}'/>">
                             </div>
 
                             <!-- 4. 성별 -->
@@ -75,12 +77,12 @@
                                 <div class="d-flex gap-3">
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="gender" id="genderM"
-                                            value="1" checked>
+                                            value="1" ${empty animal or animal.gender eq 1 ? 'checked' : '' }>
                                         <label class="form-check-label" for="genderM">수컷(M)</label>
                                     </div>
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="gender" id="genderF"
-                                            value="2">
+                                            value="2" ${animal.gender eq 2 ? 'checked' : '' }>
                                         <label class="form-check-label" for="genderF">암컷(F)</label>
                                     </div>
                                 </div>
@@ -90,21 +92,24 @@
                             <div class="col-md-4">
                                 <label for="age" class="form-label fw-bold">5. 나이 (Age / 살)</label>
                                 <input type="number" name="age" id="age" class="form-control" step="0.1"
-                                    placeholder="예: 2.5" required min="0" max="50">
+                                    placeholder="예: 2.5 (최대 50살)" required min="0" max="50"
+                                    oninput="if(this.value > 50) this.value = 50;" value="${animal.age}">
                             </div>
 
                             <!-- 6. 체중 -->
                             <div class="col-md-4">
                                 <label for="weight" class="form-label fw-bold">6. 체중 (Weight / kg)</label>
                                 <input type="number" name="weight" id="weight" class="form-control" step="0.1"
-                                    placeholder="예: 5.2" required min="0" max="100">
+                                    placeholder="예: 5.2 (최대 100kg)" required min="0" max="100"
+                                    oninput="if(this.value > 100) this.value = 100;" value="${animal.weight}">
                             </div>
 
                             <!-- 7. 크기 -->
                             <div class="col-md-4">
                                 <label for="petSize" class="form-label fw-bold">7. 크기 (Size / cm)</label>
                                 <input type="number" name="petSize" id="petSize" class="form-control" step="0.1"
-                                    placeholder="크기 입력" required min="0">
+                                    placeholder="크기 입력 (최대 300cm)" required min="0" max="300"
+                                    oninput="if(this.value > 300) this.value = 300;" value="${animal.petSize}">
                             </div>
 
                             <!-- 8. 중성화 여부 -->
@@ -113,12 +118,12 @@
                                 <div class="d-flex gap-3">
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="neutered" id="neuteredY"
-                                            value="1">
+                                            value="1" ${animal.neutered eq 1 ? 'checked' : '' }>
                                         <label class="form-check-label" for="neuteredY">완료(Yes)</label>
                                     </div>
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="neutered" id="neuteredN"
-                                            value="0" checked>
+                                            value="0" ${empty animal or animal.neutered eq 0 ? 'checked' : '' }>
                                         <label class="form-check-label" for="neuteredN">미완료(No)</label>
                                     </div>
                                 </div>
@@ -129,14 +134,16 @@
                                 <label for="vaccinationStatus" class="form-label fw-bold">9. 접종 상태 (Vaccination
                                     Status)</label>
                                 <input type="text" name="vaccinationStatus" id="vaccinationStatus" class="form-control"
-                                    placeholder="예: 3차 완료" value="미접종">
+                                    placeholder="예: 3차 완료" maxlength="333" required
+                                    value="<c:out value='${animal.vaccinationStatus}'/>">
                             </div>
 
                             <!-- 10. 특이사항 -->
                             <div class="col-12">
                                 <label for="healthNotes" class="form-label fw-bold">10. 특이사항 (Health Notes)</label>
                                 <textarea name="healthNotes" id="healthNotes" class="form-control" rows="3"
-                                    placeholder="건강 상태 및 특징 작성">건강 상태 정상</textarea>
+                                    placeholder="건강 상태 및 특징 작성" maxlength="333"
+                                    required><c:out value='${animal.healthNotes}'/></textarea>
                             </div>
 
                             <!-- 11. 입양 상태 -->
@@ -152,7 +159,8 @@
                             <!-- 14. 공고 마감일 (순서 조정) -->
                             <div class="col-md-6">
                                 <label for="deadlineDate" class="form-label fw-bold">14. 공고 마감일 (Deadline)</label>
-                                <input type="date" name="deadlineDate" id="deadlineDate" class="form-control" required>
+                                <input type="date" name="deadlineDate" id="deadlineDate" class="form-control" required
+                                    value="${animal.deadlineDate}">
                             </div>
 
                             <!-- 12. 입양 조건 -->
@@ -160,7 +168,8 @@
                                 <label for="adoptionConditions" class="form-label fw-bold">12. 입양 조건
                                     (Conditions)</label>
                                 <textarea name="adoptionConditions" id="adoptionConditions" class="form-control"
-                                    rows="3" placeholder="필수 입양 조건 작성">조건 없음</textarea>
+                                    rows="3" placeholder="필수 입양 조건 작성" maxlength="333"
+                                    required><c:out value='${animal.adoptionConditions}'/></textarea>
                             </div>
 
                             <!-- 13. 입양 희망 지역 -->
@@ -168,13 +177,15 @@
                                 <label class="form-label fw-bold">13. 입양 희망 지역 (Hope Region)</label>
                                 <div class="input-group mb-2" style="max-width: 300px;">
                                     <input type="text" id="postcode" name="postcode" class="form-control"
-                                        placeholder="우편번호" readonly required>
+                                        placeholder="우편번호" readonly>
                                     <button type="button" onclick="execDaumPostcode()"
                                         class="btn btn-outline-secondary">주소 검색</button>
                                 </div>
                                 <input type="text" id="roadAddress" name="roadAddress" class="form-control"
-                                    placeholder="도로명 주소" readonly required>
-                                <input type="hidden" name="hopeRegion" id="hopeRegion">
+                                    placeholder="도로명 주소" readonly required
+                                    value="<c:out value='${animal.hopeRegion}'/>">
+                                <input type="hidden" name="hopeRegion" id="hopeRegion"
+                                    value="<c:out value='${animal.hopeRegion}'/>">
                             </div>
 
                             <!-- 15. 사진 첨부 -->
@@ -235,46 +246,6 @@
                     if (roadAddr) {
                         document.getElementById('hopeRegion').value = roadAddr;
                     }
-                });
-
-                //동물 정보 가져온 것 대입하기
-                document.addEventListener('DOMContentLoaded', function () {
-                    if ("${animal.species}") document.querySelector("#species").value = "${animal.species}";
-                    if ("${animal.animalName}") document.querySelector("#animalName").value = "${animal.animalName}";
-                    if ("${animal.breed}") document.querySelector("#breed").value = "${animal.breed}";
-                    if ("${animal.gender}") {
-                        const genderVal = "${animal.gender}";
-                        const genderRadio = document.querySelector(`input[name="gender"][value="${animal.gender}"]`);
-                        if (genderRadio) genderRadio.checked = true;
-                    }
-                    if ("${animal.age}") document.querySelector("#age").value = "${animal.age}";
-                    if ("${animal.weight}") document.querySelector("#weight").value = "${animal.weight}";
-                    if ("${animal.petSize}") document.querySelector("#petSize").value = "${animal.petSize}";
-                    if ("${animal.neutered}") {
-                        const neuteredVal = "${animal.neutered}";
-                        const neuteredRadio = document.querySelector(`input[name="neutered"][value="${animal.neutered}"]`);
-                        if (neuteredRadio) neuteredRadio.checked = true;
-                    }
-                    if ("${animal.vaccinationStatus}") document.querySelector("#vaccinationStatus").value = "${animal.vaccinationStatus}";
-                    if ("${animal.healthNotes}") document.querySelector("#healthNotes").value = "${animal.healthNotes}";
-
-                    // 수정 시에는 상태가 '대기중'으로 초기화되므로 폼에서도 대기중으로 표시 (backend에서 forced reset)
-                    if ("${animal.animalNo}") {
-                        document.querySelector("#adoptionStatus").value = "대기중";
-                        // 사용자 혼란 방지를 위해 비활성화 하거나 메시지 표시 (선택사항)
-                    } else {
-                        if ("${animal.adoptionStatus}") document.querySelector("#adoptionStatus").value = "${animal.adoptionStatus}";
-                    }
-                    if ("${animal.adoptionConditions}") document.querySelector("#adoptionConditions").value = "${animal.adoptionConditions}";
-
-                    // 주소 정보 처리
-                    if ("${animal.hopeRegion}") {
-                        document.querySelector("#hopeRegion").value = "${animal.hopeRegion}";
-                        // 도로명 주소란에 전체 주소 표시
-                        document.querySelector("#roadAddress").value = "${animal.hopeRegion}";
-                    }
-
-                    if ("${animal.deadlineDate}") document.querySelector("#deadlineDate").value = "${animal.deadlineDate}";
                 });
             </script>
         </body>

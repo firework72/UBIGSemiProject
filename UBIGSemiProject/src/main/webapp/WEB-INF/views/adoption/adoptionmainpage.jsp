@@ -19,7 +19,7 @@
 
 			<c:if test="${not empty alertMsgAd}">
 				<script>
-					alert('${alertMsgAd}');
+					alert("${alertMsgAd}");
 				</script>
 				<c:remove var="alertMsgAd" scope="session" />
 			</c:if>
@@ -134,12 +134,12 @@
 								<div class="bg-white p-2 rounded border">
 									<div class="input-group input-group-sm custom-input-group">
 										<input type="number" class="form-control input-short" name="ageMin"
-											placeholder="최소" value="${filter.ageMin}" step="1" max="99"
-											oninput="if(this.value.length>2) this.value=this.value.slice(0,2);">
+											placeholder="최소" value="${filter.ageMin}" step="0.1" min="0" max="99"
+											onchange="if(this.value) this.value=parseFloat(this.value).toFixed(1);">
 										<span class="input-group-text bg-light">~</span>
 										<input type="number" class="form-control input-short" name="ageMax"
-											placeholder="최대" value="${filter.ageMax}" step="1" max="99"
-											oninput="if(this.value.length>2) this.value=this.value.slice(0,2);">
+											placeholder="최대" value="${filter.ageMax}" step="0.1" min="0" max="99"
+											onchange="if(this.value) this.value=parseFloat(this.value).toFixed(1);">
 									</div>
 								</div>
 							</div>
@@ -150,12 +150,12 @@
 								<div class="bg-white p-2 rounded border">
 									<div class="input-group input-group-sm custom-input-group">
 										<input type="number" class="form-control input-short" name="weightMin"
-											placeholder="최소" value="${filter.weightMin}" step="0.1" max="99"
-											oninput="if(this.value.length>2) this.value=this.value.slice(0,2);">
+											placeholder="최소" value="${filter.weightMin}" step="0.1" min="0" max="99"
+											onchange="if(this.value) this.value=parseFloat(this.value).toFixed(1);">
 										<span class="input-group-text bg-light">~</span>
 										<input type="number" class="form-control input-short" name="weightMax"
-											placeholder="최대" value="${filter.weightMax}" step="0.1" max="99"
-											oninput="if(this.value.length>2) this.value=this.value.slice(0,2);">
+											placeholder="최대" value="${filter.weightMax}" step="0.1" min="0" max="99"
+											onchange="if(this.value) this.value=parseFloat(this.value).toFixed(1);">
 									</div>
 								</div>
 							</div>
@@ -210,7 +210,12 @@
 										<div class="card-title">${item.animalName}</div>
 										<div class="card-details">
 											나이: ${item.animalAge}세<br>
-											성별: ${item.animalGender}<br>
+											성별:
+											<c:choose>
+												<c:when test="${item.animalGender eq '1'}">수컷</c:when>
+												<c:when test="${item.animalGender eq '2'}">암컷</c:when>
+												<c:otherwise>알 수 없음</c:otherwise>
+											</c:choose><br>
 											몸무게: ${item.animalWeight}kg<br>
 											지역: ${item.hopeRegion}
 										</div>

@@ -13,7 +13,7 @@
 			<jsp:include page="/WEB-INF/views/common/menubar.jsp" />
 			<c:if test="${not empty alertMsgAd}">
 				<script>
-					alert('${alertMsgAd}');
+					alert("${alertMsgAd}");
 				</script>
 				<c:remove var="alertMsgAd" scope="session" />
 			</c:if>
