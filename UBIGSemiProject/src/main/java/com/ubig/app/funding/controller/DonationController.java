@@ -52,7 +52,7 @@ public class DonationController {
 	public String searchKeyword(@RequestParam(value = "curPage", defaultValue = "1") int curPage,
 	        Model model,@RequestParam(value = "searchKeyword", required = false) String searchKeyword) {
 		
-		int listCount = service.donationListCount2(searchKeyword);
+		int listCount = service.donationSearchCount(searchKeyword);
 
 	    int boardLimit = 15; // 한 페이지에 보여줄 개수
 	    int pageLimit = 10;  // 페이징 바 개수
@@ -81,14 +81,14 @@ public class DonationController {
 			
 	}
 	
-	//내 후원 목록
+	//내 정기 후원 목록
 	@RequestMapping("myDonation")
 	public String myDonation(HttpSession session,@RequestParam(value = "curPage", defaultValue = "1") int curPage,
 		       Model model) {
 			
 		MemberVO m = (MemberVO)session.getAttribute("loginMember");
 		
-		int listCount = service.donationListCount();
+		int listCount = service.donationListCount2();
 		
 		int boardLimit = 15; // 한 페이지에 보여줄 개수
 		int pageLimit = 10;  // 페이징 바 개수
@@ -103,14 +103,14 @@ public class DonationController {
 		return "funding/donationPage";
 	}
 	
-	//내 후원 목록
+	//내 일시 후원 목록
 		@RequestMapping("myDonation2")
 		public String myDonation2(HttpSession session,@RequestParam(value = "curPage", defaultValue = "1") int curPage,
 			       Model model) {
 				
 			MemberVO m = (MemberVO)session.getAttribute("loginMember");
 			
-			int listCount = service.donationListCount();
+			int listCount = service.donationListCount3();
 			
 			int boardLimit = 15; // 한 페이지에 보여줄 개수
 			int pageLimit = 10;  // 페이징 바 개수

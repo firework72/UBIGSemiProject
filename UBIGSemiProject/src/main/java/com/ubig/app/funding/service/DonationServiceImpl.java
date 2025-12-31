@@ -33,9 +33,21 @@ public class DonationServiceImpl implements DonationService{
 	}
 	
 	@Override
-	public int donationListCount2(String searchKeyword) {
+	public int donationListCount2() {
 		
-		return dao.donationListCount2(sqlSession,searchKeyword);
+		return dao.donationListCount2(sqlSession);
+	}
+	
+	@Override
+	public int donationListCount3() {
+		
+		return dao.donationListCount3(sqlSession);
+	}
+	
+	@Override
+	public int donationSearchCount(String searchKeyword) {
+		
+		return dao.donationSearchCount(sqlSession,searchKeyword);
 	}
 	
 	@Override
