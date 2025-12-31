@@ -274,99 +274,100 @@
 
                                                 html += "<button type='button' class='btn btn-secondary btn-xs' onclick='event.stopPropagation(); updateAdoption(" + item.animalNo + ")'>정보수정</button> ";
                                                 html += "<button type='button' class='btn btn-secondary btn-xs' onclick='event.stopPropagation(); cancelAdoption(" + item.animalNo + ")'>등록취소</button>";
-                                            }
 
                                                 html += "</td>";
-                                            if (item.adoptionStatus === "신청중") {
-                                                html += "<td><button type='button' class='btn btn-success btn-xs' onclick='event.stopPropagation();openApplicantModal(" + item.animalNo + ")'>수락</button> ";
-                                                html += "<button type='button' class='btn btn-danger btn-xs' onclick='event.stopPropagation();denyAdoption(" + item.animalNo + ")'>거절</button></td>";
-                                            }
-                                            html += "</tr>";
-                                        });
+                                                if (item.adoptionStatus === "신청중") {
+                                                    html += "<td><button type='button' class='btn btn-success btn-xs' onclick='event.stopPropagation();openApplicantModal(" + item.animalNo + ")'>수락</button> ";
+                                                    html += "<button type='button' class='btn btn-danger btn-xs' onclick='event.stopPropagation();denyAdoption(" + item.animalNo + ")'>거절</button></td>";
+                                                } else {
+                                                    html += "<td></td>";
+                                                }
+                                                html += "</tr>";
+                                            });
 
-                                        tbody1.innerHTML = html;
+                                            tbody1.innerHTML = html;
 
-                                        // 페이징 1 (등록 동물)
-                                        const pi1 = ResultMap.pi1;
-                                        let p1Html = "";
-                                        if (pi1) {
-                                            if (pi1.currentPage > 1) {
-                                                p1Html += '<button type="button" class="btn btn-sm btn-outline-secondary mx-1" onclick="getAdoptionData(' + (pi1.currentPage - 1) + ', currPage2)">&lt;</button>';
+                                            // 페이징 1 (등록 동물)
+                                            const pi1 = ResultMap.pi1;
+                                            let p1Html = "";
+                                            if (pi1) {
+                                                if (pi1.currentPage > 1) {
+                                                    p1Html += '<button type="button" class="btn btn-sm btn-outline-secondary mx-1" onclick="getAdoptionData(' + (pi1.currentPage - 1) + ', currPage2)">&lt;</button>';
+                                                }
+                                                for (let i = pi1.startPage; i <= pi1.endPage; i++) {
+                                                    let active = (pi1.currentPage == i) ? "btn-secondary" : "btn-outline-secondary";
+                                                    p1Html += '<button type="button" class="btn btn-sm ' + active + ' mx-1" onclick="getAdoptionData(' + i + ', currPage2)">' + i + '</button>';
+                                                }
+                                                if (pi1.currentPage < pi1.maxPage) {
+                                                    p1Html += '<button type="button" class="btn btn-sm btn-outline-secondary mx-1" onclick="getAdoptionData(' + (pi1.currentPage + 1) + ', currPage2)">&gt;</button>';
+                                                }
                                             }
-                                            for (let i = pi1.startPage; i <= pi1.endPage; i++) {
-                                                let active = (pi1.currentPage == i) ? "btn-secondary" : "btn-outline-secondary";
-                                                p1Html += '<button type="button" class="btn btn-sm ' + active + ' mx-1" onclick="getAdoptionData(' + i + ', currPage2)">' + i + '</button>';
-                                            }
-                                            if (pi1.currentPage < pi1.maxPage) {
-                                                p1Html += '<button type="button" class="btn btn-sm btn-outline-secondary mx-1" onclick="getAdoptionData(' + (pi1.currentPage + 1) + ', currPage2)">&gt;</button>';
-                                            }
+                                            const area1 = document.querySelector("#pagingArea1");
+                                            if (area1) area1.innerHTML = p1Html;
+                                        } else {
+                                            tbody1.innerHTML = "<tr><td colspan='4'>등록한 내역이 없습니다.</td></tr>";
                                         }
-                                        const area1 = document.querySelector("#pagingArea1");
-                                        if (area1) area1.innerHTML = p1Html;
-                                    } else {
-                                        tbody1.innerHTML = "<tr><td colspan='4'>등록한 내역이 없습니다.</td></tr>";
-                                    }
 
-                                    // 2. 내가 신청한 입양 내역 (myApplications) 처리
-                                    const tbody2 = document.querySelector("#myadoption2 table:nth-of-type(2) tbody");
-                                    tbody2.innerHTML = ""; // 기존 내용 초기화
+                                        // 2. 내가 신청한 입양 내역 (myApplications) 처리
+                                        const tbody2 = document.querySelector("#myadoption2 table:nth-of-type(2) tbody");
+                                        tbody2.innerHTML = ""; // 기존 내용 초기화
 
-                                    const myApplications = ResultMap.myApplications;
-                                    if (myApplications && myApplications.length > 0) {
-                                        let html = "";
-                                        myApplications.forEach(item => {
-                                            html += "<tr onclick= 'location.href=\"${pageContext.request.contextPath}/adoption.detailpage?anino=" + item.animalNo + "\"' >";
-                                            html += "<td>" + item.adoptionAppId + "</td>";
-                                            html += "<td><img src='${pageContext.request.contextPath}/resources/download/adoption/" + item.photoUrl + "' style='width:50px; height:50px; object-fit:cover;'></td>";
-                                            html += "<td>" + (item.animalName ? item.animalName : "-") + "</td>";
-                                            html += "<td>" + (item.applyDateStr || "-") + "</td>";
-                                            // 상태 코드(int)를 문자열로 변환
-                                            let statusStr = "";
-                                            switch (item.adoptStatus) {
-                                                case 1: statusStr = "신청완료"; break;
-                                                case 2: statusStr = "입양완료"; break;
-                                                case 3: statusStr = "반려"; break;
-                                                default: statusStr = "접수중";
-                                            }
-                                            html += "<td>" + statusStr + "</td>";
-                                            html += "<td>";
-                                            if (item.adoptStatus !== 2 && item.adoptStatus !== 3) {
-                                                html += "<button type='button' class='btn btn-danger btn-xs' onclick='event.stopPropagation();cancelAdoptionApp(" + item.adoptionAppId + ")'>신청취소</button>";
-                                            }
-                                            html += "</td>";
-                                            html += "</tr>";
-                                        });
-                                        tbody2.innerHTML = html;
+                                        const myApplications = ResultMap.myApplications;
+                                        if (myApplications && myApplications.length > 0) {
+                                            let html = "";
+                                            myApplications.forEach(item => {
+                                                html += "<tr onclick= 'location.href=\"${pageContext.request.contextPath}/adoption.detailpage?anino=" + item.animalNo + "\"' >";
+                                                html += "<td>" + item.adoptionAppId + "</td>";
+                                                html += "<td><img src='${pageContext.request.contextPath}/resources/download/adoption/" + item.photoUrl + "' style='width:50px; height:50px; object-fit:cover;'></td>";
+                                                html += "<td>" + (item.animalName ? item.animalName : "-") + "</td>";
+                                                html += "<td>" + (item.applyDateStr || "-") + "</td>";
+                                                // 상태 코드(int)를 문자열로 변환
+                                                let statusStr = "";
+                                                switch (item.adoptStatus) {
+                                                    case 1: statusStr = "신청완료"; break;
+                                                    case 2: statusStr = "입양완료"; break;
+                                                    case 3: statusStr = "반려"; break;
+                                                    default: statusStr = "접수중";
+                                                }
+                                                html += "<td>" + statusStr + "</td>";
+                                                html += "<td>";
+                                                if (item.adoptStatus !== 2 && item.adoptStatus !== 3) {
+                                                    html += "<button type='button' class='btn btn-danger btn-xs' onclick='event.stopPropagation();cancelAdoptionApp(" + item.adoptionAppId + ")'>신청취소</button>";
+                                                }
+                                                html += "</td>";
+                                                html += "</tr>";
+                                            });
+                                            tbody2.innerHTML = html;
 
-                                        // 페이징 2 (입양 신청)
-                                        const pi2 = ResultMap.pi2;
-                                        let p2Html = "";
-                                        if (pi2) {
-                                            if (pi2.currentPage > 1) {
-                                                p2Html += '<button type="button" class="btn btn-sm btn-outline-secondary mx-1" onclick="getAdoptionData(currPage1, ' + (pi2.currentPage - 1) + ')">&lt;</button>';
+                                            // 페이징 2 (입양 신청)
+                                            const pi2 = ResultMap.pi2;
+                                            let p2Html = "";
+                                            if (pi2) {
+                                                if (pi2.currentPage > 1) {
+                                                    p2Html += '<button type="button" class="btn btn-sm btn-outline-secondary mx-1" onclick="getAdoptionData(currPage1, ' + (pi2.currentPage - 1) + ')">&lt;</button>';
+                                                }
+                                                for (let i = pi2.startPage; i <= pi2.endPage; i++) {
+                                                    let active = (pi2.currentPage == i) ? "btn-secondary" : "btn-outline-secondary";
+                                                    p2Html += '<button type="button" class="btn btn-sm ' + active + ' mx-1" onclick="getAdoptionData(currPage1, ' + i + ')">' + i + '</button>';
+                                                }
+                                                if (pi2.currentPage < pi2.maxPage) {
+                                                    p2Html += '<button type="button" class="btn btn-sm btn-outline-secondary mx-1" onclick="getAdoptionData(currPage1, ' + (pi2.currentPage + 1) + ')">&gt;</button>';
+                                                }
                                             }
-                                            for (let i = pi2.startPage; i <= pi2.endPage; i++) {
-                                                let active = (pi2.currentPage == i) ? "btn-secondary" : "btn-outline-secondary";
-                                                p2Html += '<button type="button" class="btn btn-sm ' + active + ' mx-1" onclick="getAdoptionData(currPage1, ' + i + ')">' + i + '</button>';
-                                            }
-                                            if (pi2.currentPage < pi2.maxPage) {
-                                                p2Html += '<button type="button" class="btn btn-sm btn-outline-secondary mx-1" onclick="getAdoptionData(currPage1, ' + (pi2.currentPage + 1) + ')">&gt;</button>';
-                                            }
+                                            const area2 = document.querySelector("#pagingArea2");
+                                            if (area2) area2.innerHTML = p2Html;
+                                        } else {
+                                            tbody2.innerHTML = "<tr><td colspan='4'>신청한 내역이 없습니다.</td></tr>";
+                                            const area2 = document.querySelector("#pagingArea2");
+                                            if (area2) area2.innerHTML = "";
                                         }
-                                        const area2 = document.querySelector("#pagingArea2");
-                                        if (area2) area2.innerHTML = p2Html;
-                                    } else {
-                                        tbody2.innerHTML = "<tr><td colspan='4'>신청한 내역이 없습니다.</td></tr>";
-                                        const area2 = document.querySelector("#pagingArea2");
-                                        if (area2) area2.innerHTML = "";
+
+                                        return ResultMap;
+
+                                    } catch (error) {
+                                        console.error("Error:", error);
+                                        alert("데이터를 불러오는 중 오류가 발생했습니다.\n" + error);
                                     }
-
-                                    return ResultMap;
-
-                                } catch (error) {
-                                    console.error("Error:", error);
-                                    alert("데이터를 불러오는 중 오류가 발생했습니다.\n" + error);
-                                }
                                 }
 
                                 //입양 관련 수정+삭제+수락 링크 함수들
