@@ -85,7 +85,12 @@
                         <c:otherwise>
                             <c:forEach var="msg" items="${list}">
                                 <tr class="${msg.messageIsCheck == 'N' ? 'unread-msg' : ''}" 
-                                    onclick="openMessageDetail(${msg.messageNo}, '${msg.messageSendUserId}', '${msg.messageContent}', '${msg.messageCreateDate}', '${msg.messageIsCheck}')">
+                                	data-message-no="${msg.messageNo }"
+                                	data-message-send-user-id="${msg.messageSendUserId }"
+                                	data-message-content="${fn:escapeXml(msg.messageContent) }"
+                                	data-message-create-date="${msg.messageCreateDate }"
+                                	data-message-is-check="${msg.messageIsCheck }"
+                                    id="messageInfo">
                                     
                                     <td>
                                         <c:if test="${msg.messageIsCheck == 'N'}">
@@ -206,8 +211,107 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+
+	$(function() {
+		$(document).on("click", "#messageInfo", function() {
+			let msgNo = $(this).data("messageNo");
+			let sender = $(this).data("messageSendUserId");
+			let content = $(this).data("messageContent");
+			let date = $(this).data("messageCreateDate");
+			let isCheck = $(this).data("messageIsCheck");
+			
+	    	console.log(content);
+	        // 모달 내용 채우기
+	        $("#modalSender").text(sender);
+	        $("#modalContent").text(content); 
+	        $("#modalDate").text(date);
+	        $("#btnKick").text(sender + " 차단하기");
+	        
+	        // 답장하기 버튼 클릭 시 -> 쓰기 모달의 받는 사람에 세팅하고 쓰기 모달 띄우기
+	        $("#btnReply").off("click").on("click", function() {
+	             // 상세 모달 닫고
+	             $("#detailModal").modal("hide");
+	             // 쓰기 모달 열기 + ID 세팅
+	             $("#inputMessageReceiveUserId").val(sender)
+	             $("#writeModal").modal("show");
+	        });
+	        
+	        // 차단하기 버튼 클릭 시 -> 차단할 건지 한번 더 물어본 후 yes를 누르면 차단 테이블에 등록
+	        var isKicked = true;
+	        $("#btnKick").off("click").on("click", function() {
+	        	var isSuccess = false;
+	        	if (confirm(sender + "님을 차단하시겠습니까?")) {
+	        		$.ajax({
+	        			url : "${pageContext.request.contextPath}/kick/insertKick.ki",
+	        			type : "POST",
+	        			async : false,
+	        			data : {
+	        				kicker : '${loginMember.userId}',
+	        				kickedUser : sender
+	        			},
+	        			success : function(data) {
+	        				console.log(data);
+	        				if (data == "success") {
+	        					alert("차단되었습니다.");
+	        					isSuccess = true;
+	        				}
+	        				else {
+	        					alert("차단에 실패했습니다.");
+	        				}
+	        			},
+	        			error : function() {
+	        				alert("알 수 없는 오류가 발생했습니다.");
+	        			}
+	        		});
+	        	}
+	        	
+	        	if (isSuccess) {
+	        		$("#detailModal").modal("hide");
+	        	}
+	        });
+	        
+	        // 만약 이미 차단되어있는 상태라면 차단 버튼을 disable한다.
+	        $.ajax({
+	        	url :  "${pageContext.request.contextPath}/kick/isKicked.ki",
+	        	type: "POST",
+	        	async : false,
+	        	data : {
+	        		messageSendUserId : sender,
+	        		messageReceiveUserId : '${loginMember.userId}'
+	        	},
+	        	success : function(data) {
+	        		console.log(data);
+	        		if (data == "notkicked") {
+	        			isKicked = false;
+	        		}
+	        	},
+	        	error : function() {
+	        		alert("알 수 없는 오류가 발생했습니다.");
+	        	}
+	        });
+	        
+	        $("#btnKick").prop("disabled", isKicked);
+	        $("#btnReply").prop("disabled", isKicked);
+
+	        // 모달 띄우기
+	        $("#detailModal").modal("show");
+
+	        // 만약 선택된 쪽지가 아직 읽지 않은 쪽지라면, 읽음 상태로 변경한다.
+	        if(isCheck === 'N') {
+	            $.ajax({
+	                url: "${pageContext.request.contextPath}/message/read.ms",
+	                type: "POST",
+	                data: { messageNo: msgNo },
+	                success: function(res) {
+	                    console.log("읽음 처리 완료");
+	                }
+	            });
+	        }
+		});
+	});
     // 1. 쪽지 상세 보기 함수
     function openMessageDetail(msgNo, sender, content, date, isCheck) {
+    	console.log(content);
         // 모달 내용 채우기
         $("#modalSender").text(sender);
         $("#modalContent").text(content); 
