@@ -9,11 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ubig.app.admin.service.AdminService;
+import com.ubig.app.common.model.vo.PageInfo;
+import com.ubig.app.common.util.Pagination;
 import com.ubig.app.vo.community.BoardVO;
-import com.ubig.app.vo.funding.DonationVO;
+import com.ubig.app.vo.funding.FundingVO;
 import com.ubig.app.vo.member.MemberVO;
 import com.ubig.app.vo.volunteer.ActivityVO;
 
@@ -26,29 +29,53 @@ public class AdminController {
 	
 	//관리자 페이지 이동
 	@RequestMapping("")
-	public String adminPage() {
+	public String adminPage(Model model) {
+		
+		int listCount = service.adminListCount();
+		
+		model.addAttribute("listCount",listCount);
 		
 		return "admin/adminPage";
 	}
 	
 	//회원 관리 페이지
 	@RequestMapping("/userStatus")
-	public String selectUser(Model model,String userId) {
+	public String selectUser(
+				@RequestParam(value = "curPage", defaultValue = "1") int curPage,
+				Model model) {
 		
-		ArrayList<MemberVO> list = service.selectUser();
+		int listCount = service.adminListCount();
 		
-		model.addAttribute("list",list);
+	    int boardLimit = 10; // 한 페이지에 보여줄 개수
+	    int pageLimit = 10;  // 페이징 바 개수
+	
+	    PageInfo pi = Pagination.getPageInfo(listCount, curPage, pageLimit, boardLimit);
+	    
+	    ArrayList<MemberVO> list = service.selectUser(pi);
+	
+	    model.addAttribute("list", list);
+	    model.addAttribute("pi", pi);
 		
 		return "admin/userStatusView";
 	}
 	
 	//검색 기능
 	@RequestMapping("/searchKeyword")
-	public String searchKeyword(Model model,String searchKeyword) {
+	public String searchKeyword(@RequestParam(value = "curPage", defaultValue = "1") int curPage,
+	        Model model,@RequestParam(value = "searchKeyword", required = false) String searchKeyword) {
 				
-		ArrayList<MemberVO> list = service.searchKeyword(searchKeyword);
-			
-		model.addAttribute("list",list);
+		int listCount = service.adminListCount2();
+		
+	    int boardLimit = 10; // 한 페이지에 보여줄 개수
+	    int pageLimit = 10;  // 페이징 바 개수
+	
+	    PageInfo pi = Pagination.getPageInfo(listCount, curPage, pageLimit, boardLimit);
+	    
+	    ArrayList<MemberVO> list = service.searchKeyword(searchKeyword,pi);
+	
+	    model.addAttribute("list", list);
+	    model.addAttribute("pi", pi);
+	    model.addAttribute("keyword", searchKeyword);
 				
 		return "admin/userStatusView";
 				

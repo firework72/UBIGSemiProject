@@ -148,7 +148,8 @@
                     </c:if>
 
                     <label class="form-label">제목</label>
-                    <input type="text" name="title" class="form-input" placeholder="제목을 입력하세요" required>
+                    <input type="text" name="title" class="form-input" placeholder="제목을 입력하세요 (30자 이내)" maxlength="30"
+                        required>
                     </div>
 
                     <!-- [Step 14: 태그 선택 (봉사후기 전용)] -->
