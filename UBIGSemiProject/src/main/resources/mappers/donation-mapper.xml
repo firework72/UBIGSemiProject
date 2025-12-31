@@ -16,7 +16,19 @@
 		FROM DONATIONS
 	</select>
 	
-	<select id="donationListCount2" parameterType="string" resultType="int">
+	<select id="donationListCount2" resultType="_int">
+		SELECT COUNT(*)
+		FROM DONATIONS
+		WHERE DONATION_TYPE = 1
+	</select>
+	
+	<select id="donationListCount3" resultType="_int">
+		SELECT COUNT(*)
+		FROM DONATIONS
+		WHERE DONATION_TYPE = 2
+	</select>
+	
+	<select id="donationSearchCount" parameterType="string" resultType="int">
 	    SELECT COUNT(*)
 	    FROM DONATIONS
 	    WHERE USER_ID LIKE '%' || #{searchKeyword} || '%'

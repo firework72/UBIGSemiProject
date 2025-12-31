@@ -12,7 +12,11 @@ public interface DonationService {
 	
 	int donationListCount();
 	
-	int donationListCount2(String searchKeyword);
+	int donationListCount2();
+	
+	int donationListCount3();
+	
+	int donationSearchCount(String searchKeyword);
 	
 	ArrayList<DonationVO> searchKeyword(String searchKeyword, PageInfo pi);
 	
@@ -27,6 +31,8 @@ public interface DonationService {
 	ArrayList<DonationVO> myDonation(PageInfo pi, String userId);
 
 	ArrayList<DonationVO> myDonation2(PageInfo pi, String userId);
+
+	
 	
 	
 }

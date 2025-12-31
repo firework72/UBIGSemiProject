@@ -28,9 +28,19 @@ public class DonationDao {
 		return sqlSession.selectOne("donationMapper.donationListCount");
 	}
 	
-	public int donationListCount2(SqlSessionTemplate sqlSession, String searchKeyword) {
+	public int donationListCount2(SqlSessionTemplate sqlSession) {
 		
-		return sqlSession.selectOne("donationMapper.donationListCount2",searchKeyword);
+		return sqlSession.selectOne("donationMapper.donationListCount2");
+	}
+	
+	public int donationListCount3(SqlSessionTemplate sqlSession) {
+		
+		return sqlSession.selectOne("donationMapper.donationListCount3");
+	}
+	
+	public int donationSearchCount(SqlSessionTemplate sqlSession, String searchKeyword) {
+		
+		return sqlSession.selectOne("donationMapper.donationSearchCount",searchKeyword);
 	}
 	
 	public ArrayList<DonationVO> searchKeyword(SqlSessionTemplate sqlSession, String searchKeyword,PageInfo pi) {
@@ -82,6 +92,8 @@ public class DonationDao {
 		
 		return (ArrayList)sqlSession.selectList("donationMapper.myDonation2",userId,rowBounds);
 	}
+
+	
 
 	
 
