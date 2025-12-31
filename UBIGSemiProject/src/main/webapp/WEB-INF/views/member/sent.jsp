@@ -85,7 +85,12 @@
                         <c:otherwise>
                             <c:forEach var="msg" items="${list}">
                                 <tr class="${msg.messageIsCheck == 'N' ? 'unread-msg' : ''}" 
-                                    onclick="openMessageDetail(${msg.messageNo}, '${msg.messageReceiveUserId}', '${msg.messageContent}', '${msg.messageCreateDate}', '${msg.messageIsCheck}')">
+                                    data-message-no="${msg.messageNo }"
+                                	data-message-receive-user-id="${msg.messageReceiveUserId }"
+                                	data-message-content="${fn:escapeXml(msg.messageContent) }"
+                                	data-message-create-date="${msg.messageCreateDate }"
+                                	data-message-is-check="${msg.messageIsCheck }"
+                             		id="messageInfo">
                                     
                                     <td>
                                         <c:if test="${msg.messageIsCheck == 'N' or msg.messageIsCheck == 'K'}">
@@ -206,16 +211,27 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    // 1. 쪽지 상세 보기 함수
-    function openMessageDetail(msgNo, sender, content, date, isCheck) {
-        // 모달 내용 채우기
-        $("#modalSender").text(sender);
-        $("#modalContent").text(content);
-        $("#modalDate").text(date);
-
-        // 모달 띄우기
-        $("#detailModal").modal("show");
-    }
+	
+	
+	$(function() {
+		// 1. 쪽지 상세 보기 함수
+		$(document).on("click", "#messageInfo", function() {
+			let msgNo = $(this).data("messageNo");
+			let receiver = $(this).data("messageReceiveUserId");
+			let content = $(this).data("messageContent");
+			let date = $(this).data("messageCreateDate");
+			let isCheck = $(this).data("messageIsCheck");
+			
+	    	console.log(content);
+	        // 모달 내용 채우기
+	        $("#modalSender").text(receiver);
+	        $("#modalContent").text(content); 
+	        $("#modalDate").text(date);
+	        
+	     	// 모달 띄우기
+	        $("#detailModal").modal("show");
+		});
+	});
     
     // 2. 쪽지 보내기 버튼 함수
     function sendMessage() {
