@@ -35,11 +35,6 @@
             <div class="mt-3">
                 <a href="${pageContext.request.contextPath}/admin" class="active"><i class="fas fa-tachometer-alt me-2"></i> 대시보드</a>
                 <a href="${pageContext.request.contextPath}/admin/userStatus"><i class="fas fa-users me-2"></i> 회원 관리</a>
-                <a href="${pageContext.request.contextPath}/admin/boardPage"><i class="fas fa-board me-2"></i> 공지글 관리</a>
-                <a href="/admin/adoptions"><i class="fas fa-dog me-2"></i> 입양/동물 관리</a>
-                <a href="${pageContext.request.contextPath}/admin/activityPage"><i class="fas fa-hand-holding-heart me-2"></i> 봉사활동 관리</a>
-                <a href="${pageContext.request.contextPath}/admin/fundingPage"><i class="fas fa-donate me-2"></i> 후원/펀딩 관리</a>
-                <a href="/admin/boards"><i class="fas fa-comments me-2"></i> 게시판/신고 관리</a>
                 <a href="${pageContext.request.contextPath}/admin/chatList.ch"><i class="fas fa-headset me-2"></i> 1:1 문의</a>
             </div>
         </nav>
@@ -61,7 +56,7 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <div class="text-uppercase small fw-bold mb-1">총 회원수</div>
-                                    <div class="h3 mb-0 fw-bold">${memberCount} 명</div>
+                                    <div class="h3 mb-0 fw-bold">${listCount} 명</div>
                                 </div>
                                 <div class="icon-box"><i class="fas fa-user-plus"></i></div>
                             </div>

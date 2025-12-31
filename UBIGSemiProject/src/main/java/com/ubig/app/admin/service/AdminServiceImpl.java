@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ubig.app.admin.dao.AdminDao;
+import com.ubig.app.common.model.vo.PageInfo;
 import com.ubig.app.vo.community.BoardVO;
 import com.ubig.app.vo.funding.DonationVO;
 import com.ubig.app.vo.member.MemberVO;
@@ -23,15 +24,27 @@ public class AdminServiceImpl implements AdminService{
 	private SqlSessionTemplate sqlSession;
 	
 	@Override
-	public ArrayList<MemberVO> selectUser() {
-		
-		return dao.selectUser(sqlSession);
+	public ArrayList<MemberVO> selectUser(PageInfo pi) {
+
+		return dao.selectUser(sqlSession,pi);
 	}
 	
 	@Override
-	public ArrayList<MemberVO> searchKeyword(String searchKeyword) {
+	public int adminListCount() {
 		
-		return dao.searchKeyword(sqlSession,searchKeyword);
+		return dao.adminListCount(sqlSession);
+	}
+	
+	@Override
+	public int adminListCount2() {
+
+		return dao.adminListCount2(sqlSession);
+	}
+	
+	@Override
+	public ArrayList<MemberVO> searchKeyword(String searchKeyword, PageInfo pi) {
+		
+		return dao.searchKeyword(sqlSession,searchKeyword,pi);
 	}
 	
 	@Override
