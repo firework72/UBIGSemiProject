@@ -16,7 +16,7 @@
 			<jsp:include page="/WEB-INF/views/common/menubar.jsp" />
 			<c:if test="${not empty alertMsgAd}">
 				<script>
-					alert("${alertMsgAd}");
+					alert(`${alertMsgAd}`);
 				</script>
 				<c:remove var="alertMsgAd" scope="session" />
 			</c:if>
@@ -35,7 +35,7 @@
 					<input type="text" name="userId" value="${ownerId}" readonly>
 
 					<label>동물 고유 번호</label>
-					<input type="number" name="animalNo" placeholder="숫자만 입력" value="${anino}" ${not empty anino
+					<input type="number" name="animalNo" placeholder="숫자만 입력" value="${anino}" min="1" ${not empty anino
 						? 'readonly' : '' }>
 
 					<div class="text-center mt-20">

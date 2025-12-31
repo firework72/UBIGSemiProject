@@ -13,7 +13,7 @@
 			<jsp:include page="/WEB-INF/views/common/menubar.jsp" />
 			<c:if test="${not empty alertMsgAd}">
 				<script>
-					alert("${alertMsgAd}");
+					alert(`${alertMsgAd}`);
 				</script>
 				<c:remove var="alertMsgAd" scope="session" />
 			</c:if>
@@ -128,9 +128,9 @@
 							<c:when test="${loginMember.userId eq animal.userId}">
 								<!-- 본인 동물일 경우: 버튼 숨김-->
 							</c:when>
-							<c:when test="${animal.adoptionStatus eq '마감'}">
+							<c:when test="${animal.adoptionStatus eq '마감' or animal.adoptionStatus eq '입양완료'}">
 								<!-- 마감된 경우: 버튼 비활성화 -->
-								<button class="btn-secondary" disabled>마감되었습니다</button>
+								<button class="btn-secondary" disabled>입양이 완료되거나 마감되었습니다</button>
 							</c:when>
 							<c:otherwise>
 								<!-- 본인 동물이 아닐 경우: 신청 버튼 노출 -->

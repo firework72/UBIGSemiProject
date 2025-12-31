@@ -19,7 +19,7 @@
 
             <c:if test="${not empty alertMsgAd}">
                 <script>
-                    alert("${alertMsgAd}");
+                    alert(`${alertMsgAd}`);
                 </script>
                 <c:remove var="alertMsgAd" scope="session" />
             </c:if>
@@ -93,7 +93,8 @@
                                 <label for="age" class="form-label fw-bold">5. 나이 (Age / 살)</label>
                                 <input type="number" name="age" id="age" class="form-control" step="0.1"
                                     placeholder="예: 2.5 (최대 50살)" required min="0" max="50"
-                                    oninput="if(this.value > 50) this.value = 50;" value="${animal.age}">
+                                    oninput="if(this.value<0)this.value=0; if(this.value>50)this.value=50;"
+                                    value="${animal.age}">
                             </div>
 
                             <!-- 6. 체중 -->
@@ -101,7 +102,8 @@
                                 <label for="weight" class="form-label fw-bold">6. 체중 (Weight / kg)</label>
                                 <input type="number" name="weight" id="weight" class="form-control" step="0.1"
                                     placeholder="예: 5.2 (최대 100kg)" required min="0" max="100"
-                                    oninput="if(this.value > 100) this.value = 100;" value="${animal.weight}">
+                                    oninput="if(this.value<0)this.value=0; if(this.value>100)this.value=100;"
+                                    value="${animal.weight}">
                             </div>
 
                             <!-- 7. 크기 -->
@@ -109,7 +111,8 @@
                                 <label for="petSize" class="form-label fw-bold">7. 크기 (Size / cm)</label>
                                 <input type="number" name="petSize" id="petSize" class="form-control" step="0.1"
                                     placeholder="크기 입력 (최대 300cm)" required min="0" max="300"
-                                    oninput="if(this.value > 300) this.value = 300;" value="${animal.petSize}">
+                                    oninput="if(this.value<0)this.value=0; if(this.value>300)this.value=300;"
+                                    value="${animal.petSize}">
                             </div>
 
                             <!-- 8. 중성화 여부 -->
