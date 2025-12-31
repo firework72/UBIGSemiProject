@@ -271,7 +271,12 @@
                                                 html += "<td>";
 
                                                 // 승인(게시글 있음)되거나 입양 완료된 상태가 아닐 때만 수정/삭제 버튼 노출
-                                                if (!item.postRegDate && item.adoptionStatus !== '입양완료') {
+                                                // 승인(게시글 있음)되거나 입양 완료된 상태가 아닐 때만 수정/삭제 버튼 노출 -> [수정] 본인이면 항상 노출 (입양 완료 제외)
+                                                // 다만, 원래 기획의도상 입양 완료된 건은 삭제를 막는게 맞을 수 있으나, 컨트롤러에서 '본인은 삭제 가능'하게 풀었으므로
+                                                // 여기서도 버튼을 노출시켜줍니다. (단, 입양완료시에는 숨길지 말지 결정 필요하나, 
+                                                // 컨트롤러 로직(AdoptionController.java:464)이 '승인' 여부와 관계없이 본인이면 삭제 가능하므로 
+                                                // postRegDate 체크를 제거합니다.
+                                                if (item.adoptionStatus !== '입양완료') {
                                                     html += "<button type='button' class='btn btn-secondary btn-xs' onclick='event.stopPropagation(); updateAdoption(" + item.animalNo + ")'>정보수정</button> ";
                                                     html += "<button type='button' class='btn btn-secondary btn-xs' onclick='event.stopPropagation(); cancelAdoption(" + item.animalNo + ")'>등록취소</button>";
                                                 }
@@ -330,7 +335,7 @@
                                                 }
                                                 html += "<td>" + statusStr + "</td>";
                                                 html += "<td>";
-                                                if (item.adoptStatus !== 2) {
+                                                if (item.adoptStatus !== 2 && item.adoptStatus !== 3) {
                                                     html += "<button type='button' class='btn btn-danger btn-xs' onclick='event.stopPropagation();cancelAdoptionApp(" + item.adoptionAppId + ")'>신청취소</button>";
                                                 }
                                                 html += "</td>";

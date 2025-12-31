@@ -450,14 +450,16 @@ public class AdoptionController {
 		String userRole = user.getUserRole();
 		String userId = user.getUserId();
 
-		// [검증] 승인되거나 입양완료된 동물은 삭제 불가 (관리자 제외하고 검증)
+		// [검증] 승인되거나 입양완료된 동물은 삭제 불가 (관리자 제외하고 검증) -> [수정] 본인도 삭제 가능하도록 변경 (제한 해제)
 		AnimalDetailVO animal = service.goAdoptionDetail(anino);
-		if (animal != null && !"ADMIN".equals(userRole)) {
-			if (animal.getPostNo() != 0 || "입양완료".equals(animal.getAdoptionStatus())) {
-				session.setAttribute("alertMsgAd", "승인되거나 입양 완료된 동물은 삭제할 수 없습니다.");
-				return "redirect:/user/mypage.me";
-			}
-		}
+		/*
+		 * if (animal != null && !"ADMIN".equals(userRole)) {
+		 * if (animal.getPostNo() != 0 || "입양완료".equals(animal.getAdoptionStatus())) {
+		 * session.setAttribute("alertMsgAd", "승인되거나 입양 완료된 동물은 삭제할 수 없습니다.");
+		 * return "redirect:/user/mypage.me";
+		 * }
+		 * }
+		 */
 
 		// 관리자: 강제 삭제 (트랜잭션 적용)
 		if ("ADMIN".equals(userRole)) {
@@ -514,13 +516,31 @@ public class AdoptionController {
 			result = service.deleteapp(adoptionAppId);
 
 			if (result > 0) {
-				// 3. 동물의 상태를 다시 '대기중'으로 변경 (입양 가능 상태로 복구)
-				Map<String, Object> map = new HashMap<>();
-				map.put("animalNo", animalNo);
-				map.put("status", "대기중");
-				service.updateAdoptionStatus(map);
+				// [수정] 동물 상태 및 남은 신청자 확인 후 상태 업데이트
+				AnimalDetailVO animal = service.goAdoptionDetail(animalNo);
 
-				session.setAttribute("alertMsgAd", "삭제 성공 (대기중 상태로 변경됨)");
+				if (animal != null && !"입양완료".equals(animal.getAdoptionStatus())) {
+					// 남은 신청자 수 확인 (삭제 후 시점이므로 남은 신청자만 조회됨)
+					List<AdoptionApplicationVO> remaining = service.getApplicantsList(animalNo);
+
+					String newStatus = "신청중";
+					if (remaining == null || remaining.isEmpty()) {
+						newStatus = "대기중";
+					}
+
+					Map<String, Object> map = new HashMap<>();
+					map.put("animalNo", animalNo);
+					map.put("status", newStatus);
+					service.updateAdoptionStatus(map);
+
+					if ("대기중".equals(newStatus)) {
+						session.setAttribute("alertMsgAd", "신청 취소 성공 (대기중 상태로 변경됨)");
+					} else {
+						session.setAttribute("alertMsgAd", "신청 취소 성공 (신청중 상태 유지)");
+					}
+				} else {
+					session.setAttribute("alertMsgAd", "신청 취소 성공");
+				}
 			} else {
 				session.setAttribute("alertMsgAd", "삭제 실패");
 			}
