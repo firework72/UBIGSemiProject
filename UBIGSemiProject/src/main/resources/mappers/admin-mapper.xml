@@ -8,6 +8,19 @@
 	<select id="selectUser" resultType="MemberVO">
 		SELECT *
 		FROM MEMBERS
+		ORDER BY USER_ID
+	</select>
+	
+	<select id="adminListCount" resultType="_int">
+		SELECT COUNT(*)
+		FROM MEMBERS
+	</select>
+	
+	<select id="adminListCount2" parameterType="string" resultType="_int">
+	    SELECT COUNT(*)
+	    FROM MEMBERS
+	    WHERE USER_ID LIKE '%' || #{searchKeyword} || '%'
+	    OR USER_NAME LIKE '%' || #{searchKeyword} || '%'
 	</select>
 	
 	<select id="searchKeyword" resultType="MemberVO" parameterType="string">
@@ -15,6 +28,7 @@
 	    FROM MEMBERS
 	    WHERE USER_ID LIKE '%' || #{searchKeyword} || '%'
 	    OR USER_NAME LIKE '%' || #{searchKeyword} || '%'
+	    ORDER BY USER_ID
 	</select>
 
 	<update id="updateStatus" parameterType="map">
