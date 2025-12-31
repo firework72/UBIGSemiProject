@@ -43,9 +43,7 @@ public class DonationController {
 	
 	    model.addAttribute("list", list);
 	    model.addAttribute("pi", pi);
-
-		
-		
+	    
 		return "funding/donationPage";
 	}
 	
@@ -101,7 +99,7 @@ public class DonationController {
 		
 		model.addAttribute("list", list);
 		model.addAttribute("pi", pi);
-			
+		
 		return "funding/donationPage";
 	}
 	

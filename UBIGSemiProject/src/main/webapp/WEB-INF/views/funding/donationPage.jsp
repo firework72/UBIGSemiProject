@@ -213,41 +213,29 @@
                         </c:forEach>
                     </table>
                     
-                    <div id="pagingArea">
-						<ul class="pagination">
-
-							<!-- 이전 -->
-							<c:if test="${pi.currentPage > 1}">
-								<li class="page-item">
-									<a class="page-link"
-										href="${pageContext.request.contextPath}/donation/searchKeyword?curPage=${pi.currentPage - 1}&searchKeyword=${keyword}">Prev</a>
-								</li>
-							</c:if>
-
-							<!-- 페이지 번호 -->
-							<c:forEach var="p" begin="${pi.startPage}" end="${pi.endPage}">
-								<c:choose>
-									<c:when test="${p == pi.currentPage}">
-										<li class="page-item active"><a class="page-link" href="#">${p}</a></li>
-									</c:when>
-									<c:otherwise>
-										<li class="page-item">
-											<a class="page-link"
-												href="${pageContext.request.contextPath}/donation/searchKeyword?curPage=${p}&searchKeyword=${keyword}">${p}</a>
-										</li>
-									</c:otherwise>
-								</c:choose>
-							</c:forEach>
-
-							<!-- 다음 -->
-							<c:if test="${pi.currentPage < pi.maxPage}">
-								<li class="page-item">
-									<a class="page-link"
-										href="${pageContext.request.contextPath}/donation/searchKeyword?curPage=${pi.currentPage + 1}&searchKeyword=${keyword}">Next</a>
-								</li>
-							</c:if>
-
-						</ul>
+                    <!-- 페이징바 시작 -->
+					<div class="pagination">
+					  <!-- 이전 페이지 -->
+					  <c:if test="${pi.currentPage > 1}">
+					    <a href="?curPage=${pi.currentPage - 1}&searchKeyword=${param.searchKeyword}">이전</a>
+					  </c:if>
+					
+					  <!-- 페이지 번호 반복 -->
+					  <c:forEach var="p" begin="${pi.startPage}" end="${pi.endPage}">
+					    <c:choose>
+					      <c:when test="${p == pi.currentPage}">
+					        <strong>${p}</strong> <!-- 현재 페이지 강조 -->
+					      </c:when>
+					      <c:otherwise>
+					        <a href="?curPage=${p}&searchKeyword=${param.searchKeyword}">${p}</a>
+					      </c:otherwise>
+					    </c:choose>
+					  </c:forEach>
+					
+					  <!-- 다음 페이지 -->
+					  <c:if test="${pi.currentPage < pi.maxPage}">
+					    <a href="?curPage=${pi.endPage + 1}&searchKeyword=${param.searchKeyword}">다음</a>
+					  </c:if>
 					</div>
 
                     <!-- ================= 하단 버튼 ================= -->
