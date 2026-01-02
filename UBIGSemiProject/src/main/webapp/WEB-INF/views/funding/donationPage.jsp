@@ -301,7 +301,7 @@
 
             <!-- 다음 페이지 -->
             <c:if test="${pi.currentPage < pi.maxPage}">
-                <a href="?curPage=${pi.endPage + 1}&searchKeyword=${param.searchKeyword}" class="next">다음</a>
+                <a href="?curPage=${pi.currentPage + 1}&searchKeyword=${param.searchKeyword}" class="next">다음</a>
             </c:if>
         </div>
 
