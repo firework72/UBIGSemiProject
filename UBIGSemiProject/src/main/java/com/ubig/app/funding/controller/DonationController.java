@@ -88,7 +88,7 @@ public class DonationController {
 			
 		MemberVO m = (MemberVO)session.getAttribute("loginMember");
 		
-		int listCount = service.donationListCount2();
+		int listCount = service.donationListCount2(m.getUserId());
 		
 		int boardLimit = 15; // 한 페이지에 보여줄 개수
 		int pageLimit = 10;  // 페이징 바 개수
@@ -110,7 +110,7 @@ public class DonationController {
 				
 			MemberVO m = (MemberVO)session.getAttribute("loginMember");
 			
-			int listCount = service.donationListCount3();
+			int listCount = service.donationListCount3(m.getUserId());
 			
 			int boardLimit = 15; // 한 페이지에 보여줄 개수
 			int pageLimit = 10;  // 페이징 바 개수
@@ -121,9 +121,9 @@ public class DonationController {
 			
 			model.addAttribute("list", list);
 			model.addAttribute("pi", pi);
-
-				
-				
+			
+			System.out.println(pi.getEndPage());
+			
 			return "funding/donationPage";
 		}
 	

@@ -12,9 +12,9 @@ public interface DonationService {
 	
 	int donationListCount();
 	
-	int donationListCount2();
+	int donationListCount2(String userId);
 	
-	int donationListCount3();
+	int donationListCount3(String userId);
 	
 	int donationSearchCount(String searchKeyword);
 	

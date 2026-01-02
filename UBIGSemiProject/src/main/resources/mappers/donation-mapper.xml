@@ -16,16 +16,18 @@
 		FROM DONATIONS
 	</select>
 	
-	<select id="donationListCount2" resultType="_int">
+	<select id="donationListCount2" resultType="_int" parameterType="string">
 		SELECT COUNT(*)
 		FROM DONATIONS
 		WHERE DONATION_TYPE = 1
+		AND USER_ID = #{userId}
 	</select>
 	
-	<select id="donationListCount3" resultType="_int">
+	<select id="donationListCount3" resultType="_int" parameterType="string">
 		SELECT COUNT(*)
 		FROM DONATIONS
 		WHERE DONATION_TYPE = 2
+		AND USER_ID = #{userId}
 	</select>
 	
 	<select id="donationSearchCount" parameterType="string" resultType="int">

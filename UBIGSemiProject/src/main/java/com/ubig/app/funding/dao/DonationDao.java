@@ -28,14 +28,14 @@ public class DonationDao {
 		return sqlSession.selectOne("donationMapper.donationListCount");
 	}
 	
-	public int donationListCount2(SqlSessionTemplate sqlSession) {
+	public int donationListCount2(SqlSessionTemplate sqlSession, String userId) {
 		
-		return sqlSession.selectOne("donationMapper.donationListCount2");
+		return sqlSession.selectOne("donationMapper.donationListCount2",userId);
 	}
 	
-	public int donationListCount3(SqlSessionTemplate sqlSession) {
+	public int donationListCount3(SqlSessionTemplate sqlSession,String userId) {
 		
-		return sqlSession.selectOne("donationMapper.donationListCount3");
+		return sqlSession.selectOne("donationMapper.donationListCount3",userId);
 	}
 	
 	public int donationSearchCount(SqlSessionTemplate sqlSession, String searchKeyword) {
